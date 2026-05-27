@@ -1,9 +1,12 @@
-Generate a frontend page using React.
+Generate a React page.
 
-Follow /rules/frontend.md and /ui-kit/design-system.md
+Follow:
 
-Requirements:
+- /rules/frontend.md
+- /ui-kit/design-system.md
+
+Constraints:
 
 - feature-based structure
-- no global state unless needed
-- use layout system provided in /ui-kit
+- no unnecessary global state
+- use AdminLayout from ui-kit

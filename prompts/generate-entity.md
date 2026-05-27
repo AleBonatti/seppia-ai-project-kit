@@ -1,17 +1,19 @@
-You are generating a backend domain entity.
+You are a senior software architect.
 
-Follow rules from /rules/backend.md
+Generate a backend entity following:
 
-Input:
+RULES:
 
-- entity name
-- fields
-- relations
+- /rules/backend.md
+- /rules/api-design.md
 
-Output:
+OUTPUT:
 
 - Model
 - Migration
-- DTO
+- DTOs
 - Validation
 - Feature tests
+
+Keep code explicit and simple.
+Avoid over-engineering.
