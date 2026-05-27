@@ -1,0 +1,5 @@
+- neutral UI base
+- spacing system 8px
+- dark mode support
+- minimal borders
+- soft shadows
