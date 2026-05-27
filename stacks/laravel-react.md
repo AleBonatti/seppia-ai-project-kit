@@ -1,166 +1,324 @@
-# Stack: SaaS Laravel + React (TypeScript)
+# Stack: Laravel API + React SPA (TypeScript)
 
-This stack defines a fullstack architecture with:
+This is the primary stack for all Seppia projects.
 
-- Laravel as API backend
-- React (TypeScript) as frontend
-- TailwindCSS for styling
-- Strict separation between domain and UI
+- **Backend:** Laravel (API only, no Blade views)
+- **Frontend:** React + TypeScript + Vite
+- **Styling:** Tailwind CSS
+- **Auth:** Laravel Sanctum (SPA cookie auth)
+- **State:** React Query (server) + local hooks (UI)
 
 ---
 
 ## 1. Backend (Laravel)
 
-### Core principles
+### Philosophy
 
-- API-first architecture
-- No business logic in controllers
-- Use Actions for business logic
-- Use DTOs for input/output
-- Use FormRequest for validation
-- Use Policies for authorization
-- Prefer explicit code over abstraction
+- API-first: Laravel serves JSON only, no HTML rendering
+- Thin controllers: a controller method should be 5–10 lines max
+- Business logic lives exclusively in Actions
+- No "god services" — one Action = one operation
 
-### Structure
+### Directory structure
 
+```text
 app/
-Actions/
-DTOs/
-Http/
-Controllers/
-Requests/
-Models/
-Policies/
-Queries/
-Services/ (only if necessary)
+  Actions/
+    [Entity]/
+      Create[Entity]Action.php
+      Update[Entity]Action.php
+      Delete[Entity]Action.php
+  DTOs/
+    [Entity]/
+      [Entity]Data.php          ← input DTO
+      [Entity]Resource.php      ← output (can use Laravel API Resources)
+  Http/
+    Controllers/
+      [Entity]Controller.php
+    Requests/
+      Store[Entity]Request.php
+      Update[Entity]Request.php
+  Models/
+    [Entity].php
+  Policies/
+    [Entity]Policy.php
+  Queries/
+    [Entity]Query.php           ← optional, for complex filtered lists
+routes/
+  api.php
+tests/
+  Feature/
+    [Entity]/
+      [Entity]CrudTest.php
+```
 
-### API style
+### Controller pattern
 
-- RESTful endpoints
-- Resource-based structure
-- JSON responses only
-- Consistent error format
+```php
+// Thin controller — always looks like this
+class PostController extends Controller
+{
+    public function store(StorePostRequest $request, CreatePostAction $action): PostResource
+    {
+        $post = $action->execute(PostData::fromRequest($request));
+        return new PostResource($post);
+    }
+}
+```
+
+### Action pattern
+
+```php
+class CreatePostAction
+{
+    public function execute(PostData $data): Post
+    {
+        return Post::create([
+            'title'   => $data->title,
+            'slug'    => Str::slug($data->title),
+            'body'    => $data->body,
+            'user_id' => $data->userId,
+        ]);
+    }
+}
+```
+
+### DTO pattern
+
+```php
+class PostData
+{
+    public function __construct(
+        public readonly string $title,
+        public readonly string $body,
+        public readonly int $userId,
+    ) {}
+
+    public static function fromRequest(StorePostRequest $request): self
+    {
+        return new self(
+            title:  $request->validated('title'),
+            body:   $request->validated('body'),
+            userId: $request->user()->id,
+        );
+    }
+}
+```
+
+### API response format
+
+Success (single resource):
+
+```json
+{ "data": { "id": 1, "title": "..." } }
+```
+
+Success (collection):
+
+```json
+{ "data": [...], "meta": { "total": 10, "per_page": 15 } }
+```
+
+Error:
+
+```json
+{ "message": "Validation failed", "errors": { "title": ["Required"] } }
+```
 
 ### Auth
 
-- Laravel Sanctum (SPA authentication)
-- Role-based access control (RBAC)
+- Laravel Sanctum with SPA cookie-based auth
+- `auth:sanctum` middleware on all protected routes
+- Roles handled via a `role` column on `users` table (simple enum: `admin`, `user`)
+- Policies gate every resource operation
+
+### Testing (Pest PHP)
+
+```php
+it('creates a post', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)
+        ->postJson('/api/posts', [
+            'title' => 'Hello World',
+            'body'  => 'Content here',
+        ]);
+
+    $response->assertCreated();
+    $this->assertDatabaseHas('posts', ['title' => 'Hello World']);
+});
+```
 
 ---
 
 ## 2. Frontend (React + TypeScript)
 
-### Core principles
+### Philosophy
 
-- Feature-based architecture
-- Strict TypeScript (no `any`)
-- UI driven by domain models
-- No unnecessary global state
-- React Query for server state
+- Feature-based: code is grouped by domain, not by type
+- Each feature is self-contained: its own components, hooks, pages, types, API calls
+- No barrel files (`index.ts` re-exports) unless strictly needed
+- Types are explicit — never inferred from API responses without a type definition
 
-### Structure
+### Directory structure
 
+```text
 src/
-app/
-features/
-auth/
-dashboard/
-users/
-components/
-hooks/
-services/
-types/
+  app/
+    App.tsx               ← router + providers
+    router.tsx            ← route definitions
+    queryClient.ts        ← React Query config
+  features/
+    auth/
+      components/
+        LoginForm.tsx
+      hooks/
+        useLogin.ts
+      pages/
+        LoginPage.tsx
+      types.ts
+      api.ts
+    [entity]/
+      components/
+        [Entity]Form.tsx
+        [Entity]Table.tsx
+        [Entity]Card.tsx
+      hooks/
+        use[Entity]List.ts
+        use[Entity].ts
+        useCreate[Entity].ts
+        useUpdate[Entity].ts
+        useDelete[Entity].ts
+      pages/
+        [Entity]ListPage.tsx
+        [Entity]DetailPage.tsx
+      types.ts              ← domain types for this entity
+      api.ts                ← axios calls for this entity
+  components/
+    ui/                   ← base UI components (Button, Input, Modal…)
+    layout/
+      AdminLayout.tsx
+      Topbar.tsx
+      Sidebar.tsx
+  hooks/
+    useDebounce.ts
+    usePagination.ts
+  lib/
+    axios.ts              ← configured axios instance
+    utils.ts
+  types/
+    global.d.ts
+    api.ts                ← shared API response types
+```
 
-## State management
+### API call pattern
 
-- React Query → server state
-- Local state → React hooks only
-- Zustand only if strictly needed
+```ts
+// features/posts/api.ts
+import { api } from '@/lib/axios'
+import type { Post, PostPayload } from './types'
+
+export const postsApi = {
+  list: (params?: Record<string, unknown>) =>
+    api.get<{ data: Post[]; meta: Meta }>('/posts', { params }),
+
+  show: (id: number) =>
+    api.get<{ data: Post }>(`/posts/${id}`),
+
+  create: (payload: PostPayload) =>
+    api.post<{ data: Post }>('/posts', payload),
+
+  update: (id: number, payload: Partial<PostPayload>) =>
+    api.patch<{ data: Post }>(`/posts/${id}`, payload),
+
+  delete: (id: number) =>
+    api.delete(`/posts/${id}`),
+}
+```
+
+### Hook pattern (React Query)
+
+```ts
+// features/posts/hooks/usePostList.ts
+import { useQuery } from '@tanstack/react-query'
+import { postsApi } from '../api'
+
+export function usePostList(params?: Record<string, unknown>) {
+  return useQuery({
+    queryKey: ['posts', params],
+    queryFn: () => postsApi.list(params).then(r => r.data),
+  })
+}
+```
+
+### Types pattern
+
+```ts
+// features/posts/types.ts
+export interface Post {
+  id: number
+  title: string
+  body: string
+  createdAt: string
+  updatedAt: string
+  author: {
+    id: number
+    name: string
+  }
+}
+
+export interface PostPayload {
+  title: string
+  body: string
+}
+```
 
 ---
 
 ## 3. Styling (Tailwind CSS)
 
-### Principles
-
-- Utility-first approach
-- Avoid custom CSS unless necessary
-- Design system must be consistent
-- Mobile-first approach
-
-### UI rules
-
-- spacing based on 4/8 grid system
-- consistent border radius scale
-- soft shadows only
-- dark mode supported by default
+- Utility-first — avoid custom CSS unless absolutely necessary
+- All spacing on 8px grid (use `p-2`, `p-4`, `p-6`, `p-8` etc.)
+- Mobile-first — start with mobile breakpoint, add `md:` and `lg:` as needed
+- Dark mode via `dark:` variant — always provide dark mode styles
+- No inline styles
 
 ---
 
-## 4. UI Kit (shared assumptions)
+## 4. Admin panel pattern
 
-### Components
+Every project gets a generated admin panel. It follows this pattern:
 
-- Button
-- Input
-- Modal
-- Card
-- Table
-- Sidebar layout
-- Topbar layout
-
-### Layout model
-
-- Admin layout with sidebar + topbar
-- Content rendered via router outlet
+- `AdminLayout` wraps all admin pages (sidebar + topbar)
+- Each entity gets: List page, Detail/Edit page, optional Create page
+- Tables use server-side pagination (page, per_page params to API)
+- Forms use React Hook Form + Zod for validation
 
 ---
 
 ## 5. Icons
 
-- Lucide Icons preferred
-- Consistent stroke width
-- No mixed icon libraries
+- **Lucide React** exclusively
+- Consistent `size` prop (default `16` for inline, `20` for buttons, `24` for headings)
+- Never mix with other icon libraries
 
 ---
 
-## 6. API ↔ Frontend contract
-
-- Types must be explicit
-- Avoid implicit transformations
-- Backend DTOs must map 1:1 with frontend types where possible
-
----
-
-## 7. Testing
+## 6. Anti-patterns — never do these
 
 ### Backend
 
-- Pest PHP
-- Feature tests preferred over unit tests for business logic
+- ❌ Business logic in controllers
+- ❌ Service classes that grow into "god services"
+- ❌ Dynamic/JSON-driven schema systems
+- ❌ `DB::` facade calls in controllers
+- ❌ Returning raw model instances from controllers (use Resources)
 
 ### Frontend
 
-- Vitest
-- React Testing Library
-
----
-
-## 8. Anti-patterns (IMPORTANT)
-
-- No monolithic Service layer
-- No dynamic schema systems (no JSON-driven entities)
-- No business logic in controllers
-- No global state abuse
-- No “god components”
-
----
-
-## 9. AI Usage Rule
-
-When generating code using this stack:
-
-- Follow backend rules strictly
-- Follow frontend feature-based structure
-- Prefer explicit implementations over abstractions
-- Keep code readable over generic
+- ❌ `any` in TypeScript
+- ❌ `useEffect` for data fetching (use React Query)
+- ❌ Global state for server data (use React Query)
+- ❌ Deeply nested component trees without extracting components
+- ❌ Mixing feature code into `components/ui/`
+- ❌ Implicit API response types (always define them explicitly)
