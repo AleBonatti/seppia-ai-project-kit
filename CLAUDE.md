@@ -33,9 +33,11 @@ The kit exists only to give Claude consistent instructions.
    - `ui-kit/design-system.md`
    - `ui-kit/components.md`
    - `specs/project.md` ← **fill this in for the specific project**
-   - `specs/entity.md` ← **one copy per domain entity, filled in**
-3. Open Claude Code in the new project
-4. Use the prompts in `prompts/` to start generating code
+3. For each domain entity, copy `specs/entity.md` from the kit into `specs/entities/[entity-name].md` and fill it in
+   - Example: `specs/entities/product.md`, `specs/entities/order.md`, `specs/entities/category.md`
+   - The original `specs/entity.md` in the kit is a blank template — never copy it as-is
+4. Open Claude Code in the new project
+5. Use the prompts in `prompts/` to start generating code
 
 ---
 

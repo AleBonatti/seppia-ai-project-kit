@@ -18,7 +18,7 @@ Use this prompt to generate all code for a single domain entity.
 Read the following files before doing anything:
 - CLAUDE.md
 - specs/project.md
-- specs/entities/[ENTITY_NAME].md   ← replace with the actual entity file
+- specs/entities/[entity-name].md   ← e.g. specs/entities/product.md
 - stacks/laravel-react.md
 - rules/backend.md
 - rules/frontend.md
