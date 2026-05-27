@@ -5,7 +5,7 @@
 - Main features
 - Constraints
 
-## Examples
+## Example
 
 Stack: saas-laravel-react
 
