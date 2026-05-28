@@ -64,7 +64,49 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+      '/storage': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
+  },
 })
+```
+
+The `/api` and `/storage` proxies only apply during `vite dev`. Sanctum SPA cookie auth requires the frontend and API to appear same-origin to the browser — the `/api` proxy achieves this in development. The `/storage` proxy makes Laravel's uploaded files accessible at `localhost:5173/storage/...`. In production, Vite is not involved — nginx handles routing directly.
+
+**Production nginx config** (single domain, Laravel + React on same server):
+
+```nginx
+server {
+    listen 80;
+    server_name example.com;
+    root /var/www/project/frontend/dist;
+
+    # Laravel storage files
+    location /storage {
+        alias /var/www/project/api/storage/app/public;
+        try_files $uri 404;
+    }
+
+    # Laravel API
+    location /api {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    # React SPA — all other routes serve index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
 ```
 
 In `frontend/src/index.css`:

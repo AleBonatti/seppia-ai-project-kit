@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api/v1',
-  withCredentials: true,       // required for Sanctum SPA cookie auth
+  withCredentials: true,
   withXSRFToken: true,
   headers: {
     Accept: 'application/json',
@@ -10,8 +10,6 @@ export const api = axios.create({
   },
 })
 
-// ── Response interceptor ──────────────────────────────────────────────────────
-// Redirect to login on 401 (session expired or unauthenticated)
 api.interceptors.response.use(
   response => response,
   error => {
