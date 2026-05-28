@@ -15,7 +15,7 @@ Use this prompt at the start of a new project to bootstrap and scaffold everythi
 
 ## Prompt
 
-```text
+````text
 Read the following files before doing anything:
 - CLAUDE.md
 - .claude/specs/project.md
@@ -41,7 +41,7 @@ cd api
 composer require laravel/sanctum
 composer require spatie/laravel-query-builder
 php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
-```
+````
 
 ### 0b. Install React in the `frontend/` folder
 
@@ -71,6 +71,7 @@ npm install -D \
 
 In `frontend/vite.config.ts`, add the Tailwind Vite plugin.
 In `frontend/src/index.css`, replace the contents with:
+
 ```css
 @import "tailwindcss";
 ```
@@ -78,11 +79,13 @@ In `frontend/src/index.css`, replace the contents with:
 ### 0d. Configure Vite path alias
 
 In `frontend/vite.config.ts`, add the `@` alias pointing to `src/`:
+
 ```ts
 resolve: { alias: { '@': path.resolve(__dirname, 'src') } }
 ```
 
 In `frontend/tsconfig.app.json`, add:
+
 ```json
 "paths": { "@/*": ["./src/*"] }
 ```
@@ -99,12 +102,23 @@ Generate these files inside `api/`:
    `supports_credentials: true` for Sanctum cookie auth
 
 2. `.env` (update, do not replace) — set:
-   ```
-   FRONTEND_URL=http://localhost:5173
-   SESSION_DRIVER=cookie
-   SESSION_DOMAIN=localhost
-   SANCTUM_STATEFUL_DOMAINS=localhost:5173
-   ```
+
+    ```
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=
+    DB_USERNAME=
+    DB_PASSWORD=
+
+    FRONTEND_URL=http://localhost:5173
+    SESSION_DRIVER=cookie
+    SESSION_DOMAIN=localhost
+    SANCTUM_STATEFUL_DOMAINS=localhost:5173
+    ```
+
+    Leave `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` blank for now — they will be
+    filled in interactively in Phase 3.
 
 3. `.env.example` — same keys as `.env` but with blank sensitive values
 
@@ -125,6 +139,7 @@ Generate these files inside `api/`:
 ### Directory structure
 
 Create all empty directories (with `.gitkeep`) for:
+
 ```
 app/Actions/
 app/DTOs/
@@ -150,29 +165,36 @@ Generate these files inside `frontend/src/`:
 1. `src/types/api.ts` — `ApiResponse<T>`, `PaginatedResponse<T>`, `PaginationMeta`, `ApiError`
 
 2. `src/lib/axios.ts` — axios instance:
-   - `baseURL` from `import.meta.env.VITE_API_URL` (default `http://localhost:8000/api/v1`)
-   - `withCredentials: true` and `withXSRFToken: true` for Sanctum
-   - response interceptor: redirect to `/login` on 401
+    - `baseURL` from `import.meta.env.VITE_API_URL` (default `http://localhost:8000/api/v1`)
+    - `withCredentials: true` and `withXSRFToken: true` for Sanctum
+    - response interceptor: redirect to `/login` on 401
 
 3. `src/lib/utils.ts` — `cn()` helper using `clsx` + `tailwind-merge`
 
 4. `src/app/queryClient.ts` — React Query client with sensible defaults
 
 5. `frontend/.env.example`:
-   ```
-   VITE_API_URL=http://localhost:8000/api/v1
-   ```
+    ```
+    VITE_API_URL=http://localhost:8000/api/v1
+    ```
 
 ### App shell
 
 6. `src/app/App.tsx` — `RouterProvider` + `QueryClientProvider`
 
 7. `src/app/router.tsx` — routes:
-   - `/login` → `LoginPage` (lazy)
-   - `/admin` → `AdminLayout` wrapped in `AuthGuard`, with `Outlet` for children
-   - `/admin/dashboard` → placeholder `DashboardPage`
-   - One commented placeholder route per entity from `.claude/specs/project.md`
-   - `*` → redirect to `/admin`
+    - `/login` → `LoginPage` (lazy)
+    - `/admin` → `AdminLayout` wrapped in `AuthGuard`, with `Outlet` for children
+      - index route → redirect to `/admin/dashboard`
+      - `/admin/dashboard` → `DashboardPage` (lazy)
+      - a `{ path: '*', element: <ComingSoonPage /> }` catch-all as the last child —
+        this handles every sidebar link before its real page is generated.
+        Do NOT add individual entity routes here — the catch-all covers all of them.
+    - `*` → redirect to `/admin/dashboard`
+
+   Also generate `src/features/coming-soon/ComingSoonPage.tsx` — a simple placeholder
+   that reads the current path with `useLocation()`, derives the section name from it,
+   and shows a "not generated yet" message.
 
 ### Auth feature
 
@@ -239,6 +261,34 @@ Generate complete, working implementations for all of these in `src/components/u
 
 ## Phase 3 — Wire up Laravel config
 
+### 3a. Collect database credentials
+
+Before running any artisan commands, prompt the user for their local database details:
+
+```
+Ask the user:
+  "What is your database name? (DB_DATABASE)"
+  "What is your database username? (DB_USERNAME)"
+  "What is your database password? (DB_PASSWORD, press Enter for empty)"
+```
+
+Then write the answers into `api/.env`, replacing the blank values set in Phase 1:
+
+```bash
+# Example — use the actual values provided by the user:
+sed -i '' "s/^DB_DATABASE=.*/DB_DATABASE=my_project/" api/.env
+sed -i '' "s/^DB_USERNAME=.*/DB_USERNAME=root/" api/.env
+sed -i '' "s/^DB_PASSWORD=.*/DB_PASSWORD=secret/" api/.env
+```
+
+Also update `api/.env` to remove any SQLite remnants:
+
+```bash
+sed -i '' "s/^DB_CONNECTION=.*/DB_CONNECTION=mysql/" api/.env
+```
+
+### 3b. Generate key, migrate, and link storage
+
 Run these commands from `api/`:
 
 ```bash
@@ -247,11 +297,14 @@ php artisan migrate
 php artisan storage:link
 ```
 
-Then create a seeder `database/seeders/AdminUserSeeder.php` that creates one default admin user:
+### 3c. Seed the default admin user
+
+Create `database/seeders/AdminUserSeeder.php` with one default admin user:
+
 - name: Admin
-- email: admin@example.com
-- password: password (hashed)
-- role: admin (or superadmin if the project has that role)
+- email: la.seppia@gmail.com
+- password: `password` (hashed with bcrypt)
+- role: `admin` (or `superadmin` if the project defines that role)
 
 Run: `php artisan db:seed --class=AdminUserSeeder`
 
@@ -262,19 +315,20 @@ Run: `php artisan db:seed --class=AdminUserSeeder`
 - Follow all rules in `.claude/rules/backend.md`, `.claude/rules/frontend.md`, `.claude/rules/typescript.md`
 - Generate complete, working files — no stubs or TODOs
 - Use the entity names and UI style from `.claude/specs/project.md` throughout
-- After completing all phases, tell me:
-  1. Any commands that need to be run manually (e.g. database config)
-  2. The URL to open to verify everything works: `http://localhost:5173/login`
-  3. The default admin credentials from the seeder
+- After completing all phases, confirm:
+    1. That migrations ran successfully
+    2. The URL to open: `http://localhost:5173/login`
+    3. The default admin credentials from the seeder
+
 ```
 
 ---
 
 ## After running this prompt
 
-1. Configure your local database in `api/.env` (DB_DATABASE, DB_USERNAME, DB_PASSWORD)
-2. Start the Laravel dev server: `cd api && php artisan serve`
-3. Start the React dev server: `cd frontend && npm run dev`
-4. Open `http://localhost:5173/login` — you should see the login page
-5. Log in with the seeded admin credentials
-6. Then run `generate-entity.md` for each entity in your project
+1. Start the Laravel dev server: `cd api && php artisan serve`
+2. Start the React dev server: `cd frontend && npm run dev`
+3. Open <http://localhost:5173/login> — you should see the login page
+4. Log in with the seeded admin credentials
+5. Then run `generate-entity.md` for each entity in your project
+```
