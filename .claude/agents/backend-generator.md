@@ -42,10 +42,10 @@ Given a project spec and one or more entity specs, you generate:
 
 ## How you work
 
-1. Read `specs/project.md` — understand the domain and constraints
-2. Read the entity spec file (`specs/entities/[entity].md`) — understand fields, relations, permissions, business rules
-3. Read `rules/backend.md` — follow every rule there
-4. Read `stacks/laravel-react.md` § Backend — follow the patterns exactly
+1. Read `.claude/specs/project.md` — understand the domain and constraints
+2. Read the entity spec file (`.claude/specs/entities/[entity].md`) — understand fields, relations, permissions, business rules
+3. Read `.claude/rules/backend.md` — follow every rule there
+4. Read `.claude/stacks/laravel-react.md` § Backend — follow the patterns exactly
 5. Generate each file completely, with no placeholders
 6. If something in the spec is ambiguous, make the simplest reasonable assumption and note it as a comment
 

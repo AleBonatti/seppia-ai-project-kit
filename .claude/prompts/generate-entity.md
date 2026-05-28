@@ -7,7 +7,7 @@ Use this prompt to generate all code for a single domain entity.
 ## When to use
 
 - The project scaffold already exists (run `generate-project.md` first)
-- You have filled in `specs/entities/[entity].md`
+- You have filled in `.claude/specs/entities/[entity].md`
 - You want to generate the full backend + frontend for one entity
 
 ---
@@ -17,17 +17,17 @@ Use this prompt to generate all code for a single domain entity.
 ```text
 Read the following files before doing anything:
 - CLAUDE.md
-- specs/project.md
-- specs/entities/[entity-name].md   ← e.g. specs/entities/product.md
-- stacks/laravel-react.md
-- rules/backend.md
-- rules/frontend.md
-- rules/typescript.md
+- .claude/specs/project.md
+- .claude/specs/entities/[entity-name].md   ← e.g. .claude/specs/entities/product.md
+- .claude/stacks/laravel-react.md
+- .claude/rules/backend.md
+- .claude/rules/frontend.md
+- .claude/rules/typescript.md
 
 Generate all backend and frontend code for the [ENTITY_NAME] entity
 as described in its spec file.
 
-## Backend — generate these files
+## Backend — generate these files (inside api/)
 
 1. `database/migrations/[timestamp]_create_[entities]_table.php`
    - All columns from the spec
@@ -75,7 +75,7 @@ as described in its spec file.
     - Tests for validation errors
     - Tests for authorization (forbidden cases)
 
-## Frontend — generate these files
+## Frontend — generate these files (inside frontend/)
 
 1. `src/features/[entity]/types.ts`
    - [Entity] interface matching all spec fields (camelCase)
@@ -95,7 +95,7 @@ as described in its spec file.
 8. `src/features/[entity]/components/[Entity]Form.tsx`
    - React Hook Form + Zod validation
    - All fields from the spec
-   - Works for both create and edit (optional postId prop)
+   - Works for both create and edit (optional id prop)
 
 9. `src/features/[entity]/components/[Entity]Table.tsx`
    - Columns from the spec's "List page" section
@@ -115,20 +115,20 @@ as described in its spec file.
 
 ## Rules
 
-- Follow all rules in rules/backend.md and rules/frontend.md
+- Follow all rules in .claude/rules/backend.md and .claude/rules/frontend.md
 - Generate complete, working files — no stubs or TODOs
 - Use explicit types everywhere — no `any`
 - Business rules from the spec must be implemented in Actions, not controllers
 - Permissions from the spec must be implemented in the Policy
-- Match the UI style described in specs/project.md
+- Match the UI style described in .claude/specs/project.md
 ```
 
 ---
 
 ## After running this prompt
 
-1. Add the new entity routes to `src/app/router.tsx`
-2. Add the new entity to the `Sidebar.tsx` navigation
-3. Register the Policy in `AuthServiceProvider`
-4. Run migrations: `php artisan migrate`
-5. Run tests: `php artisan test --filter=[Entity]`
+1. Add the new entity routes to `frontend/src/app/router.tsx`
+2. Add the new entity to `frontend/src/components/layout/Sidebar.tsx`
+3. Register the Policy in `api/app/Providers/AuthServiceProvider.php`
+4. Run migrations: `cd api && php artisan migrate`
+5. Run tests: `cd api && php artisan test --filter=[Entity]`

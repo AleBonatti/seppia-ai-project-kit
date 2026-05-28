@@ -39,14 +39,14 @@ Given a project spec and one or more entity specs, you generate:
 
 ## How you work
 
-1. Read `specs/project.md` — understand the domain, UI style, and navigation
-2. Read the entity spec file (`specs/entities/[entity].md`) — understand fields, permissions, UI requirements
-3. Read `rules/frontend.md` — follow every rule there
-4. Read `rules/typescript.md` — follow every rule there
-5. Read `stacks/laravel-react.md` § Frontend — follow the patterns exactly
-6. Read `ui-kit/design-system.md` and `ui-kit/components.md` — use the right components
+1. Read `.claude/specs/project.md` — understand the domain, UI style, and navigation
+2. Read the entity spec file (`.claude/specs/entities/[entity].md`) — understand fields, permissions, UI requirements
+3. Read `.claude/rules/frontend.md` — follow every rule there
+4. Read `.claude/rules/typescript.md` — follow every rule there
+5. Read `.claude/stacks/laravel-react.md` § Frontend — follow the patterns exactly
+6. Read `.claude/ui-kit/design-system.md` and `.claude/ui-kit/components.md` — use the right components
 7. Generate each file completely, with no placeholders
-8. Match the UI style described in `specs/project.md`
+8. Match the UI style described in `.claude/specs/project.md`
 
 ---
 

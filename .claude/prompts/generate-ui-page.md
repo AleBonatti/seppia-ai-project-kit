@@ -17,12 +17,13 @@ Use this prompt to generate a single custom page that doesn't fit the standard e
 ```text
 Read the following files before doing anything:
 - CLAUDE.md
-- specs/project.md
-- stacks/laravel-react.md
-- rules/frontend.md
-- rules/typescript.md
-- ui-kit/design-system.md
-- ui-kit/components.md
+- CLAUDE.md
+- .claude/specs/project.md
+- .claude/stacks/laravel-react.md
+- .claude/rules/frontend.md
+- .claude/rules/typescript.md
+- .claude/ui-kit/design-system.md
+- .claude/ui-kit/components.md
 
 Generate the following page: [PAGE NAME]
 
@@ -59,8 +60,8 @@ Examples:
 
 ## Rules
 
-- Follow all rules in rules/frontend.md and rules/typescript.md
-- Use only components from ui-kit/components.md
+- Follow all rules in .claude/rules/frontend.md and .claude/rules/typescript.md
+- Use only components from .claude/ui-kit/components.md
 - Use AdminLayout as the page wrapper
 - Server data via React Query hooks only
 - Generate complete, working code — no stubs or TODOs
@@ -72,4 +73,4 @@ Examples:
 
 - If the page needs a new API endpoint, describe it clearly and the backend will be generated too
 - For dashboard-style pages, be explicit about which metrics and which entities feed them
-- Reference the design style in `specs/project.md` — the AI will match it
+- Reference the design style in `.claude/specs/project.md` — the AI will match it

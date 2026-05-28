@@ -6,8 +6,8 @@ Use this prompt at the start of a new project to bootstrap and scaffold everythi
 
 ## When to use
 
-- You have a new, empty project repo (just the kit `.md` files — nothing else)
-- You have filled in `specs/project.md`
+- You have a new, empty project repo (just `CLAUDE.md` and the `.claude/` kit files — nothing else)
+- You have filled in `.claude/specs/project.md`
 - You have NOT yet run `composer` or `npm` — this prompt handles that too
 - Run this once, at the very beginning, before `generate-entity.md`
 
@@ -18,11 +18,11 @@ Use this prompt at the start of a new project to bootstrap and scaffold everythi
 ```text
 Read the following files before doing anything:
 - CLAUDE.md
-- specs/project.md
-- stacks/laravel-react.md
-- rules/backend.md
-- rules/frontend.md
-- rules/typescript.md
+- .claude/specs/project.md
+- .claude/stacks/laravel-react.md
+- .claude/rules/backend.md
+- .claude/rules/frontend.md
+- .claude/rules/typescript.md
 
 Then bootstrap and scaffold the full project from zero.
 Work through the phases below in order. Do not skip any phase.
@@ -112,7 +112,7 @@ Generate these files inside `api/`:
 
 4. `app/Models/User.php` — add `role` column to `$fillable` and `$casts`;
    add `isSuperAdmin(): bool` and `isAdmin(): bool` helper methods;
-   role values: `admin` and `user` (or as defined in specs/project.md)
+   role values: `admin` and `user` (or as defined in `.claude/specs/project.md`)
 
 5. `database/migrations/[timestamp]_add_role_to_users_table.php` — add `role` string column,
    default `'user'`, after `email`
@@ -137,7 +137,7 @@ tests/Feature/
 ### Routes
 
 8. `routes/api.php` — auth routes (login, logout, me) + one commented placeholder
-   `Route::apiResource` for each entity in specs/project.md
+   `Route::apiResource` for each entity in `.claude/specs/project.md`
 
 ---
 
@@ -171,7 +171,7 @@ Generate these files inside `frontend/src/`:
    - `/login` → `LoginPage` (lazy)
    - `/admin` → `AdminLayout` wrapped in `AuthGuard`, with `Outlet` for children
    - `/admin/dashboard` → placeholder `DashboardPage`
-   - One commented placeholder route per entity from specs/project.md
+   - One commented placeholder route per entity from `.claude/specs/project.md`
    - `*` → redirect to `/admin`
 
 ### Auth feature
@@ -190,14 +190,14 @@ Generate these files inside `frontend/src/`:
     redirects to `/login` while loading shows a full-screen spinner
 
 14. `src/features/auth/pages/LoginPage.tsx` — email + password form, uses `useLogin`,
-    styled to match the UI style from specs/project.md
+    styled to match the UI style from `.claude/specs/project.md`
 
 ### Layout
 
 15. `src/components/layout/AdminLayout.tsx` — `Sidebar` + `Topbar` + `<Outlet />`
 
-16. `src/components/layout/Sidebar.tsx` — navigation items from specs/project.md (entities + dashboard);
-    active route highlighted; project name from specs/project.md as the logo/title
+16. `src/components/layout/Sidebar.tsx` — navigation items from `.claude/specs/project.md` (entities + dashboard);
+    active route highlighted; project name from `.claude/specs/project.md` as the logo/title
 
 17. `src/components/layout/Topbar.tsx` — logged-in user name + logout button
 
@@ -259,9 +259,9 @@ Run: `php artisan db:seed --class=AdminUserSeeder`
 
 ## Rules
 
-- Follow all rules in rules/backend.md, rules/frontend.md, rules/typescript.md
+- Follow all rules in `.claude/rules/backend.md`, `.claude/rules/frontend.md`, `.claude/rules/typescript.md`
 - Generate complete, working files — no stubs or TODOs
-- Use the entity names and UI style from specs/project.md throughout
+- Use the entity names and UI style from `.claude/specs/project.md` throughout
 - After completing all phases, tell me:
   1. Any commands that need to be run manually (e.g. database config)
   2. The URL to open to verify everything works: `http://localhost:5173/login`
