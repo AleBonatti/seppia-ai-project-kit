@@ -157,6 +157,7 @@ The edit form is a single page with two sections:
 
 - The edit page uses a tab component to switch between `IT` and `EN` translation forms
 - Both language forms are submitted together in one API call — not separately
+- **Validation:** only `it` fields are required. The `en` Zod schema is fully optional — no `superRefine`, no conditional required rules. The submit handler omits `en` from the payload when all its fields are empty. See `rules/frontend.md` § Multi-language forms.
 - The attachment section is a sub-component `PageAttachments` that manages its own state
 - Opening the media picker shows a modal with the full media library grid (paginated, searchable)
 - After selecting a media from the picker, a new attachment record is created via `POST /api/v1/admin/attachments`

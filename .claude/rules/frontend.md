@@ -102,6 +102,48 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>
 ```
 
+### Multi-language forms
+
+When an entity has translations in multiple locales, only the **primary locale** is required. Secondary locales are always fully optional — no `superRefine`, no conditional required rules. The submit handler omits a locale from the payload when all its fields are empty.
+
+```ts
+// ✅ Correct — primary required, secondary fully optional
+const requiredTranslationSchema = z.object({
+  slug:       z.string().min(1, 'Required'),
+  title:      z.string().min(1, 'Required').max(255),
+  short_text: z.string(),
+  full_text:  z.string(),
+})
+
+const optionalTranslationSchema = z.object({
+  slug:       z.string(),
+  title:      z.string(),
+  short_text: z.string(),
+  full_text:  z.string(),
+})
+// ❌ Never use superRefine to conditionally require fields on a secondary locale —
+//    hidden tab fields still validate on submit and will silently block the form.
+
+const schema = z.object({
+  translations: z.object({
+    it: requiredTranslationSchema,   // primary — always required
+    en: optionalTranslationSchema,   // secondary — never required
+  }),
+})
+
+// Submit handler — omit locale from payload when empty
+const handleFormSubmit = (values: FormValues): void => {
+  const en = values.translations.en
+  const hasEnContent = !!(en.title || en.slug || en.short_text || en.full_text)
+  onSubmit({
+    translations: {
+      it: values.translations.it,
+      ...(hasEnContent ? { en } : {}),
+    },
+  })
+}
+```
+
 ---
 
 ## Routing
