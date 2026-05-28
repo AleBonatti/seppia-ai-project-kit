@@ -169,11 +169,57 @@ class PostPolicy
 
 ---
 
-## Queries (optional)
+## Queries (Spatie QueryBuilder)
 
-- Complex filtered/sorted list queries go in `app/Queries/[Entity]Query.php`
-- A Query class accepts filter parameters and returns a Builder
-- Use Queries when the controller would otherwise need multiple scopes chained inline
+Use `spatie/laravel-query-builder` for all filterable, sortable, paginated index endpoints.
+
+**Critical:** `allowedFilters()`, `allowedSorts()`, and `allowedIncludes()` are **variadic methods** —
+they take individual arguments, never an array. Always pass arguments directly, or spread an array.
+
+```php
+// ✅ Correct — variadic arguments
+QueryBuilder::for(Post::class)
+    ->allowedFilters('title', 'status', AllowedFilter::exact('user_id'))
+    ->allowedSorts('title', 'created_at', '-created_at')
+    ->allowedIncludes('author', 'tags')
+    ->paginate();
+
+// ✅ Also correct — spread an array if you build it dynamically
+$filters = ['title', 'status'];
+QueryBuilder::for(Post::class)
+    ->allowedFilters(...$filters)
+    ->paginate();
+
+// ❌ Wrong — passing an array causes a fatal TypeError
+QueryBuilder::for(Post::class)
+    ->allowedFilters(['title', 'status'])   // ← never do this
+    ->paginate();
+```
+
+Complex queries go in `app/Queries/[Entity]Query.php` — keeps the controller thin:
+
+```php
+class PostQuery
+{
+    public function get(): LengthAwarePaginator
+    {
+        return QueryBuilder::for(Post::class)
+            ->allowedFilters('title', 'status', AllowedFilter::exact('user_id'))
+            ->allowedSorts('title', 'created_at')
+            ->allowedIncludes('author')
+            ->paginate();
+    }
+}
+```
+
+The controller then becomes a single line:
+
+```php
+public function index(PostQuery $query): AnonymousResourceCollection
+{
+    return PostResource::collection($query->get());
+}
+```
 
 ---
 
