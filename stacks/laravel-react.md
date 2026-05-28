@@ -10,6 +10,103 @@ This is the primary stack for all Seppia projects.
 
 ---
 
+## 0. Installation
+
+### Folder structure
+
+Every project has two top-level folders:
+
+```text
+project-root/
+  api/          ← Laravel API
+  frontend/     ← React SPA
+```
+
+### Laravel (`api/`)
+
+```bash
+composer create-project laravel/laravel api
+cd api
+composer require laravel/sanctum
+composer require spatie/laravel-query-builder
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+```
+
+### React (`frontend/`)
+
+```bash
+npm create vite@latest frontend -- --template react-ts
+cd frontend
+npm install \
+  @tanstack/react-query \
+  axios \
+  react-router-dom \
+  react-hook-form \
+  @hookform/resolvers \
+  zod \
+  lucide-react \
+  clsx \
+  tailwind-merge
+npm install -D \
+  tailwindcss \
+  @tailwindcss/vite \
+  autoprefixer \
+  @types/node
+```
+
+### Tailwind setup
+
+In `frontend/vite.config.ts`:
+
+```ts
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
+})
+```
+
+In `frontend/src/index.css`:
+
+```css
+@import "tailwindcss";
+```
+
+In `frontend/tsconfig.app.json`, under `compilerOptions`:
+
+```json
+"paths": { "@/*": ["./src/*"] }
+```
+
+### Environment files
+
+`api/.env` (minimum required):
+
+```text
+FRONTEND_URL=http://localhost:5173
+SESSION_DRIVER=cookie
+SESSION_DOMAIN=localhost
+SANCTUM_STATEFUL_DOMAINS=localhost:5173
+```
+
+`frontend/.env`:
+
+```text
+VITE_API_URL=http://localhost:8000/api/v1
+```
+
+### Post-install commands
+
+```bash
+# In api/
+php artisan key:generate
+php artisan migrate
+php artisan storage:link
+```
+
+---
+
 ## 1. Backend (Laravel)
 
 ### Philosophy
