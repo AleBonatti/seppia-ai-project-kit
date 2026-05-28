@@ -101,6 +101,9 @@ Soft shadows only — no heavy drop shadows.
 - Use the `dark:` Tailwind prefix
 - Never assume light-only — every component must work in both modes
 - Dark mode is triggered by the `dark` class on `<html>` (Tailwind `darkMode: 'class'`)
+- **Default is dark mode** — applied immediately in `AdminLayout.tsx` via a module-level statement before first render to avoid flash
+- The toggle lives in `Topbar.tsx` and uses `useTheme()` from `templates/admin-layout/useTheme.ts`
+- User preference is persisted in `localStorage` under the key `theme`
 
 ---
 

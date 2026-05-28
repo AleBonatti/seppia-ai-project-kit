@@ -1,6 +1,11 @@
+import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
+
+// Apply stored theme before first paint to avoid flash
+const stored = localStorage.getItem('theme')
+document.documentElement.classList.toggle('dark', stored !== 'light')
 
 export function AdminLayout() {
   return (
