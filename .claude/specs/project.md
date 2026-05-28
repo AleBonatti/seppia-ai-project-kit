@@ -83,6 +83,36 @@ Contact
 
 ---
 
+## Dashboard
+
+The admin dashboard (`/admin/dashboard`) should display:
+
+### Stats cards
+
+| Metric         | Value source                        | Notes                          |
+| -------------- | ----------------------------------- | ------------------------------ |
+| [e.g. Total pages] | `COUNT(pages)`                  | [e.g. link to pages list]      |
+| [e.g. Active pages] | `COUNT(pages WHERE active=true)` | [e.g. highlighted in green]   |
+| [e.g. Total users] | `COUNT(users)`                  | [e.g. superadmin only]         |
+
+### Recent activity (optional)
+
+- [ ] [e.g. Last 5 pages created — show title, date, author]
+- [ ] [e.g. Last 5 media uploads — show filename, size, date]
+- [ ] None — stats only
+
+### Quick actions (optional)
+
+- [ ] [e.g. "New page" button linking to /admin/pages/create]
+- [ ] None
+
+### Notes
+
+- [e.g. "Stats are fetched from dedicated `/api/v1/admin/dashboard` endpoint"]
+- [e.g. "No real-time updates — standard React Query polling interval"]
+
+---
+
 ## UI style
 
 - **Aesthetic:** [e.g. "clean and minimal", "bold and editorial", "friendly and colorful"]
