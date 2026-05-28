@@ -121,7 +121,14 @@ Generate these files inside `api/`:
     SESSION_DRIVER=cookie
     SESSION_DOMAIN=localhost
     SANCTUM_STATEFUL_DOMAINS=localhost:5173
+
+    MAIL_MAILER=log
+    MAIL_FROM_ADDRESS=noreply@localhost
+    MAIL_FROM_NAME="${APP_NAME}"
     ```
+
+    `MAIL_MAILER=log` writes emails to `storage/logs/laravel.log` in development so
+    password reset links are visible without configuring a real mail provider.
 
     Leave `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` blank for now — they will be
     filled in interactively in Phase 3.
@@ -140,7 +147,15 @@ Generate these files inside `api/`:
 6. `app/Http/Controllers/AuthController.php` — `login()`, `logout()`, `me()` using Sanctum;
    login returns the authenticated user resource
 
-7. `app/Http/Requests/LoginRequest.php` — validate `email` and `password`
+7. `app/Http/Controllers/PasswordResetController.php` — two methods using Laravel's built-in
+   Password broker (no extra packages):
+   - `sendResetLink(Request $request)`: validates `email`, calls `Password::sendResetLink()`,
+     returns 200 on success or 422 with the error message on failure
+   - `reset(Request $request)`: validates `token`, `email`, `password`, `password_confirmation`,
+     calls `Password::reset()` with a closure that updates the user's password and fires
+     `PasswordReset` event, returns 200 on success or 422 on failure
+
+8. `app/Http/Requests/LoginRequest.php` — validate `email` and `password`
 
 ### Directory structure
 
@@ -157,7 +172,7 @@ tests/Feature/
 
 ### Routes
 
-8. `routes/api.php` — auth routes (login, logout, me) + one commented placeholder
+9. `routes/api.php` — auth routes (login, logout, me, forgot-password, reset-password) + one commented placeholder
    `Route::apiResource` for each entity in `.claude/specs/project.md`
 
 ---
@@ -190,6 +205,8 @@ Generate these files inside `frontend/src/`:
 
 7. `src/app/router.tsx` — routes:
     - `/login` → `LoginPage` (lazy)
+    - `/forgot-password` → `ForgotPasswordPage` (lazy)
+    - `/reset-password` → `ResetPasswordPage` (lazy)
     - `/admin` → `AdminLayout` wrapped in `AuthGuard`, with `Outlet` for children
       - index route → redirect to `/admin/dashboard`
       - `/admin/dashboard` → `DashboardPage` (lazy)
@@ -204,9 +221,11 @@ Generate these files inside `frontend/src/`:
 
 ### Auth feature
 
-8. `src/features/auth/types.ts` — `AuthUser`, `UserRole`, `LoginPayload`
+8. `src/features/auth/types.ts` — `AuthUser`, `UserRole`, `LoginPayload`,
+   `ForgotPasswordPayload`, `ResetPasswordPayload`
 
-9. `src/features/auth/api.ts` — `authApi.login()`, `authApi.logout()`, `authApi.me()`
+9. `src/features/auth/api.ts` — `authApi.login()`, `authApi.logout()`, `authApi.me()`,
+   `authApi.forgotPassword()`, `authApi.resetPassword()`
 
 10. `src/features/auth/hooks/useAuth.ts` — React Query hook, `staleTime: Infinity`
 
@@ -214,11 +233,25 @@ Generate these files inside `frontend/src/`:
 
 12. `src/features/auth/hooks/useLogout.ts` — mutation, clears query cache, navigates to `/login`
 
-13. `src/features/auth/components/AuthGuard.tsx` — renders children if authenticated,
+13. `src/features/auth/hooks/useForgotPassword.ts` — mutation, on success shows a confirmation
+    message ("Check your email for a reset link") in the same page
+
+14. `src/features/auth/hooks/useResetPassword.ts` — mutation, reads `token` and `email` from
+    URL query params, on success navigates to `/login` with a success message
+
+15. `src/features/auth/components/AuthGuard.tsx` — renders children if authenticated,
     redirects to `/login` while loading shows a full-screen spinner
 
-14. `src/features/auth/pages/LoginPage.tsx` — email + password form, uses `useLogin`,
+16. `src/features/auth/pages/LoginPage.tsx` — email + password form, uses `useLogin`,
+    includes a "Forgot password?" link to `/forgot-password`,
     styled to match the UI style from `.claude/specs/project.md`
+
+17. `src/features/auth/pages/ForgotPasswordPage.tsx` — single email field, uses
+    `useForgotPassword`, shows inline confirmation on success instead of redirecting
+
+18. `src/features/auth/pages/ResetPasswordPage.tsx` — password + password_confirmation fields,
+    reads `token` and `email` from URL query params (Laravel appends these to the reset link),
+    uses `useResetPassword`
 
 ### Layout
 
