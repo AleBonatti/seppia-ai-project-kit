@@ -32,6 +32,7 @@ The kit exists only to give Claude consistent instructions.
    - `.claude/ui-kit/design-system.md`
    - `.claude/ui-kit/components.md`
    - `.claude/specs/project.md` ← **fill this in for the specific project**
+   - `.claude/templates/` (entire folder) ← reference code Claude reads when generating files
 3. For each domain entity, copy `.claude/specs/entity.md` from the kit into `.claude/specs/entities/[entity-name].md` and fill it in
    - Example: `.claude/specs/entities/product.md`, `.claude/specs/entities/order.md`
    - The original `.claude/specs/entity.md` in the kit is a blank template — never copy it as-is
@@ -105,6 +106,10 @@ project-root/
       project.md            ← filled in: what this project is
       entities/
         [entity].md         ← one per domain entity, filled in
+    templates/              ← reference code Claude reads when generating files
+      laravel-api/
+      react-app/
+      admin-layout/
   api/                      ← Laravel application (generated)
   frontend/                 ← React application (generated)
 ```

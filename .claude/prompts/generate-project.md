@@ -23,6 +23,12 @@ Read the following files before doing anything:
 - .claude/rules/backend.md
 - .claude/rules/frontend.md
 - .claude/rules/typescript.md
+- .claude/templates/laravel-api/ (all files)
+- .claude/templates/react-app/ (all files)
+- .claude/templates/admin-layout/ (all files)
+
+The templates are reference implementations — generate the project files to match them exactly,
+adapting only what the project spec requires (project name, entity names, nav items, etc.).
 
 Then bootstrap and scaffold the full project from zero.
 Work through the phases below in order. Do not skip any phase.
@@ -216,12 +222,19 @@ Generate these files inside `frontend/src/`:
 
 ### Layout
 
-15. `src/components/layout/AdminLayout.tsx` — `Sidebar` + `Topbar` + `<Outlet />`
+15. `src/components/layout/AdminLayout.tsx` — `Sidebar` + `Topbar` + `<Outlet />`;
+    apply stored theme before first render with a module-level statement:
+    `document.documentElement.classList.toggle('dark', localStorage.getItem('theme') !== 'light')`
 
 16. `src/components/layout/Sidebar.tsx` — navigation items from `.claude/specs/project.md` (entities + dashboard);
     active route highlighted; project name from `.claude/specs/project.md` as the logo/title
 
-17. `src/components/layout/Topbar.tsx` — logged-in user name + logout button
+17. `src/components/layout/Topbar.tsx` — logged-in user name, theme toggle icon, logout button;
+    use `useTheme` hook; show `Sun` icon when dark mode is active, `Moon` when light
+
+18. `src/components/layout/useTheme.ts` — hook that manages the `dark` class on `<html>` and
+    persists preference to `localStorage` under key `theme`; default is dark mode;
+    exports `{ theme, toggle }`
 
 ### Base UI components
 

@@ -83,9 +83,13 @@ CLAUDE.md                        → project root
     components.md
   specs/
     project.md                   ← you will fill this in next
+  templates/                     ← reference code Claude reads when generating files
+    laravel-api/
+    react-app/
+    admin-layout/
 ```
 
-You do **not** need to copy `prompts/`, `agents/`, `templates/`, or `examples/` into the project —
+You do **not** need to copy `prompts/`, `agents/`, or `examples/` into the project —
 those stay in this kit repo and are used from here.
 
 ### Step 3 — Describe the project
