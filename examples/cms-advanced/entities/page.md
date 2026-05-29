@@ -11,27 +11,28 @@
 
 ### `pages` table (locale-independent data)
 
-| Field          | Type      | Required | Validation           | Notes                                              |
-| -------------- | --------- | -------- | -------------------- | -------------------------------------------------- |
-| `id`           | integer   | auto     | —                    | Primary key                                        |
-| `date`         | date      | no       | nullable             | Optional editorial date (e.g. publication date)    |
-| `order_column` | integer   | yes      | min:0, default:0     | Used for manual sorting in lists                   |
-| `active`       | boolean   | yes      | default:false        | Only active pages are visible in the public API    |
+| Field          | Type      | Required | Validation                | Notes                                                  |
+| -------------- | --------- | -------- | ------------------------- | ------------------------------------------------------ |
+| `id`           | integer   | auto     | —                         | Primary key                                            |
+| `date`         | date      | no       | nullable                  | Optional editorial date (e.g. publication date)        |
+| `order_column` | integer   | yes      | min:0, default:0          | Used for manual sorting in lists                       |
+| `date`         | datetim   | No       | nullable.                 | Used in news or post type, will be remove              |
+| `active`       | boolean   | yes      | default:false             | Only active pages are visible in the public API        |
 | `created_by`   | foreignId | no       | nullable, exists:users,id | Set to NULL if the user is deleted (onDelete:SET NULL) |
-| `created_at`   | timestamp | auto     | —                    |                                                    |
-| `updated_at`   | timestamp | auto     | —                    |                                                    |
+| `created_at`   | timestamp | auto     | —                         |                                                        |
+| `updated_at`   | timestamp | auto     | —                         |                                                        |
 
 ### `page_translations` table (locale-specific data)
 
-| Field        | Type    | Required | Validation              | Notes                                              |
-| ------------ | ------- | -------- | ----------------------- | -------------------------------------------------- |
-| `id`         | integer | auto     | —                       | Primary key                                        |
-| `page_id`    | foreignId | yes    | exists:pages,id         | Foreign key, cascade on delete                     |
-| `locale`     | string  | yes      | in:it,en                | Supported locales: `it`, `en`                      |
-| `slug`       | string  | yes      | unique per locale       | URL-friendly identifier; unique within each locale |
-| `title`      | string  | yes      | max:255                 |                                                    |
-| `short_text` | text    | no       | nullable                | Summary / intro text                               |
-| `full_text`  | longtext| no       | nullable                | Full body content (HTML)                           |
+| Field        | Type      | Required | Validation        | Notes                                              |
+| ------------ | --------- | -------- | ----------------- | -------------------------------------------------- |
+| `id`         | integer   | auto     | —                 | Primary key                                        |
+| `page_id`    | foreignId | yes      | exists:pages,id   | Foreign key, cascade on delete                     |
+| `locale`     | string    | yes      | in:it,en          | Supported locales: `it`, `en`                      |
+| `slug`       | string    | yes      | unique per locale | URL-friendly identifier; unique within each locale |
+| `title`      | string    | yes      | max:255           |                                                    |
+| `short_text` | text      | no       | nullable          | Summary / intro text                               |
+| `full_text`  | longtext  | no       | nullable          | Full body content (HTML)                           |
 
 > Unique constraint on `(locale, slug)` — the same slug can exist in different locales
 > but not twice within the same locale.
@@ -40,24 +41,24 @@
 
 ## Relationships
 
-| Relation       | Type         | Target          | Notes                                              |
-| -------------- | ------------ | --------------- | -------------------------------------------------- |
-| `translations` | hasMany      | PageTranslation | All locale translations for this page              |
-| `translation`  | hasOne       | PageTranslation | Single translation — used with `locale` scope      |
-| `attachments`  | hasMany      | Attachment      | Media items attached to this page (via pivot data) |
-| `creator`      | belongsTo    | User            | The admin who created the page (`created_by` FK)   |
+| Relation       | Type      | Target          | Notes                                              |
+| -------------- | --------- | --------------- | -------------------------------------------------- |
+| `translations` | hasMany   | PageTranslation | All locale translations for this page              |
+| `translation`  | hasOne    | PageTranslation | Single translation — used with `locale` scope      |
+| `attachments`  | hasMany   | Attachment      | Media items attached to this page (via pivot data) |
+| `creator`      | belongsTo | User            | The admin who created the page (`created_by` FK)   |
 
 ---
 
 ## Permissions
 
-| Action | Superadmin | Admin | Public             |
-| ------ | ---------- | ----- | ------------------ |
-| list   | ✅          | ✅     | ✅ (active only)    |
-| view   | ✅          | ✅     | ✅ (active only)    |
-| create | ✅          | ✅     | ❌                  |
-| update | ✅          | ✅     | ❌                  |
-| delete | ✅          | ✅     | ❌                  |
+| Action | Superadmin | Admin | Public           |
+| ------ | ---------- | ----- | ---------------- |
+| list   | ✅         | ✅    | ✅ (active only) |
+| view   | ✅         | ✅    | ✅ (active only) |
+| create | ✅         | ✅    | ❌               |
+| update | ✅         | ✅    | ❌               |
+| delete | ✅         | ✅    | ❌               |
 
 > Future: superadmin may have additional restrictions on which pages admin can edit.
 > For now both roles have equal access to page CRUD.
@@ -68,20 +69,20 @@
 
 ### Admin (authenticated)
 
-| Method | Path                           | Description                              | Auth  |
-| ------ | ------------------------------ | ---------------------------------------- | ----- |
-| GET    | `/api/v1/admin/pages`          | Paginated list (all pages, any locale)   | admin |
-| GET    | `/api/v1/admin/pages/{id}`     | Single page with all translations + attachments | admin |
-| POST   | `/api/v1/admin/pages`          | Create page with translations            | admin |
-| PATCH  | `/api/v1/admin/pages/{id}`     | Update page + translations               | admin |
-| DELETE | `/api/v1/admin/pages/{id}`     | Permanently delete page                  | admin |
+| Method | Path                       | Description                                     | Auth  |
+| ------ | -------------------------- | ----------------------------------------------- | ----- |
+| GET    | `/api/v1/admin/pages`      | Paginated list (all pages, any locale)          | admin |
+| GET    | `/api/v1/admin/pages/{id}` | Single page with all translations + attachments | admin |
+| POST   | `/api/v1/admin/pages`      | Create page with translations                   | admin |
+| PATCH  | `/api/v1/admin/pages/{id}` | Update page + translations                      | admin |
+| DELETE | `/api/v1/admin/pages/{id}` | Permanently delete page                         | admin |
 
 ### Public (no auth)
 
-| Method | Path                           | Description                              | Auth  |
-| ------ | ------------------------------ | ---------------------------------------- | ----- |
-| GET    | `/api/v1/pages`                | Active pages, specific locale via `?locale=it` | no |
-| GET    | `/api/v1/pages/{locale}/{slug}`| Single active page by locale + slug      | no    |
+| Method | Path                            | Description                                    | Auth |
+| ------ | ------------------------------- | ---------------------------------------------- | ---- |
+| GET    | `/api/v1/pages`                 | Active pages, specific locale via `?locale=it` | no   |
+| GET    | `/api/v1/pages/{locale}/{slug}` | Single active page by locale + slug            | no   |
 
 ---
 
@@ -93,8 +94,8 @@
 - Default locale shown in list: `it` (fallback to `en` if IT translation missing)
 - Sortable by `order_column` — drag to reorder or inline numeric input
 - Filters:
-  - [ ] Filter by active / inactive
-  - [ ] Search by title (searches across all locales)
+    - [ ] Filter by active / inactive
+    - [ ] Search by title (searches across all locales)
 
 ### Create / Edit page
 
@@ -139,16 +140,16 @@ The edit form is a single page with two sections:
 
 - The `Page` model has a `translations()` hasMany and a scoped `translation(string $locale)` hasOne
 - Create/update accepts a `translations` array in the request body, keyed by locale:
-  ```json
-  {
-    "date": "2024-06-01",
-    "active": true,
-    "translations": {
-      "it": { "slug": "chi-siamo", "title": "Chi siamo", "short_text": "...", "full_text": "..." },
-      "en": { "slug": "about-us",  "title": "About us",  "short_text": "...", "full_text": "..." }
+    ```json
+    {
+        "date": "2024-06-01",
+        "active": true,
+        "translations": {
+            "it": { "slug": "chi-siamo", "title": "Chi siamo", "short_text": "...", "full_text": "..." },
+            "en": { "slug": "about-us", "title": "About us", "short_text": "...", "full_text": "..." }
+        }
     }
-  }
-  ```
+    ```
 - `CreatePageAction` saves the page then iterates `$data->translations` to upsert each `PageTranslation`
 - `UpdatePageAction` uses `updateOrCreate(['page_id' => $page->id, 'locale' => $locale], [...])` for each translation
 - `PageResource` always includes all translations and attachments (with their media)
