@@ -55,6 +55,37 @@ examples/
   ecommerce/                     ← complete filled-in spec: small online shop
   cms-simple/                    ← complete filled-in spec: studio website CMS
   cms-advanced/                  ← complete filled-in spec: multi-admin CMS with media library
+
+jsx/
+  SeppiaCms.html                 ← hi-fi admin layout prototype
+  Login.html                     ← login page prototype
+  SeppiaCms Wireframe.html       ← wireframe variant
+  hf-shell.jsx / hf-pages.jsx    ← component source loaded by the HTML files
+  wf-shell.jsx / wf-pages.jsx    ← wireframe component source
+  tweaks-panel.jsx               ← live customisation panel
+```
+
+---
+
+## Previewing the UI prototypes
+
+The `jsx/` folder contains standalone HTML prototypes of the admin layout. They load `.jsx` component files at runtime, which requires an HTTP server (browsers block `file://` cross-origin requests).
+
+```bash
+cd jsx
+python3 -m http.server 8080
+```
+
+Then open in your browser:
+
+- `http://localhost:8080/SeppiaCms.html` — hi-fi admin layout
+- `http://localhost:8080/Login.html` — login page
+- `http://localhost:8080/SeppiaCms%20Wireframe.html` — wireframe variant
+
+To stop the server:
+
+```bash
+kill $(lsof -ti:8080)
 ```
 
 ---
