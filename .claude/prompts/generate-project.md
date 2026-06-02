@@ -23,12 +23,17 @@ Read the following files before doing anything:
 - .claude/rules/backend.md
 - .claude/rules/frontend.md
 - .claude/rules/typescript.md
+- .claude/ui-kit/design-system.md
+- .claude/ui-kit/components.md
 - .claude/templates/laravel-api/ (all files)
 - .claude/templates/react-app/ (all files)
 - .claude/templates/admin-layout/ (all files)
+- jsx/SeppiaCms.html (visual reference — read the CSS tokens and component HTML structure)
+- jsx/hf-pages.jsx (visual reference — read the page layouts and component patterns)
 
 The templates are reference implementations — generate the project files to match them exactly,
 adapting only what the project spec requires (project name, entity names, nav items, etc.).
+The jsx files are the visual source of truth — all generated UI must match their look and feel.
 
 Then bootstrap and scaffold the full project from zero.
 Work through the phases below in order. Do not skip any phase.
@@ -63,7 +68,7 @@ npm install \
   react-hook-form \
   @hookform/resolvers \
   zod \
-  lucide-react \
+  @hugeicons/react \
   clsx \
   tailwind-merge
 npm install -D \
@@ -73,14 +78,17 @@ npm install -D \
   @types/node
 ```
 
-### 0c. Configure Tailwind
+### 0c. Configure Tailwind and design tokens
 
 In `frontend/vite.config.ts`, add the Tailwind Vite plugin.
-In `frontend/src/index.css`, replace the contents with:
 
-```css
-@import "tailwindcss";
-```
+In `frontend/src/index.css`, replace the contents with the full CSS token block from
+`.claude/ui-kit/design-system.md` § Color tokens — this includes `@import "tailwindcss"`,
+the `:root` accent/radius/sidebar-width vars, and the `html[data-theme]` dark/light palettes.
+
+In `frontend/index.html`, add the Figtree Google Font link tags inside `<head>` as documented
+in `.claude/ui-kit/design-system.md` § Font. Also set `data-theme="dark"` on `<html>` as the
+default so the page loads with the correct colors before JavaScript runs.
 
 ### 0d. Configure Vite path alias
 
@@ -255,48 +263,79 @@ Generate these files inside `frontend/src/`:
 
 ### Layout
 
-15. `src/components/layout/AdminLayout.tsx` — `Sidebar` + `Topbar` + `<Outlet />`;
-    apply stored theme before first render with a module-level statement:
-    `document.documentElement.classList.toggle('dark', localStorage.getItem('theme') !== 'light')`
+Generate these files by following `.claude/templates/admin-layout/` exactly, and use
+`jsx/SeppiaCms.html` as the visual reference for colors, spacing, and structure.
 
-16. `src/components/layout/Sidebar.tsx` — navigation items from `.claude/specs/project.md` (entities + dashboard);
-    active route highlighted; project name from `.claude/specs/project.md` as the logo/title
+19. `src/components/layout/AdminLayout.tsx` — CSS Grid shell (`grid-template-columns: var(--sb-w) 1fr`);
+    apply stored theme before first render at module level:
+    `document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') ?? 'dark')`
 
-17. `src/components/layout/Topbar.tsx` — logged-in user name, theme toggle icon, logout button;
-    use `useTheme` hook; show `Sun` icon when dark mode is active, `Moon` when light
+20. `src/components/layout/Sidebar.tsx` — brand area, nav groups with group labels, nav items
+    with active accent highlight, collapsible (comfortable ↔ icon-only), user card with
+    dropdown containing theme toggle and logout;
+    navigation items from `.claude/specs/project.md`; project name from spec as the brand label;
+    uses `useTheme` and `useLogout`
 
-18. `src/components/layout/useTheme.ts` — hook that manages the `dark` class on `<html>` and
-    persists preference to `localStorage` under key `theme`; default is dark mode;
-    exports `{ theme, toggle }`
+21. `src/components/layout/Breadcrumb.tsx` — derives breadcrumb items from current route path;
+    sits at top of main column above page content; home icon + path segments + separators
+
+22. `src/components/layout/useTheme.ts` — manages `data-theme` attribute on `<html>`;
+    default dark; persists to `localStorage` under key `theme`; exports `{ theme, toggle }`
 
 ### Base UI components
 
-Generate complete, working implementations for all of these in `src/components/ui/`:
+Generate complete, working implementations for all of these in `src/components/ui/`.
+Follow `.claude/ui-kit/components.md` for props and styling. Use CSS var tokens
+(`bg-[--box]`, `text-[--ink]`, etc.) — never hardcode hex colors. Use `@hugeicons/react`
+for all icons. Visual reference: `jsx/SeppiaCms.html`.
 
-18. `Button.tsx` — variants: `primary`, `secondary`, `danger`, `ghost`; sizes: `sm`, `md`, `lg`;
-    `isLoading` prop shows a spinner and disables the button
+23. `Button.tsx` — variants: `primary`, `secondary`, `danger`, `ghost`; sizes: `sm`, `md`, `lg`;
+    `isLoading` prop shows a spinner; primary uses `bg-[--accent] text-[--accent-ink]`
 
-19. `Input.tsx` — `label`, `error`, `hint` props; forwards ref; full dark mode support
+24. `Input.tsx` — `label`, `error`, `hint` props; forwards ref;
+    field styling: `bg-[--field] border-[--field-border] focus:border-[--accent]`
 
-20. `Textarea.tsx` — same interface as Input
+25. `Textarea.tsx` — same interface as Input
 
-21. `Select.tsx` — `label`, `error`, `options: { value, label }[]` props
+26. `Select.tsx` — `label`, `error`, `options: { value, label }[]` props
 
-22. `Card.tsx` — `title`, `description`, `footer`, `children` props
+27. `Card.tsx` — `title`, `description`, `footer`, `children`; `bg-[--box] border-[--border] rounded-xl`
 
-23. `Badge.tsx` — variants: `success`, `warning`, `error`, `info`, `neutral`
+28. `Badge.tsx` — variants: `success`, `warning`, `error`, `info`, `neutral`;
+    colors from semantic palette in `design-system.md`
 
-24. `Table.tsx` — composable: `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`
+29. `Chip.tsx` — filter toggle; `active` prop switches to `bg-[--accent] text-[--accent-ink]`;
+    optional `count` badge
 
-25. `Modal.tsx` — controlled (`isOpen`, `onClose`); `title`, `description`, `footer`, `children`
+30. `Avatar.tsx` — initials circle; sizes: `sm` (28px), `md` (34px), `lg` (80px);
+    `bg-[--accent] text-[--accent-ink]`
 
-26. `Spinner.tsx` — sizes: `sm`, `md`, `lg`
+31. `Table.tsx` — composable: `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`;
+    rows: `hover:bg-[--surface-2]`; dividers: `divide-y divide-[--border-soft]`
 
-27. `EmptyState.tsx` — `icon`, `title`, `description`, `action` props
+32. `Tabs.tsx` — underline style; `tabs`, `active`, `onChange` props;
+    active tab: `border-b-2 border-[--accent] text-[--accent]`
 
-28. `Pagination.tsx` — `currentPage`, `totalPages`, `onPageChange`; shows prev/next + page numbers
+33. `Breadcrumb.tsx` — `items: { label, href?, icon? }[]`; last item non-linked
 
-29. `PageHeader.tsx` — `title`, `description`, `action` props; used at the top of every admin page
+34. `Modal.tsx` — controlled; backdrop `bg-black/60`; panel `bg-[--box] border-[--border] rounded-xl`
+
+35. `Spinner.tsx` — sizes: `sm`, `md`, `lg`
+
+36. `EmptyState.tsx` — `icon`, `title`, `description`, `action` props
+
+37. `Pagination.tsx` — `currentPage`, `totalPages`, `onPageChange`;
+    active page: `bg-[--accent] text-[--accent-ink]`
+
+38. `PageHeader.tsx` — `title`, `description`, `action`, optional `backHref` props;
+    back button uses `ArrowLeft01Icon` from `@hugeicons/react`
+
+39. `StatCard.tsx` — `label`, `value`, `icon`, optional `delta` and `deltaUp`;
+    icon container: `bg-[--accent]/15 text-[--accent]`
+
+40. `SaveBar.tsx` — sticky bottom bar; `lastSaved`, `onSave`, `onDiscard`, `isLoading` props
+
+41. `Dropzone.tsx` — drag-and-drop file upload area; drag-over state: `border-[--accent] bg-[--accent]/5`
 
 ### Dashboard placeholder
 

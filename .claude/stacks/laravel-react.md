@@ -44,7 +44,7 @@ npm install \
   react-hook-form \
   @hookform/resolvers \
   zod \
-  lucide-react \
+  @hugeicons/react \
   clsx \
   tailwind-merge
 npm install -D \

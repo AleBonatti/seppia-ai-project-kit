@@ -1,22 +1,22 @@
-import { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
-import { Sidebar } from './Sidebar'
-import { Topbar } from './Topbar'
-
 // Apply stored theme before first paint to avoid flash
 const stored = localStorage.getItem('theme')
-document.documentElement.classList.toggle('dark', stored !== 'light')
+document.documentElement.setAttribute('data-theme', stored ?? 'dark')
+
+import { Outlet } from 'react-router-dom'
+import { Sidebar } from './Sidebar'
+import { Breadcrumb } from './Breadcrumb'
 
 export function AdminLayout() {
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div
+      className="h-screen overflow-hidden bg-[--bg]"
+      style={{ display: 'grid', gridTemplateColumns: 'var(--sb-w) 1fr' }}
+    >
       <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar />
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="mx-auto max-w-5xl">
-            <Outlet />
-          </div>
+      <div className="flex flex-col overflow-hidden">
+        <Breadcrumb />
+        <main className="flex-1 overflow-y-auto p-5">
+          <Outlet />
         </main>
       </div>
     </div>

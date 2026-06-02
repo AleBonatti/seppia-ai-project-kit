@@ -12,7 +12,7 @@ function getInitialTheme(): Theme {
 }
 
 function applyTheme(theme: Theme): void {
-  document.documentElement.classList.toggle('dark', theme === 'dark')
+  document.documentElement.setAttribute('data-theme', theme)
 }
 
 export function useTheme() {
