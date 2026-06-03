@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
+import type { HugeiconsProps } from '@hugeicons/react'
 import {
   DashboardSquare01Icon,
   LayoutLeftIcon,
@@ -7,8 +8,7 @@ import {
   Sun03Icon,
   Logout01Icon,
   ArrowDown01Icon,
-  type LucideProps,
-} from '@hugeicons/react'
+} from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useLogout } from '@/features/auth/hooks/useLogout'
@@ -19,7 +19,7 @@ import { useTheme } from './useTheme'
 interface NavItem {
   label: string
   href: string
-  icon: React.ComponentType<LucideProps>
+  icon: React.ComponentType<HugeiconsProps>
   count?: number
 }
 
@@ -29,7 +29,7 @@ interface NavGroup {
 }
 
 // ── Navigation — edit this list per project ───────────────────────────────────
-// Import the relevant Hugeicons and add one entry per entity.
+// Import the relevant icons from @/lib/icons and add one entry per entity.
 const NAV: NavGroup[] = [
   {
     group: 'Main',
@@ -53,12 +53,17 @@ function initials(name: string): string {
   return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
 }
 
+function toggleSidebarAttr(next: 'comfortable' | 'icononly') {
+  document.documentElement.setAttribute('data-sidebar', next)
+  localStorage.setItem('sidebar', next)
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function Sidebar() {
   const { user } = useAuth()
   const logout = useLogout()
-  const { theme, toggle } = useTheme()
+  const { theme, setTheme } = useTheme()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem('sidebar') === 'icononly'
@@ -67,122 +72,162 @@ export function Sidebar() {
   const toggleCollapse = () => {
     const next = !collapsed
     setCollapsed(next)
-    localStorage.setItem('sidebar', next ? 'icononly' : 'comfortable')
-    document.documentElement.style.setProperty('--sb-w', next ? '62px' : '256px')
+    toggleSidebarAttr(next ? 'icononly' : 'comfortable')
   }
 
   return (
-    <aside className="flex flex-col border-r border-[--border] bg-[--bg] overflow-hidden">
+    <aside className="flex flex-col bg-[--bg] overflow-hidden relative" style={{ padding: '18px 11px', gap: '4px' }}>
 
       {/* Brand */}
-      <div className="flex h-14 items-center justify-between px-4 border-b border-[--border] shrink-0">
+      <div className="flex items-center gap-1.5 px-2 pb-[18px]">
         {!collapsed && (
-          <span className="text-base font-semibold text-[--selected] truncate">
+          <span className="flex-1 font-semibold text-2xl tracking-tight text-[--ink] truncate">
             Project Name
           </span>
         )}
         <button
           type="button"
           onClick={toggleCollapse}
-          className="ml-auto rounded-lg p-1.5 text-[--faint] hover:bg-[--surface-2] hover:text-[--ink] transition-colors"
+          className={cn(
+            'flex-none w-[30px] h-[30px] grid place-items-center rounded-lg bg-transparent text-[--muted] border-none cursor-pointer hover:bg-[--surface-2] hover:text-[--ink] transition-colors',
+            collapsed && 'mx-auto',
+          )}
           aria-label="Toggle sidebar"
         >
-          <LayoutLeftIcon size={18} strokeWidth={1.8} />
+          <LayoutLeftIcon size={19} strokeWidth={1.8} />
         </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-3 space-y-5">
-        {NAV.filter(g => g.items.length > 0).map(({ group, items }) => (
-          <div key={group}>
-            {!collapsed && (
-              <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-[--faint]">
-                {group}
-              </p>
-            )}
-            <div className="space-y-0.5">
-              {items.map(item => (
-                <NavLink
-                  key={item.href}
-                  to={item.href}
-                  title={collapsed ? item.label : undefined}
-                  className={({ isActive }) =>
-                    cn(
-                      'flex items-center gap-3 rounded-[9px] px-3 py-2 text-sm transition-colors',
-                      collapsed && 'justify-center px-2',
-                      isActive
-                        ? 'bg-[--accent]/15 text-[--accent] font-medium'
-                        : 'text-[--muted] hover:bg-[--surface-2] hover:text-[--ink]',
-                    )
-                  }
-                >
-                  <item.icon size={20} strokeWidth={1.8} />
-                  {!collapsed && (
-                    <>
-                      <span className="flex-1">{item.label}</span>
-                      {item.count !== undefined && (
-                        <span className="rounded-full bg-[--surface-2] px-2 py-0.5 text-xs text-[--faint]">
-                          {item.count}
-                        </span>
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              ))}
-            </div>
+      {NAV.filter(g => g.items.length > 0).map(({ group, items }) => (
+        <div key={group}>
+          <p className={cn(
+            'text-[10.5px] font-semibold uppercase tracking-[.09em] text-[--faint] px-3 pt-4 pb-[7px]',
+            collapsed && 'text-center text-[8.5px] px-0',
+          )}>
+            {group}
+          </p>
+          <div>
+            {items.map(item => (
+              <NavLink
+                key={item.href}
+                to={item.href}
+                title={item.label}
+                className={({ isActive }) =>
+                  cn(
+                    'flex items-center gap-3 rounded-[9px] px-3 py-[9px] text-[14.5px] font-medium transition-colors relative border-none w-full text-left cursor-pointer',
+                    collapsed && 'justify-center px-0 py-[11px]',
+                    isActive
+                      ? 'text-[--selected] bg-[--surface-2] font-semibold'
+                      : 'text-[--muted] hover:bg-[--surface-2] hover:text-[--ink]',
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <span className="absolute left-[-14px] top-[9px] bottom-[9px] w-[3px] bg-[--accent] rounded-r-[3px]" />
+                    )}
+                    <span className="flex-none grid place-items-center">
+                      <item.icon size={19} strokeWidth={1.8} />
+                    </span>
+                    {!collapsed && (
+                      <>
+                        <span className="flex-1">{item.label}</span>
+                        {item.count !== undefined && (
+                          <span className="text-[11px] font-semibold tabular-nums bg-[--surface-2] text-[--muted] px-2 py-px rounded-full min-w-[24px] text-center">
+                            {item.count}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </NavLink>
+            ))}
           </div>
-        ))}
-      </nav>
+        </div>
+      ))}
 
       {/* User card */}
-      <div className="shrink-0 border-t border-[--border] p-3">
+      <div className="mt-auto pt-3">
         <div className="relative">
-          <button
-            type="button"
-            onClick={() => setUserMenuOpen(o => !o)}
-            className={cn(
-              'flex w-full items-center gap-3 rounded-[9px] px-3 py-2 text-sm transition-colors hover:bg-[--surface-2]',
-              collapsed && 'justify-center px-2',
-            )}
-          >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[--accent] text-[--accent-ink] text-xs font-semibold">
-              {user ? initials(user.name) : '?'}
-            </div>
-            {!collapsed && (
-              <>
-                <div className="flex-1 text-left overflow-hidden">
-                  <div className="truncate font-medium text-[--ink]">{user?.name}</div>
-                  <div className="truncate text-xs text-[--faint]">{user?.role}</div>
-                </div>
-                <ArrowDown01Icon size={14} strokeWidth={1.8} className="text-[--faint]" />
-              </>
-            )}
-          </button>
+          {userMenuOpen && (
+            <div
+              className="fixed inset-0 z-[55]"
+              onClick={() => setUserMenuOpen(false)}
+            />
+          )}
 
           {/* Dropdown menu */}
           {userMenuOpen && (
-            <div className="absolute bottom-full left-0 mb-1 w-48 rounded-xl border border-[--border] bg-[--box] shadow-[--shadow] py-1 z-50">
+            <div className={cn(
+              'absolute bottom-[calc(100%+8px)] left-0 right-0 min-w-[234px] bg-[--box] border border-[--border] rounded-[12px] p-2 z-[60] flex flex-col gap-[3px]',
+              'shadow-[--shadow]',
+              collapsed && 'right-auto w-[234px]',
+            )}>
+              <p className="text-[10.5px] font-semibold uppercase tracking-[.07em] text-[--faint] px-2 pt-1.5 pb-1">
+                Appearance
+              </p>
+              {/* Segmented dark / light control */}
+              <div className="flex gap-[5px] px-0.5 pb-1">
+                <button
+                  type="button"
+                  onClick={() => setTheme('dark')}
+                  className={cn(
+                    'flex-1 inline-flex items-center justify-center gap-1.5 p-2 bg-transparent text-[--muted] cursor-pointer border border-[--border] rounded-[9px] font-medium text-[13px] transition-colors',
+                    theme === 'dark' && 'bg-[--accent] text-[--accent-ink] border-[--accent] font-semibold',
+                  )}
+                >
+                  <Moon02Icon size={15} strokeWidth={1.8} /> Dark
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTheme('light')}
+                  className={cn(
+                    'flex-1 inline-flex items-center justify-center gap-1.5 p-2 bg-transparent text-[--muted] cursor-pointer border border-[--border] rounded-[9px] font-medium text-[13px] transition-colors',
+                    theme === 'light' && 'bg-[--accent] text-[--accent-ink] border-[--accent] font-semibold',
+                  )}
+                >
+                  <Sun03Icon size={15} strokeWidth={1.8} /> Light
+                </button>
+              </div>
+              <div className="h-px bg-[--border] my-[5px]" />
               <button
                 type="button"
-                onClick={() => { toggle(); setUserMenuOpen(false) }}
-                className="flex w-full items-center gap-3 px-3 py-2 text-sm text-[--muted] hover:bg-[--surface-2] hover:text-[--ink] transition-colors"
+                onClick={() => { logout.mutate(); setUserMenuOpen(false) }}
+                className="flex items-center gap-[11px] px-2 py-[9px] bg-transparent border-none text-[--ink] cursor-pointer font-medium text-[13.5px] rounded-[9px] text-left hover:bg-[--surface-2] transition-colors"
               >
-                {theme === 'dark'
-                  ? <Sun03Icon size={16} strokeWidth={1.8} />
-                  : <Moon02Icon size={16} strokeWidth={1.8} />}
-                {theme === 'dark' ? 'Light mode' : 'Dark mode'}
-              </button>
-              <div className="my-1 border-t border-[--border]" />
-              <button
-                type="button"
-                onClick={() => logout.mutate()}
-                className="flex w-full items-center gap-3 px-3 py-2 text-sm text-[--muted] hover:bg-[--surface-2] hover:text-[--ink] transition-colors"
-              >
-                <Logout01Icon size={16} strokeWidth={1.8} />
+                <span className="text-[--muted]"><Logout01Icon size={17} strokeWidth={1.8} /></span>
                 Sign out
               </button>
             </div>
           )}
+
+          <button
+            type="button"
+            onClick={() => setUserMenuOpen(o => !o)}
+            className={cn(
+              'flex w-full items-center gap-[10px] p-2 cursor-pointer bg-transparent border border-[--border] rounded-[12px] text-left text-[--ink] transition-colors hover:bg-[--surface-2]',
+              collapsed && 'justify-center p-[7px]',
+              userMenuOpen && '[&_.uc-caret]:rotate-180',
+            )}
+          >
+            <div className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[--surface-2] text-[--ink] border border-[--border] text-[13px] font-semibold">
+              {user ? initials(user.name) : '?'}
+            </div>
+            {!collapsed && (
+              <>
+                <div className="flex-1 flex flex-col min-w-0 leading-[1.25]">
+                  <span className="text-[13.5px] font-semibold truncate">{user?.name}</span>
+                  <span className="text-[11.5px] text-[--muted]">{user?.role}</span>
+                </div>
+                <span className="uc-caret text-[--muted] flex-none transition-transform duration-[180ms]">
+                  <ArrowDown01Icon size={16} strokeWidth={1.8} />
+                </span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </aside>

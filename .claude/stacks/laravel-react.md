@@ -45,6 +45,7 @@ npm install \
   @hookform/resolvers \
   zod \
   @hugeicons/react \
+  @hugeicons/core-free-icons \
   clsx \
   tailwind-merge
 npm install -D \

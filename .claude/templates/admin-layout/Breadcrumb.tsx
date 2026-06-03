@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home01Icon, ArrowRight01Icon } from '@hugeicons/react'
+import { Home01Icon, ArrowRight01Icon } from '@/lib/icons'
 
-// ── Derive a readable label from a path segment ───────────────────────────────
 function labelFromSegment(segment: string): string {
   return segment
     .replace(/-/g, ' ')
@@ -10,8 +9,6 @@ function labelFromSegment(segment: string): string {
 
 export function Breadcrumb() {
   const { pathname } = useLocation()
-
-  // Build crumb items from the path, skipping 'admin'
   const segments = pathname.split('/').filter(s => s && s !== 'admin')
 
   const crumbs = segments.map((seg, i) => ({
@@ -21,21 +18,28 @@ export function Breadcrumb() {
   }))
 
   return (
-    <div className="flex items-center gap-1.5 border-b border-[--border] px-5 py-3 text-sm shrink-0">
-      <Link
-        to="/admin/dashboard"
-        className="text-[--faint] hover:text-[--ink] transition-colors"
-        aria-label="Home"
-      >
-        <Home01Icon size={14} strokeWidth={1.8} />
-      </Link>
+    <div className="bg-[--panel] rounded-[7px] px-4 py-[11px] mb-[18px] flex items-center gap-2 flex-wrap">
+      <span className="inline-flex items-center gap-[7px] text-[--muted] text-[13.5px] font-medium">
+        <span className="text-[--faint]"><Home01Icon size={15} strokeWidth={1.8} /></span>
+        <Link to="/admin/dashboard" className="hover:text-[--ink] transition-colors">
+          Home
+        </Link>
+      </span>
       {crumbs.map(crumb => (
-        <span key={crumb.href} className="flex items-center gap-1.5">
-          <ArrowRight01Icon size={12} strokeWidth={1.8} className="text-[--faint]" />
+        <span key={crumb.href} className="inline-flex items-center gap-2">
+          <span className="text-[--faint]"><ArrowRight01Icon size={14} strokeWidth={2} /></span>
           {crumb.isLast ? (
-            <span className="font-medium text-[--ink]">{crumb.label}</span>
+            <span className="inline-flex items-center gap-[7px] text-[--ink] text-[13.5px] font-semibold">
+              <span className="text-[--accent]">
+                {/* current page icon inserted by page component if desired */}
+              </span>
+              {crumb.label}
+            </span>
           ) : (
-            <Link to={crumb.href} className="text-[--muted] hover:text-[--ink] transition-colors">
+            <Link
+              to={crumb.href}
+              className="inline-flex items-center gap-[7px] text-[--muted] text-[13.5px] font-medium hover:text-[--ink] transition-colors"
+            >
               {crumb.label}
             </Link>
           )}

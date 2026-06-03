@@ -47,8 +47,17 @@ Add to `frontend/src/index.css`:
     --accent-ink: #06210a;
     --r: 12px;
     --r-sm: 9px;
-    --sb-w: 256px;
   }
+
+  /* Sidebar width — driven by data-sidebar attribute on <html> */
+  html[data-sidebar="comfortable"] { --sb-w: 256px; }
+  html[data-sidebar="compact"]     { --sb-w: 212px; }
+  html[data-sidebar="icononly"]    { --sb-w: 62px; }
+
+  /* Density modes — cozy is the default */
+  html[data-density="cozy"]    { --pad: 22px; --row-h: 60px; --gap: 18px; }
+  html[data-density="compact"] { --pad: 16px; --row-h: 48px; --gap: 12px; }
+  html:not([data-density])     { --pad: 22px; --row-h: 60px; --gap: 18px; }
 
   html[data-theme="dark"] {
     --bg: #18181b;
@@ -143,6 +152,30 @@ In components, use Tailwind spacing utilities that approximate these:
 
 ---
 
+## Shell layout
+
+The admin shell uses a two-column CSS Grid: sidebar + main area.
+
+```
+shell (grid: var(--sb-w) 1fr, h-screen)
+├── <aside>  (sidebar — bg-[--bg])
+└── .main  (flex-col, overflow-hidden)
+    └── .content  (flex-1, overflow-y-auto, padding: var(--pad), padding-left: 0)
+        └── .pagebox  (bg-[--box], border-radius: 16px, padding: 18px, min-height: 100%)
+            ├── <Breadcrumb />   ← floating pill inside pagebox, above page content
+            └── <Outlet />       ← page content
+```
+
+Key rules:
+- The **pagebox** is the white/dark card that wraps all page content. It provides the visual container — pages render inside it, not beside it.
+- The **Breadcrumb** lives inside the pagebox, not in a top bar with a border. It is a rounded floating pill (`bg-[--panel] rounded-[7px]`).
+- The `.content` div has `padding-left: 0` so the pagebox sits flush against the sidebar border.
+- Sidebar width is controlled by `html[data-sidebar]` CSS attribute — never set `--sb-w` via inline style. Toggle by calling `document.documentElement.setAttribute('data-sidebar', value)` and persisting to `localStorage`.
+- The active nav item uses a left accent bar (`position: absolute; left: -14px; width: 3px; background: var(--accent)`) plus `bg-[--surface-2]` — not a tinted `bg-[--accent]/15` background.
+- The theme dropdown in the user menu is a **segmented control** (Dark | Light buttons), not a single toggle. Active segment: `bg-[--accent] text-[--accent-ink]`.
+
+---
+
 ## Border radius
 
 - Default (cards, modals, inputs): `rounded-[12px]` or `rounded-xl`
@@ -153,18 +186,28 @@ In components, use Tailwind spacing utilities that approximate these:
 
 ## Icons
 
-**Library: Hugeicons** (`@hugeicons/react`) — the only icon library used in all projects.
+**Library: Hugeicons** — the only icon library used in all projects.
 
-Install:
+Two packages are required:
+
 ```bash
-npm install @hugeicons/react
+npm install @hugeicons/react @hugeicons/core-free-icons
 ```
+
+`@hugeicons/react` ships only the generic `HugeiconsIcon` renderer. Individual icon data
+ships in `@hugeicons/core-free-icons`. A thin adapter at `src/lib/icons.tsx` wraps each
+data object into a named React component — all other files import from there.
 
 Usage:
 ```tsx
-import { DashboardSquare01Icon, UserGroupIcon } from '@hugeicons/react'
+// ✅ Always import from the adapter
+import { DashboardSquare01Icon, UserGroupIcon } from '@/lib/icons'
 
 <DashboardSquare01Icon size={20} strokeWidth={1.8} />
+
+// ❌ Never import directly from the packages
+import { DashboardSquare01Icon } from '@hugeicons/react'
+import { dashboardSquare01 } from '@hugeicons/core-free-icons'
 ```
 
 - Size for nav items: `20`
