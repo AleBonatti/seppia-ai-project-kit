@@ -69,6 +69,7 @@ npm install \
   @hookform/resolvers \
   zod \
   @hugeicons/react \
+  @hugeicons/core-free-icons \
   clsx \
   tailwind-merge
 npm install -D \
@@ -183,6 +184,13 @@ tests/Feature/
 9. `routes/api.php` — auth routes (login, logout, me, forgot-password, reset-password) + one commented placeholder
    `Route::apiResource` for each entity in `.claude/specs/project.md`
 
+> **STOP — do not generate entity files here.**
+> Phase 1 ends here. Do NOT generate migrations, models, controllers, resources, policies,
+> DTOs, actions, or any other files for domain entities listed in `.claude/specs/project.md`.
+> Those are created exclusively by `generate-entity.md`, one entity at a time, after this
+> project scaffold is complete. Generating them now causes schema conflicts because the
+> database is migrated in Phase 3 before the entity specs are finalised.
+
 ---
 
 ## Phase 2 — React application files
@@ -199,6 +207,17 @@ Generate these files inside `frontend/src/`:
     - response interceptor: redirect to `/login` on 401
 
 3. `src/lib/utils.ts` — `cn()` helper using `clsx` + `tailwind-merge`
+
+4. `src/lib/icons.tsx` — thin adapter that wraps `@hugeicons/core-free-icons` data objects
+   into React components using `HugeiconsIcon` from `@hugeicons/react`. Follow
+   `.claude/templates/react-app/src/lib/icons.tsx` exactly.
+   Add every icon needed by the project at generation time; additional icons can be added later.
+   **All files in this project must import icons from `@/lib/icons`, never directly from
+   `@hugeicons/react` or `@hugeicons/core-free-icons`.**
+
+   > **Why:** `@hugeicons/react` v1.x ships only the generic `HugeiconsIcon` renderer.
+   > Individual icon data ships in `@hugeicons/core-free-icons`. The adapter hides this
+   > split so the rest of the codebase uses familiar named components unchanged.
 
 4. `src/app/queryClient.ts` — React Query client with sensible defaults
 
@@ -263,24 +282,41 @@ Generate these files inside `frontend/src/`:
 
 ### Layout
 
-Generate these files by following `.claude/templates/admin-layout/` exactly, and use
-`jsx/SeppiaCms.html` as the visual reference for colors, spacing, and structure.
+Generate these files by following `.claude/templates/admin-layout/` exactly.
+Read `.claude/ui-kit/design-system.md` § Shell layout for the required DOM structure.
+Use `jsx/SeppiaCms.html` and `jsx/hf-shell.jsx` as the visual reference.
 
-19. `src/components/layout/AdminLayout.tsx` — CSS Grid shell (`grid-template-columns: var(--sb-w) 1fr`);
-    apply stored theme before first render at module level:
-    `document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') ?? 'dark')`
+19. `src/components/layout/AdminLayout.tsx` — CSS Grid shell (`grid-template-columns: var(--sb-w) 1fr`).
+    At module level (before any React code), apply stored theme AND sidebar state to avoid flash:
+    ```ts
+    document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') ?? 'dark')
+    document.documentElement.setAttribute('data-sidebar', localStorage.getItem('sidebar') ?? 'comfortable')
+    ```
+    Structure: `shell → sidebar | main → content (padding: var(--pad), padding-left: 0) → pagebox (bg-[--box], rounded-2xl)`.
+    The `<Outlet />` renders inside the pagebox. The `<Breadcrumb />` also renders inside the pagebox,
+    above the outlet — import and place it there directly in `AdminLayout.tsx`.
 
-20. `src/components/layout/Sidebar.tsx` — brand area, nav groups with group labels, nav items
-    with active accent highlight, collapsible (comfortable ↔ icon-only), user card with
-    dropdown containing theme toggle and logout;
-    navigation items from `.claude/specs/project.md`; project name from spec as the brand label;
-    uses `useTheme` and `useLogout`
+20. `src/components/layout/Sidebar.tsx` — follow the template exactly:
+    - Brand area: project name (large, 24px) + collapse toggle button
+    - Nav groups with uppercase group labels; nav items with icon + label
+    - **Active item style**: `bg-[--surface-2]` background + a 3px left accent bar
+      (`position: absolute; left: -14px; top/bottom: 9px; width: 3px; background: var(--accent)`)
+      — NOT a tinted `bg-[--accent]/15` background
+    - Collapse toggles `data-sidebar` attribute on `<html>` (comfortable ↔ icononly) and
+      persists to `localStorage` — never mutates `--sb-w` via inline style
+    - User card at bottom with dropdown menu containing:
+      - **Segmented Dark / Light control** (two buttons, active = `bg-[--accent] text-[--accent-ink]`)
+      - Sign out button
+    - Navigation items from `.claude/specs/project.md`; project name from spec as the brand label
+    - Uses `useTheme` (for `{ theme, setTheme }`) and `useLogout`
 
-21. `src/components/layout/Breadcrumb.tsx` — derives breadcrumb items from current route path;
-    sits at top of main column above page content; home icon + path segments + separators
+21. `src/components/layout/Breadcrumb.tsx` — floating pill inside the pagebox above page content.
+    Style: `bg-[--panel] rounded-[7px] px-4 py-[11px] mb-[18px]`.
+    Derives crumb items from the current route path; Home icon + path segments + arrow separators.
+    Current (last) segment: `text-[--ink] font-semibold`. Ancestors: `text-[--muted]` links.
 
 22. `src/components/layout/useTheme.ts` — manages `data-theme` attribute on `<html>`;
-    default dark; persists to `localStorage` under key `theme`; exports `{ theme, toggle }`
+    default dark; persists to `localStorage` under key `theme`; exports `{ theme, setTheme }`
 
 ### Base UI components
 
@@ -381,6 +417,10 @@ php artisan key:generate
 php artisan migrate
 php artisan storage:link
 ```
+
+> At this point the database should contain only Laravel's core tables (users, password_reset_tokens,
+> sessions, cache, jobs) plus the `add_role_to_users` migration. No entity tables exist yet —
+> those are created later when `generate-entity.md` is run for each entity.
 
 ### 3c. Seed the default admin user
 

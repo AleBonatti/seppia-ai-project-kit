@@ -121,6 +121,17 @@ as described in its spec file.
 - Business rules from the spec must be implemented in Actions, not controllers
 - Permissions from the spec must be implemented in the Policy
 - Match the UI style described in .claude/specs/project.md
+
+## After generating all files
+
+Run the migration immediately:
+
+```bash
+cd api && php artisan migrate
+```
+
+Then confirm the new table exists and the migration ran without errors before reporting done.
+
 ```
 
 ---
