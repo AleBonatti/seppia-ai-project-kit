@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Eye01Icon, EyeOffIcon, Moon02Icon, Sun03Icon } from '@/lib/icons'
+import { EyeIcon, EyeOffIcon, Moon02Icon, Sun03Icon } from '@/lib/icons'
 import { useLogin } from '../hooks/useLogin'
 import { useTheme } from '@/components/layout/useTheme'
 
@@ -143,7 +143,7 @@ export default function LoginPage() {
             >
               {showPassword
                 ? <EyeOffIcon size={20} strokeWidth={1.8} />
-                : <Eye01Icon size={20} strokeWidth={1.8} />
+                : <EyeIcon size={20} strokeWidth={1.8} />
               }
             </button>
           </div>

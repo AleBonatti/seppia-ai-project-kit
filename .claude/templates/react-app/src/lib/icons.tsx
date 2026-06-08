@@ -9,28 +9,31 @@
 
 import { HugeiconsIcon, type HugeiconsProps } from '@hugeicons/react'
 import {
-  dashboardSquare01 as DashboardSquare01,
-  layoutLeft as LayoutLeft,
-  moon02 as Moon02,
-  sun03 as Sun03,
-  logout01 as Logout01,
-  arrowDown01 as ArrowDown01,
-  home01 as Home01,
-  arrowRight01 as ArrowRight01,
-  arrowLeft01 as ArrowLeft01,
-  userGroup as UserGroup,
-  file01 as File01,
-  image01 as Image01,
-  search01 as Search01,
-  plus as Plus,
-  edit01 as Edit01,
-  delete01 as Delete01,
-  cancel01 as Cancel01,
-  tick01 as Tick01,
-  informationCircle as InformationCircle,
-  alertCircle as AlertCircle,
-  checkmarkCircle01 as CheckmarkCircle01,
-  settings01 as Settings01,
+  DashboardSquare01Icon as _DashboardSquare01,
+  LayoutLeftIcon        as _LayoutLeft,
+  Moon02Icon            as _Moon02,
+  Sun03Icon             as _Sun03,
+  Logout01Icon          as _Logout01,
+  ArrowDown01Icon       as _ArrowDown01,
+  ArrowUp01Icon         as _ArrowUp01,
+  Home01Icon            as _Home01,
+  ArrowRight01Icon      as _ArrowRight01,
+  ArrowLeft01Icon       as _ArrowLeft01,
+  UserGroupIcon         as _UserGroup,
+  File01Icon            as _File01,
+  Image01Icon           as _Image01,
+  Search01Icon          as _Search01,
+  PlusSignIcon          as _PlusSign,
+  Edit01Icon            as _Edit01,
+  Delete01Icon          as _Delete01,
+  Cancel01Icon          as _Cancel01,
+  Tick01Icon            as _Tick01,
+  EyeIcon               as _Eye,
+  EyeOffIcon            as _EyeOff,
+  InformationCircleIcon as _InformationCircle,
+  AlertCircleIcon       as _AlertCircle,
+  CheckmarkCircle01Icon as _CheckmarkCircle01,
+  Settings01Icon        as _Settings01,
 } from '@hugeicons/core-free-icons'
 import type { FC } from 'react'
 
@@ -39,25 +42,28 @@ function wrap(data: object): FC<HugeiconsProps> {
   return Comp
 }
 
-export const DashboardSquare01Icon = wrap(DashboardSquare01)
-export const LayoutLeftIcon        = wrap(LayoutLeft)
-export const Moon02Icon            = wrap(Moon02)
-export const Sun03Icon             = wrap(Sun03)
-export const Logout01Icon          = wrap(Logout01)
-export const ArrowDown01Icon       = wrap(ArrowDown01)
-export const Home01Icon            = wrap(Home01)
-export const ArrowRight01Icon      = wrap(ArrowRight01)
-export const ArrowLeft01Icon       = wrap(ArrowLeft01)
-export const UserGroupIcon         = wrap(UserGroup)
-export const File01Icon            = wrap(File01)
-export const Image01Icon           = wrap(Image01)
-export const Search01Icon          = wrap(Search01)
-export const PlusIcon              = wrap(Plus)
-export const Edit01Icon            = wrap(Edit01)
-export const Delete01Icon          = wrap(Delete01)
-export const Cancel01Icon          = wrap(Cancel01)
-export const Tick01Icon            = wrap(Tick01)
-export const InformationCircleIcon = wrap(InformationCircle)
-export const AlertCircleIcon       = wrap(AlertCircle)
-export const CheckmarkCircle01Icon = wrap(CheckmarkCircle01)
-export const Settings01Icon        = wrap(Settings01)
+export const DashboardSquare01Icon = wrap(_DashboardSquare01)
+export const LayoutLeftIcon        = wrap(_LayoutLeft)
+export const Moon02Icon            = wrap(_Moon02)
+export const Sun03Icon             = wrap(_Sun03)
+export const Logout01Icon          = wrap(_Logout01)
+export const ArrowDown01Icon       = wrap(_ArrowDown01)
+export const ArrowUp01Icon         = wrap(_ArrowUp01)
+export const Home01Icon            = wrap(_Home01)
+export const ArrowRight01Icon      = wrap(_ArrowRight01)
+export const ArrowLeft01Icon       = wrap(_ArrowLeft01)
+export const UserGroupIcon         = wrap(_UserGroup)
+export const File01Icon            = wrap(_File01)
+export const Image01Icon           = wrap(_Image01)
+export const Search01Icon          = wrap(_Search01)
+export const PlusSignIcon          = wrap(_PlusSign)
+export const Edit01Icon            = wrap(_Edit01)
+export const Delete01Icon          = wrap(_Delete01)
+export const Cancel01Icon          = wrap(_Cancel01)
+export const Tick01Icon            = wrap(_Tick01)
+export const EyeIcon               = wrap(_Eye)
+export const EyeOffIcon            = wrap(_EyeOff)
+export const InformationCircleIcon = wrap(_InformationCircle)
+export const AlertCircleIcon       = wrap(_AlertCircle)
+export const CheckmarkCircle01Icon = wrap(_CheckmarkCircle01)
+export const Settings01Icon        = wrap(_Settings01)
