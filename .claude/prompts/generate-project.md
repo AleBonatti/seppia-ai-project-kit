@@ -297,28 +297,28 @@ Use `jsx/SeppiaCms.html` and `jsx/hf-shell.jsx` as the visual reference.
     document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') ?? 'dark')
     document.documentElement.setAttribute('data-sidebar', localStorage.getItem('sidebar') ?? 'comfortable')
     ```
-    Structure: `shell → sidebar | main → content (padding: var(--pad), padding-left: 0) → pagebox (bg-[--box], rounded-2xl)`.
+    Structure: `shell → sidebar | main → content (padding: var(--pad), padding-left: 0) → pagebox (bg-(--box), rounded-2xl)`.
     The `<Outlet />` renders inside the pagebox. The `<Breadcrumb />` also renders inside the pagebox,
     above the outlet — import and place it there directly in `AdminLayout.tsx`.
 
 20. `src/components/layout/Sidebar.tsx` — follow the template exactly:
     - Brand area: project name (large, 24px) + collapse toggle button
     - Nav groups with uppercase group labels; nav items with icon + label
-    - **Active item style**: `bg-[--surface-2]` background + a 3px left accent bar
+    - **Active item style**: `bg-(--surface-2)` background + a 3px left accent bar
       (`position: absolute; left: -14px; top/bottom: 9px; width: 3px; background: var(--accent)`)
-      — NOT a tinted `bg-[--accent]/15` background
+      — NOT a tinted `bg-(--accent)/15` background
     - Collapse toggles `data-sidebar` attribute on `<html>` (comfortable ↔ icononly) and
       persists to `localStorage` — never mutates `--sb-w` via inline style
     - User card at bottom with dropdown menu containing:
-      - **Segmented Dark / Light control** (two buttons, active = `bg-[--accent] text-[--accent-ink]`)
+      - **Segmented Dark / Light control** (two buttons, active = `bg-(--accent) text-(--accent-ink)`)
       - Sign out button
     - Navigation items from `.claude/specs/project.md`; project name from spec as the brand label
     - Uses `useTheme` (for `{ theme, setTheme }`) and `useLogout`
 
 21. `src/components/layout/Breadcrumb.tsx` — floating pill inside the pagebox above page content.
-    Style: `bg-[--panel] rounded-[7px] px-4 py-[11px] mb-[18px]`.
+    Style: `bg-(--panel) rounded-[7px] px-4 py-[11px] mb-[18px]`.
     Derives crumb items from the current route path; Home icon + path segments + arrow separators.
-    Current (last) segment: `text-[--ink] font-semibold`. Ancestors: `text-[--muted]` links.
+    Current (last) segment: `text-(--ink) font-semibold`. Ancestors: `text-(--muted)` links.
 
 22. `src/components/layout/useTheme.ts` — manages `data-theme` attribute on `<html>`;
     default dark; persists to `localStorage` under key `theme`; exports `{ theme, setTheme }`
@@ -327,56 +327,56 @@ Use `jsx/SeppiaCms.html` and `jsx/hf-shell.jsx` as the visual reference.
 
 Generate complete, working implementations for all of these in `src/components/ui/`.
 Follow `.claude/ui-kit/components.md` for props and styling. Use CSS var tokens
-(`bg-[--box]`, `text-[--ink]`, etc.) — never hardcode hex colors. Use `@hugeicons/react`
+(`bg-(--box)`, `text-(--ink)`, etc.) — never hardcode hex colors. Use `@hugeicons/react`
 for all icons. Visual reference: `jsx/SeppiaCms.html`.
 
 23. `Button.tsx` — variants: `primary`, `secondary`, `danger`, `ghost`; sizes: `sm`, `md`, `lg`;
-    `isLoading` prop shows a spinner; primary uses `bg-[--accent] text-[--accent-ink]`
+    `isLoading` prop shows a spinner; primary uses `bg-(--accent) text-(--accent-ink)`
 
 24. `Input.tsx` — `label`, `error`, `hint` props; forwards ref;
-    field styling: `bg-[--field] border-[--field-border] focus:border-[--accent]`
+    field styling: `bg-(--field) border-(--field-border) focus:border-(--accent)`
 
 25. `Textarea.tsx` — same interface as Input
 
 26. `Select.tsx` — `label`, `error`, `options: { value, label }[]` props
 
-27. `Card.tsx` — `title`, `description`, `footer`, `children`; `bg-[--box] border-[--border] rounded-xl`
+27. `Card.tsx` — `title`, `description`, `footer`, `children`; `bg-(--box) border-(--border) rounded-xl`
 
 28. `Badge.tsx` — variants: `success`, `warning`, `error`, `info`, `neutral`;
     colors from semantic palette in `design-system.md`
 
-29. `Chip.tsx` — filter toggle; `active` prop switches to `bg-[--accent] text-[--accent-ink]`;
+29. `Chip.tsx` — filter toggle; `active` prop switches to `bg-(--accent) text-(--accent-ink)`;
     optional `count` badge
 
 30. `Avatar.tsx` — initials circle; sizes: `sm` (28px), `md` (34px), `lg` (80px);
-    `bg-[--accent] text-[--accent-ink]`
+    `bg-(--accent) text-(--accent-ink)`
 
 31. `Table.tsx` — composable: `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`;
-    rows: `hover:bg-[--surface-2]`; dividers: `divide-y divide-[--border-soft]`
+    rows: `hover:bg-(--surface-2)`; dividers: `divide-y divide-(--border-soft)`
 
 32. `Tabs.tsx` — underline style; `tabs`, `active`, `onChange` props;
-    active tab: `border-b-2 border-[--accent] text-[--accent]`
+    active tab: `border-b-2 border-(--accent) text-(--accent)`
 
 33. `Breadcrumb.tsx` — `items: { label, href?, icon? }[]`; last item non-linked
 
-34. `Modal.tsx` — controlled; backdrop `bg-black/60`; panel `bg-[--box] border-[--border] rounded-xl`
+34. `Modal.tsx` — controlled; backdrop `bg-black/60`; panel `bg-(--box) border-(--border) rounded-xl`
 
 35. `Spinner.tsx` — sizes: `sm`, `md`, `lg`
 
 36. `EmptyState.tsx` — `icon`, `title`, `description`, `action` props
 
 37. `Pagination.tsx` — `currentPage`, `totalPages`, `onPageChange`;
-    active page: `bg-[--accent] text-[--accent-ink]`
+    active page: `bg-(--accent) text-(--accent-ink)`
 
 38. `PageHeader.tsx` — `title`, `description`, `action`, optional `backHref` props;
     back button uses `ArrowLeft01Icon` from `@hugeicons/react`
 
 39. `StatCard.tsx` — `label`, `value`, `icon`, optional `delta` and `deltaUp`;
-    icon container: `bg-[--accent]/15 text-[--accent]`
+    icon container: `bg-(--accent)/15 text-(--accent)`
 
 40. `SaveBar.tsx` — sticky bottom bar; `lastSaved`, `onSave`, `onDiscard`, `isLoading` props
 
-41. `Dropzone.tsx` — drag-and-drop file upload area; drag-over state: `border-[--accent] bg-[--accent]/5`
+41. `Dropzone.tsx` — drag-and-drop file upload area; drag-over state: `border-(--accent) bg-(--accent)/5`
 
 ### Dashboard placeholder
 

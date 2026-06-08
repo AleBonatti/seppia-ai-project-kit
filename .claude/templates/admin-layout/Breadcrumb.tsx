@@ -18,19 +18,19 @@ export function Breadcrumb() {
   }))
 
   return (
-    <div className="bg-[--panel] rounded-[7px] px-4 py-[11px] mb-[18px] flex items-center gap-2 flex-wrap">
-      <span className="inline-flex items-center gap-[7px] text-[--muted] text-[13.5px] font-medium">
-        <span className="text-[--faint]"><Home01Icon size={15} strokeWidth={1.8} /></span>
-        <Link to="/admin/dashboard" className="hover:text-[--ink] transition-colors">
+    <div className="bg-(--panel) rounded-[7px] px-4 py-[11px] mb-[18px] flex items-center gap-2 flex-wrap">
+      <span className="inline-flex items-center gap-[7px] text-(--muted) text-[13.5px] font-medium">
+        <span className="text-(--faint)"><Home01Icon size={15} strokeWidth={1.8} /></span>
+        <Link to="/admin/dashboard" className="hover:text-(--ink) transition-colors">
           Home
         </Link>
       </span>
       {crumbs.map(crumb => (
         <span key={crumb.href} className="inline-flex items-center gap-2">
-          <span className="text-[--faint]"><ArrowRight01Icon size={14} strokeWidth={2} /></span>
+          <span className="text-(--faint)"><ArrowRight01Icon size={14} strokeWidth={2} /></span>
           {crumb.isLast ? (
-            <span className="inline-flex items-center gap-[7px] text-[--ink] text-[13.5px] font-semibold">
-              <span className="text-[--accent]">
+            <span className="inline-flex items-center gap-[7px] text-(--ink) text-[13.5px] font-semibold">
+              <span className="text-(--accent)">
                 {/* current page icon inserted by page component if desired */}
               </span>
               {crumb.label}
@@ -38,7 +38,7 @@ export function Breadcrumb() {
           ) : (
             <Link
               to={crumb.href}
-              className="inline-flex items-center gap-[7px] text-[--muted] text-[13.5px] font-medium hover:text-[--ink] transition-colors"
+              className="inline-flex items-center gap-[7px] text-(--muted) text-[13.5px] font-medium hover:text-(--ink) transition-colors"
             >
               {crumb.label}
             </Link>

@@ -34,7 +34,7 @@ body {
 
 ## Color tokens
 
-Colors are defined as CSS custom properties in `@layer base` and consumed in components via Tailwind's arbitrary value syntax (`bg-[--box]`, `text-[--ink]`). This allows the accent color to be swapped per project without touching component code.
+Colors are defined as CSS custom properties in `@layer base` and consumed in components via Tailwind's arbitrary value syntax (`bg-(--box)`, `text-(--ink)`). This allows the accent color to be swapped per project without touching component code.
 
 Add to `frontend/src/index.css`:
 
@@ -158,21 +158,21 @@ The admin shell uses a two-column CSS Grid: sidebar + main area.
 
 ```
 shell (grid: var(--sb-w) 1fr, h-screen)
-├── <aside>  (sidebar — bg-[--bg])
+├── <aside>  (sidebar — bg-(--bg))
 └── .main  (flex-col, overflow-hidden)
     └── .content  (flex-1, overflow-y-auto, padding: var(--pad), padding-left: 0)
-        └── .pagebox  (bg-[--box], border-radius: 16px, padding: 18px, min-height: 100%)
+        └── .pagebox  (bg-(--box), border-radius: 16px, padding: 18px, min-height: 100%)
             ├── <Breadcrumb />   ← floating pill inside pagebox, above page content
             └── <Outlet />       ← page content
 ```
 
 Key rules:
 - The **pagebox** is the white/dark card that wraps all page content. It provides the visual container — pages render inside it, not beside it.
-- The **Breadcrumb** lives inside the pagebox, not in a top bar with a border. It is a rounded floating pill (`bg-[--panel] rounded-[7px]`).
+- The **Breadcrumb** lives inside the pagebox, not in a top bar with a border. It is a rounded floating pill (`bg-(--panel) rounded-[7px]`).
 - The `.content` div has `padding-left: 0` so the pagebox sits flush against the sidebar border.
 - Sidebar width is controlled by `html[data-sidebar]` CSS attribute — never set `--sb-w` via inline style. Toggle by calling `document.documentElement.setAttribute('data-sidebar', value)` and persisting to `localStorage`.
-- The active nav item uses a left accent bar (`position: absolute; left: -14px; width: 3px; background: var(--accent)`) plus `bg-[--surface-2]` — not a tinted `bg-[--accent]/15` background.
-- The theme dropdown in the user menu is a **segmented control** (Dark | Light buttons), not a single toggle. Active segment: `bg-[--accent] text-[--accent-ink]`.
+- The active nav item uses a left accent bar (`position: absolute; left: -14px; width: 3px; background: var(--accent)`) plus `bg-(--surface-2)` — not a tinted `bg-(--accent)/15` background.
+- The theme dropdown in the user menu is a **segmented control** (Dark | Light buttons), not a single toggle. Active segment: `bg-(--accent) text-(--accent-ink)`.
 
 ---
 

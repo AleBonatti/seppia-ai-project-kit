@@ -44,9 +44,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 ### Styling notes
 
-- Primary: `bg-[--accent] text-[--accent-ink] hover:opacity-90 rounded-[9px]`
-- Secondary: `border border-[--border] text-[--ink] hover:bg-[--surface-2] rounded-[9px]`
-- Ghost: `text-[--muted] hover:bg-[--surface-2] hover:text-[--ink] rounded-[9px]`
+- Primary: `bg-(--accent) text-(--accent-ink) hover:opacity-90 rounded-[9px]`
+- Secondary: `border border-(--border) text-(--ink) hover:bg-(--surface-2) rounded-[9px]`
+- Ghost: `text-(--muted) hover:bg-(--surface-2) hover:text-(--ink) rounded-[9px]`
 - Danger: `bg-red-500/15 text-red-400 hover:bg-red-500/25 rounded-[9px]`
 
 ### Usage
@@ -79,10 +79,10 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 ### Styling notes
 
-- Wrapper: `bg-[--field] border border-[--field-border] rounded-xl text-[--ink]`
-- Label: `text-sm font-medium text-[--muted]`
+- Wrapper: `bg-(--field) border border-(--field-border) rounded-xl text-(--ink)`
+- Label: `text-sm font-medium text-(--muted)`
 - Error: `text-red-400 text-xs`
-- Focus: `focus:border-[--accent] focus:outline-none`
+- Focus: `focus:border-(--accent) focus:outline-none`
 
 ---
 
@@ -116,7 +116,7 @@ Same styling as Input. Use a caret icon on the right.
 
 **File:** `src/components/ui/Card.tsx`
 
-A surface container. Background `bg-[--box]`, border `border border-[--border]`, radius `rounded-xl`, padding `p-5`.
+A surface container. Background `bg-(--box)`, border `border border-(--border)`, radius `rounded-xl`, padding `p-5`.
 
 ### Props
 
@@ -186,8 +186,8 @@ interface ChipProps {
 
 ### Styling notes
 
-- Default: `bg-[--surface-2] text-[--muted] rounded-full px-3 py-1 text-sm`
-- Active: `bg-[--accent] text-[--accent-ink]`
+- Default: `bg-(--surface-2) text-(--muted) rounded-full px-3 py-1 text-sm`
+- Active: `bg-(--accent) text-(--accent-ink)`
 - Count badge inside: `bg-black/20 rounded-full px-1.5 text-xs ml-1`
 
 ### Usage
@@ -225,7 +225,7 @@ interface AvatarProps {
 | `md` | 34px (default) |
 | `lg` | 80px |
 
-Styling: `rounded-full bg-[--accent] text-[--accent-ink] font-semibold flex items-center justify-center`
+Styling: `rounded-full bg-(--accent) text-(--accent-ink) font-semibold flex items-center justify-center`
 
 ---
 
@@ -238,11 +238,11 @@ Composable table primitive. Use for entity list pages.
 ### Sub-components
 
 - `Table` — `<table>` wrapper, `w-full`
-- `TableHeader` — `<thead>` with `border-b border-[--border]`
-- `TableBody` — `<tbody>` with `divide-y divide-[--border-soft]`
-- `TableRow` — `<tr>` with `hover:bg-[--surface-2] transition-colors`
-- `TableHead` — `<th>` — `text-xs uppercase tracking-wider text-[--faint] font-medium px-4`
-- `TableCell` — `<td>` — `px-4 text-sm text-[--ink]`, height via `--row-h`
+- `TableHeader` — `<thead>` with `border-b border-(--border)`
+- `TableBody` — `<tbody>` with `divide-y divide-(--border-soft)`
+- `TableRow` — `<tr>` with `hover:bg-(--surface-2) transition-colors`
+- `TableHead` — `<th>` — `text-xs uppercase tracking-wider text-(--faint) font-medium px-4`
+- `TableCell` — `<td>` — `px-4 text-sm text-(--ink)`, height via `--row-h`
 
 ### Usage
 
@@ -260,11 +260,11 @@ Composable table primitive. Use for entity list pages.
     {posts.map(post => (
       <TableRow key={post.id}>
         <TableCell>
-          <div className="font-medium text-[--selected]">{post.title}</div>
-          <div className="text-xs text-[--faint]">{post.slug}</div>
+          <div className="font-medium text-(--selected)">{post.title}</div>
+          <div className="text-xs text-(--faint)">{post.slug}</div>
         </TableCell>
         <TableCell><Badge variant="success">{post.status}</Badge></TableCell>
-        <TableCell className="text-[--muted]">{formatDate(post.date)}</TableCell>
+        <TableCell className="text-(--muted)">{formatDate(post.date)}</TableCell>
         <TableCell>
           <Button variant="ghost" size="sm">Edit</Button>
         </TableCell>
@@ -294,10 +294,10 @@ interface TabsProps {
 
 ### Styling notes
 
-- Container: `flex gap-1 border-b border-[--border]`
+- Container: `flex gap-1 border-b border-(--border)`
 - Tab: `px-4 py-2 text-sm font-medium transition-colors`
-- Active: `border-b-2 border-[--accent] text-[--accent]`
-- Inactive: `text-[--muted] hover:text-[--ink]`
+- Active: `border-b-2 border-(--accent) text-(--accent)`
+- Inactive: `text-(--muted) hover:text-(--ink)`
 
 ---
 
@@ -317,9 +317,9 @@ interface BreadcrumbProps {
 
 ### Styling notes
 
-- Container: `flex items-center gap-1.5 px-5 py-3 border-b border-[--border] text-sm text-[--muted]`
-- Separator: `/` or `>` character in `text-[--faint]`
-- Last item: `text-[--ink] font-medium` (not a link)
+- Container: `flex items-center gap-1.5 px-5 py-3 border-b border-(--border) text-sm text-(--muted)`
+- Separator: `/` or `>` character in `text-(--faint)`
+- Last item: `text-(--ink) font-medium` (not a link)
 
 ---
 
@@ -345,7 +345,7 @@ interface ModalProps {
 ### Styling notes
 
 - Backdrop: `fixed inset-0 bg-black/60`
-- Panel: `bg-[--box] border border-[--border] rounded-xl shadow-[--shadow]`
+- Panel: `bg-(--box) border border-(--border) rounded-xl shadow-(--shadow)`
 
 ---
 
@@ -368,8 +368,8 @@ interface PaginationProps {
 ### Styling notes
 
 - Container: `flex items-center gap-1`
-- Page button: `w-8 h-8 rounded-[9px] text-sm text-[--muted] hover:bg-[--surface-2]`
-- Active page: `bg-[--accent] text-[--accent-ink] font-medium`
+- Page button: `w-8 h-8 rounded-[9px] text-sm text-(--muted) hover:bg-(--surface-2)`
+- Active page: `bg-(--accent) text-(--accent-ink) font-medium`
 
 ---
 
@@ -393,8 +393,8 @@ interface PageHeaderProps {
 ### Styling notes
 
 - Container: `flex items-start justify-between gap-4 mb-6`
-- Title: `text-2xl font-semibold text-[--selected] tracking-tight`
-- Description: `text-sm text-[--muted] mt-1`
+- Title: `text-2xl font-semibold text-(--selected) tracking-tight`
+- Description: `text-sm text-(--muted) mt-1`
 - Back button (when `backHref` provided): ghost button with `ArrowLeft01Icon`
 
 ---
@@ -419,9 +419,9 @@ interface StatCardProps {
 
 ### Styling notes
 
-- Card: `bg-[--box] border border-[--border] rounded-xl p-5`
-- Icon container: `w-10 h-10 rounded-xl bg-[--accent]/15 text-[--accent] flex items-center justify-center`
-- Value: `text-2xl font-bold text-[--selected] mt-3`
+- Card: `bg-(--box) border border-(--border) rounded-xl p-5`
+- Icon container: `w-10 h-10 rounded-xl bg-(--accent)/15 text-(--accent) flex items-center justify-center`
+- Value: `text-2xl font-bold text-(--selected) mt-3`
 - Delta up: `text-green-400`, delta down: `text-red-400`
 
 ---
@@ -445,8 +445,8 @@ interface SaveBarProps {
 
 ### Styling notes
 
-- Container: `sticky bottom-0 flex items-center justify-between border-t border-[--border] bg-[--box] px-5 py-3`
-- Timestamp: `text-xs text-[--faint]`
+- Container: `sticky bottom-0 flex items-center justify-between border-t border-(--border) bg-(--box) px-5 py-3`
+- Timestamp: `text-xs text-(--faint)`
 
 ---
 
@@ -469,8 +469,8 @@ interface DropzoneProps {
 
 ### Styling notes
 
-- Default: `border-2 border-dashed border-[--field-border] rounded-xl p-8 text-center text-[--muted]`
-- Drag-over: `border-[--accent] bg-[--accent]/5`
+- Default: `border-2 border-dashed border-(--field-border) rounded-xl p-8 text-center text-(--muted)`
+- Drag-over: `border-(--accent) bg-(--accent)/5`
 
 ---
 
@@ -532,7 +532,7 @@ When Claude generates a new feature, it must:
 
 1. Use components from this file — never re-implement Button, Input, Table, etc.
 2. Import from `@/components/ui/[Component]`
-3. Use CSS var tokens (`text-[--ink]`, `bg-[--box]`) — never hardcode hex colors
+3. Use CSS var tokens (`text-(--ink)`, `bg-(--box)`) — never hardcode hex colors
 4. Use Hugeicons for all icons — never Lucide or other libraries
 5. Only create new components in `src/components/ui/` if a genuinely new primitive is needed
 6. Keep feature-specific components inside `src/features/[entity]/components/`

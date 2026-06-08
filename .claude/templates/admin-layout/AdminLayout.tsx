@@ -15,7 +15,7 @@ export function AdminLayout() {
       <Sidebar />
       <div className="flex flex-col overflow-hidden min-w-0">
         <div className="flex-1 overflow-y-auto" style={{ padding: 'var(--pad)', paddingLeft: 0 }}>
-          <div className="bg-[--box] rounded-2xl p-[18px] min-h-full">
+          <div className="bg-(--box) rounded-2xl p-[18px] min-h-full">
             <Breadcrumb />
             <Outlet />
           </div>
