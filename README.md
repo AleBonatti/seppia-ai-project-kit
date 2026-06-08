@@ -103,21 +103,21 @@ Copy these files and folders from this kit into the new project, preserving the 
 ```text
 CLAUDE.md                        → project root
 .claude/
-  stacks/
-    laravel-react.md
   rules/
     backend.md
     frontend.md
     typescript.md
-  ui-kit/
-    design-system.md
-    components.md
   specs/
-    project.md                   ← you will fill this in next
+    project.md
+  stacks/
+    laravel-react.md              ← you will fill this in next
   templates/                     ← reference code Claude reads when generating files
     laravel-api/
     react-app/
     admin-layout/
+  ui-kit/
+    design-system.md
+    components.md
 ```
 
 You do **not** need to copy `prompts/`, `agents/`, or `examples/` into the project —
