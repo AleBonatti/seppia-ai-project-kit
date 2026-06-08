@@ -83,9 +83,13 @@ npm install -D \
 
 In `frontend/vite.config.ts`, add the Tailwind Vite plugin.
 
-In `frontend/src/index.css`, replace the contents with the full CSS token block from
-`.claude/ui-kit/design-system.md` § Color tokens — this includes `@import "tailwindcss"`,
-the `:root` accent/radius/sidebar-width vars, and the `html[data-theme]` dark/light palettes.
+In `frontend/src/index.css`, copy the contents of `.claude/templates/react-app/src/index.css`
+exactly — do not paraphrase or reconstruct it. If the project spec defines a custom accent color,
+add an override after the `@layer base` block:
+
+```css
+:root { --accent: #2A6FDB; /* project-specific */ }
+```
 
 In `frontend/index.html`, add the Figtree Google Font link tags inside `<head>` as documented
 in `.claude/ui-kit/design-system.md` § Font. Also set `data-theme="dark"` on `<html>` as the
@@ -269,9 +273,10 @@ Generate these files inside `frontend/src/`:
 15. `src/features/auth/components/AuthGuard.tsx` — renders children if authenticated,
     redirects to `/login` while loading shows a full-screen spinner
 
-16. `src/features/auth/pages/LoginPage.tsx` — email + password form, uses `useLogin`,
-    includes a "Forgot password?" link to `/forgot-password`,
-    styled to match the UI style from `.claude/specs/project.md`
+16. `src/features/auth/pages/LoginPage.tsx` — copy `.claude/templates/react-app/src/features/auth/pages/LoginPage.tsx`
+    exactly, replacing "Project Name" with the project name from `.claude/specs/project.md`.
+    Layout: full-screen centered card on `var(--bg)`, NOT the admin shell. No sidebar, no breadcrumb.
+    Visual reference: `jsx/Login.html`.
 
 17. `src/features/auth/pages/ForgotPasswordPage.tsx` — single email field, uses
     `useForgotPassword`, shows inline confirmation on success instead of redirecting
