@@ -122,7 +122,7 @@ Generate these files inside `api/`:
 
 2. `.env` (update, do not replace) — set:
 
-    ```
+    ```env
     DB_CONNECTION=mysql
     DB_HOST=127.0.0.1
     DB_PORT=3306
@@ -150,17 +150,17 @@ Generate these files inside `api/`:
 
 ### Auth
 
-4. `app/Models/User.php` — add `role` column to `$fillable` and `$casts`;
+1. `app/Models/User.php` — add `role` column to `$fillable` and `$casts`;
    add `isSuperAdmin(): bool` and `isAdmin(): bool` helper methods;
    role values: `admin` and `user` (or as defined in `.claude/specs/project.md`)
 
-5. `database/migrations/[timestamp]_add_role_to_users_table.php` — add `role` string column,
+2. `database/migrations/[timestamp]_add_role_to_users_table.php` — add `role` string column,
    default `'user'`, after `email`
 
-6. `app/Http/Controllers/AuthController.php` — `login()`, `logout()`, `me()` using Sanctum;
+3. `app/Http/Controllers/AuthController.php` — `login()`, `logout()`, `me()` using Sanctum;
    login returns the authenticated user resource
 
-7. `app/Http/Controllers/PasswordResetController.php` — two methods using Laravel's built-in
+4. `app/Http/Controllers/PasswordResetController.php` — two methods using Laravel's built-in
    Password broker (no extra packages):
    - `sendResetLink(Request $request)`: validates `email`, calls `Password::sendResetLink()`,
      returns 200 on success or 422 with the error message on failure
@@ -168,13 +168,13 @@ Generate these files inside `api/`:
      calls `Password::reset()` with a closure that updates the user's password and fires
      `PasswordReset` event, returns 200 on success or 422 on failure
 
-8. `app/Http/Requests/LoginRequest.php` — validate `email` and `password`
+5. `app/Http/Requests/LoginRequest.php` — validate `email` and `password`
 
 ### Directory structure
 
 Create all empty directories (with `.gitkeep`) for:
 
-```
+```text
 app/Actions/
 app/DTOs/
 app/Queries/
@@ -185,7 +185,7 @@ tests/Feature/
 
 ### Routes
 
-9. `routes/api.php` — auth routes (login, logout, me, forgot-password, reset-password) + one commented placeholder
+1. `routes/api.php` — auth routes (login, logout, me, forgot-password, reset-password) + one commented placeholder
    `Route::apiResource` for each entity in `.claude/specs/project.md`
 
 > **STOP — do not generate entity files here.**
@@ -223,18 +223,19 @@ Generate these files inside `frontend/src/`:
    > Individual icon data ships in `@hugeicons/core-free-icons`. The adapter hides this
    > split so the rest of the codebase uses familiar named components unchanged.
 
-4. `src/app/queryClient.ts` — React Query client with sensible defaults
+5. `src/app/queryClient.ts` — React Query client with sensible defaults
 
-5. `frontend/.env.example`:
-    ```
+6. `frontend/.env.example`:
+
+    ```env
     VITE_API_URL=http://localhost:8000/api/v1
     ```
 
 ### App shell
 
-6. `src/app/App.tsx` — `RouterProvider` + `QueryClientProvider`
+1. `src/app/App.tsx` — `RouterProvider` + `QueryClientProvider`
 
-7. `src/app/router.tsx` — routes:
+2. `src/app/router.tsx` — routes:
     - `/login` → `LoginPage` (lazy)
     - `/forgot-password` → `ForgotPasswordPage` (lazy)
     - `/reset-password` → `ResetPasswordPage` (lazy)
@@ -252,38 +253,26 @@ Generate these files inside `frontend/src/`:
 
 ### Auth feature
 
-8. `src/features/auth/types.ts` — `AuthUser`, `UserRole`, `LoginPayload`,
-   `ForgotPasswordPayload`, `ResetPasswordPayload`
+Copy all of the following files from `.claude/templates/react-app/src/features/auth/` exactly,
+replacing every occurrence of `"Project Name"` with the project name from `.claude/specs/project.md`:
 
-9. `src/features/auth/api.ts` — `authApi.login()`, `authApi.logout()`, `authApi.me()`,
-   `authApi.forgotPassword()`, `authApi.resetPassword()`
+1. `src/features/auth/types.ts`
+2. `src/features/auth/api.ts`
+3. `src/features/auth/hooks/useAuth.ts`
+4. `src/features/auth/hooks/useLogin.ts`
+5. `src/features/auth/hooks/useLogout.ts`
+6. `src/features/auth/hooks/useForgotPassword.ts`
+7. `src/features/auth/hooks/useResetPassword.ts`
+8. `src/features/auth/components/AuthLayout.tsx` — shared card shell used by all auth pages
+9. `src/features/auth/components/AuthInput.tsx` — login-scoped input with eye-toggle
+10. `src/features/auth/components/AuthGuard.tsx` — renders children if authenticated,
+    redirects to `/login`; shows a full-screen spinner while loading
+11. `src/features/auth/pages/LoginPage.tsx`
+12. `src/features/auth/pages/ForgotPasswordPage.tsx`
+13. `src/features/auth/pages/ResetPasswordPage.tsx`
 
-10. `src/features/auth/hooks/useAuth.ts` — React Query hook, `staleTime: Infinity`
-
-11. `src/features/auth/hooks/useLogin.ts` — mutation, sets query data on success, navigates to `/admin/dashboard`
-
-12. `src/features/auth/hooks/useLogout.ts` — mutation, clears query cache, navigates to `/login`
-
-13. `src/features/auth/hooks/useForgotPassword.ts` — mutation, on success shows a confirmation
-    message ("Check your email for a reset link") in the same page
-
-14. `src/features/auth/hooks/useResetPassword.ts` — mutation, reads `token` and `email` from
-    URL query params, on success navigates to `/login` with a success message
-
-15. `src/features/auth/components/AuthGuard.tsx` — renders children if authenticated,
-    redirects to `/login` while loading shows a full-screen spinner
-
-16. `src/features/auth/pages/LoginPage.tsx` — copy `.claude/templates/react-app/src/features/auth/pages/LoginPage.tsx`
-    exactly, replacing "Project Name" with the project name from `.claude/specs/project.md`.
-    Layout: full-screen centered card on `var(--bg)`, NOT the admin shell. No sidebar, no breadcrumb.
-    Visual reference: `jsx/Login.html`.
-
-17. `src/features/auth/pages/ForgotPasswordPage.tsx` — single email field, uses
-    `useForgotPassword`, shows inline confirmation on success instead of redirecting
-
-18. `src/features/auth/pages/ResetPasswordPage.tsx` — password + password_confirmation fields,
-    reads `token` and `email` from URL query params (Laravel appends these to the reset link),
-    uses `useResetPassword`
+All three pages share `AuthLayout` — the same card, logo, and project name. They do NOT use
+the admin shell. Visual reference: `jsx/Login.html`.
 
 ### Layout
 
@@ -291,17 +280,19 @@ Generate these files by following `.claude/templates/admin-layout/` exactly.
 Read `.claude/ui-kit/design-system.md` § Shell layout for the required DOM structure.
 Use `jsx/SeppiaCms.html` and `jsx/hf-shell.jsx` as the visual reference.
 
-19. `src/components/layout/AdminLayout.tsx` — CSS Grid shell (`grid-template-columns: var(--sb-w) 1fr`).
+1. `src/components/layout/AdminLayout.tsx` — CSS Grid shell (`grid-template-columns: var(--sb-w) 1fr`).
     At module level (before any React code), apply stored theme AND sidebar state to avoid flash:
+
     ```ts
     document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') ?? 'dark')
     document.documentElement.setAttribute('data-sidebar', localStorage.getItem('sidebar') ?? 'comfortable')
     ```
+
     Structure: `shell → sidebar | main → content (padding: var(--pad), padding-left: 0) → pagebox (bg-(--box), rounded-2xl)`.
     The `<Outlet />` renders inside the pagebox. The `<Breadcrumb />` also renders inside the pagebox,
     above the outlet — import and place it there directly in `AdminLayout.tsx`.
 
-20. `src/components/layout/Sidebar.tsx` — follow the template exactly:
+2. `src/components/layout/Sidebar.tsx` — follow the template exactly:
     - Brand area: project name (large, 24px) + collapse toggle button
     - Nav groups with uppercase group labels; nav items with icon + label
     - **Active item style**: `bg-(--surface-2)` background + a 3px left accent bar
@@ -315,12 +306,12 @@ Use `jsx/SeppiaCms.html` and `jsx/hf-shell.jsx` as the visual reference.
     - Navigation items from `.claude/specs/project.md`; project name from spec as the brand label
     - Uses `useTheme` (for `{ theme, setTheme }`) and `useLogout`
 
-21. `src/components/layout/Breadcrumb.tsx` — floating pill inside the pagebox above page content.
+3. `src/components/layout/Breadcrumb.tsx` — floating pill inside the pagebox above page content.
     Style: `bg-(--panel) rounded-[7px] px-4 py-[11px] mb-[18px]`.
     Derives crumb items from the current route path; Home icon + path segments + arrow separators.
     Current (last) segment: `text-(--ink) font-semibold`. Ancestors: `text-(--muted)` links.
 
-22. `src/components/layout/useTheme.ts` — manages `data-theme` attribute on `<html>`;
+4. `src/components/layout/useTheme.ts` — manages `data-theme` attribute on `<html>`;
     default dark; persists to `localStorage` under key `theme`; exports `{ theme, setTheme }`
 
 ### Base UI components
@@ -330,58 +321,58 @@ Follow `.claude/ui-kit/components.md` for props and styling. Use CSS var tokens
 (`bg-(--box)`, `text-(--ink)`, etc.) — never hardcode hex colors. Use `@hugeicons/react`
 for all icons. Visual reference: `jsx/SeppiaCms.html`.
 
-23. `Button.tsx` — variants: `primary`, `secondary`, `danger`, `ghost`; sizes: `sm`, `md`, `lg`;
-    `isLoading` prop shows a spinner; primary uses `bg-(--accent) text-(--accent-ink)`
+1. `Button.tsx` — variants: `primary`, `secondary`, `danger`, `ghost`; sizes: `sm`, `md`, `lg`;
+   `isLoading` prop shows a spinner; primary uses `bg-(--accent) text-(--accent-ink)`
 
-24. `Input.tsx` — `label`, `error`, `hint` props; forwards ref;
-    field styling: `bg-(--field) border-(--field-border) focus:border-(--accent)`
+2. `Input.tsx` — `label`, `error`, `hint` props; forwards ref;
+   field styling: `bg-(--field) border-(--field-border) focus:border-(--accent)`
 
-25. `Textarea.tsx` — same interface as Input
+3. `Textarea.tsx` — same interface as Input
 
-26. `Select.tsx` — `label`, `error`, `options: { value, label }[]` props
+4. `Select.tsx` — `label`, `error`, `options: { value, label }[]` props
 
-27. `Card.tsx` — `title`, `description`, `footer`, `children`; `bg-(--box) border-(--border) rounded-xl`
+5. `Card.tsx` — `title`, `description`, `footer`, `children`; `bg-(--box) border-(--border) rounded-xl`
 
-28. `Badge.tsx` — variants: `success`, `warning`, `error`, `info`, `neutral`;
-    colors from semantic palette in `design-system.md`
+6. `Badge.tsx` — variants: `success`, `warning`, `error`, `info`, `neutral`;
+   colors from semantic palette in `design-system.md`
 
-29. `Chip.tsx` — filter toggle; `active` prop switches to `bg-(--accent) text-(--accent-ink)`;
-    optional `count` badge
+7. `Chip.tsx` — filter toggle; `active` prop switches to `bg-(--accent) text-(--accent-ink)`;
+   optional `count` badge
 
-30. `Avatar.tsx` — initials circle; sizes: `sm` (28px), `md` (34px), `lg` (80px);
-    `bg-(--accent) text-(--accent-ink)`
+8. `Avatar.tsx` — initials circle; sizes: `sm` (28px), `md` (34px), `lg` (80px);
+   `bg-(--accent) text-(--accent-ink)`
 
-31. `Table.tsx` — composable: `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`;
-    rows: `hover:bg-(--surface-2)`; dividers: `divide-y divide-(--border-soft)`
+9. `Table.tsx` — composable: `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`;
+   rows: `hover:bg-(--surface-2)`; dividers: `divide-y divide-(--border-soft)`
 
-32. `Tabs.tsx` — underline style; `tabs`, `active`, `onChange` props;
+10. `Tabs.tsx` — underline style; `tabs`, `active`, `onChange` props;
     active tab: `border-b-2 border-(--accent) text-(--accent)`
 
-33. `Breadcrumb.tsx` — `items: { label, href?, icon? }[]`; last item non-linked
+11. `Breadcrumb.tsx` — `items: { label, href?, icon? }[]`; last item non-linked
 
-34. `Modal.tsx` — controlled; backdrop `bg-black/60`; panel `bg-(--box) border-(--border) rounded-xl`
+12. `Modal.tsx` — controlled; backdrop `bg-black/60`; panel `bg-(--box) border-(--border) rounded-xl`
 
-35. `Spinner.tsx` — sizes: `sm`, `md`, `lg`
+13. `Spinner.tsx` — sizes: `sm`, `md`, `lg`
 
-36. `EmptyState.tsx` — `icon`, `title`, `description`, `action` props
+14. `EmptyState.tsx` — `icon`, `title`, `description`, `action` props
 
-37. `Pagination.tsx` — `currentPage`, `totalPages`, `onPageChange`;
+15. `Pagination.tsx` — `currentPage`, `totalPages`, `onPageChange`;
     active page: `bg-(--accent) text-(--accent-ink)`
 
-38. `PageHeader.tsx` — `title`, `description`, `action`, optional `backHref` props;
+16. `PageHeader.tsx` — `title`, `description`, `action`, optional `backHref` props;
     back button uses `ArrowLeft01Icon` from `@hugeicons/react`
 
-39. `StatCard.tsx` — `label`, `value`, `icon`, optional `delta` and `deltaUp`;
+17. `StatCard.tsx` — `label`, `value`, `icon`, optional `delta` and `deltaUp`;
     icon container: `bg-(--accent)/15 text-(--accent)`
 
-40. `SaveBar.tsx` — sticky bottom bar; `lastSaved`, `onSave`, `onDiscard`, `isLoading` props
+18. `SaveBar.tsx` — sticky bottom bar; `lastSaved`, `onSave`, `onDiscard`, `isLoading` props
 
-41. `Dropzone.tsx` — drag-and-drop file upload area; drag-over state: `border-(--accent) bg-(--accent)/5`
+19. `Dropzone.tsx` — drag-and-drop file upload area; drag-over state: `border-(--accent) bg-(--accent)/5`
 
 ### Dashboard placeholder
 
-30. `src/features/dashboard/pages/DashboardPage.tsx` — a minimal page with a welcome message
-    and `PageHeader`; no data fetching — just a static placeholder to confirm routing works
+1. `src/features/dashboard/pages/DashboardPage.tsx` — a minimal page with a welcome message
+   and `PageHeader`; no data fetching — just a static placeholder to confirm routing works
 
 ---
 
@@ -391,7 +382,7 @@ for all icons. Visual reference: `jsx/SeppiaCms.html`.
 
 Before running any artisan commands, prompt the user for their local database details:
 
-```
+```text
 Ask the user:
   "What is your database name? (DB_DATABASE)"
   "What is your database username? (DB_USERNAME)"
@@ -432,7 +423,7 @@ php artisan storage:link
 Create `database/seeders/AdminUserSeeder.php` with one default admin user:
 
 - name: Admin
-- email: la.seppia@gmail.com
+- email: `la.seppia@gmail.com`
 - password: `password` (hashed with bcrypt)
 - role: `admin` (or `superadmin` if the project defines that role)
 
@@ -450,15 +441,12 @@ Run: `php artisan db:seed --class=AdminUserSeeder`
     2. The URL to open: `http://localhost:5173/login`
     3. The default admin credentials from the seeder
 
-```
-
 ---
 
 ## After running this prompt
 
 1. Start the Laravel dev server: `cd api && php artisan serve`
 2. Start the React dev server: `cd frontend && npm run dev`
-3. Open <http://localhost:5173/login> — you should see the login page
+3. Open `http://localhost:5173/login` — you should see the login page
 4. Log in with the seeded admin credentials
 5. Then run `generate-entity.md` for each entity in your project
-```
