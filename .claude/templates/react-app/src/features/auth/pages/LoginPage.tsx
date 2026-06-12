@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { AuthLayout } from '../components/AuthLayout'
-import { AuthInput } from '../components/AuthInput'
+import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { useLogin } from '../hooks/useLogin'
 
@@ -38,9 +38,9 @@ export default function LoginPage() {
       <button
         type="button"
         className="w-full flex items-center justify-center gap-[11px] text-[14.5px] font-semibold rounded-[7px] cursor-pointer mt-[22px] transition-[border-color]"
-        style={{ padding: 13, background: 'var(--login-field)', color: 'var(--ink)', border: '1px solid var(--login-border)' }}
+        style={{ padding: 13, background: 'var(--field)', color: 'var(--ink)', border: '1px solid var(--border)' }}
         onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--muted)' }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--login-border)' }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)' }}
       >
         <svg viewBox="0 0 48 48" className="w-[19px] h-[19px] flex-none">
           <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4.5 24 4.5 13.2 4.5 4.5 13.2 4.5 24S13.2 43.5 24 43.5 43.5 34.8 43.5 24c0-1.2-.1-2.3-.4-3.5z"/>
@@ -53,13 +53,13 @@ export default function LoginPage() {
 
       {/* OR divider */}
       <div className="flex items-center gap-3.5 text-[12px] tracking-[.08em] my-[22px]" style={{ color: 'var(--faint)' }}>
-        <span className="flex-1 h-px" style={{ background: 'var(--login-border)' }} />
+        <span className="flex-1 h-px bg-(--border)" />
         OR
-        <span className="flex-1 h-px" style={{ background: 'var(--login-border)' }} />
+        <span className="flex-1 h-px bg-(--border)" />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <AuthInput
+        <Input
           id="email"
           label="Email"
           type="text"
@@ -69,23 +69,25 @@ export default function LoginPage() {
           {...register('email')}
         />
 
-        <AuthInput
-          id="password"
-          label="Password"
-          isPassword
-          placeholder="Enter your password"
-          autoComplete="current-password"
-          error={errors.password?.message}
-          labelAction={
+        <div className="mb-[18px]">
+          <div className="flex items-center justify-between mb-1">
+            <label htmlFor="password" className="text-sm font-medium text-(--muted)">Password</label>
             <Link
               to="/forgot-password"
               className="text-[13px] no-underline transition-colors whitespace-nowrap text-(--muted) hover:text-(--accent)"
             >
               Forgot password?
             </Link>
-          }
-          {...register('password')}
-        />
+          </div>
+          <Input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            autoComplete="current-password"
+            error={errors.password?.message}
+            {...register('password')}
+          />
+        </div>
 
         {/* Remember me */}
         <label
@@ -101,9 +103,9 @@ export default function LoginPage() {
           <span
             className="w-5 h-5 rounded-md border grid place-items-center flex-none transition-[background,border-color]"
             style={{
-              background:   rememberMe ? 'var(--accent)'       : 'var(--login-field)',
-              borderColor:  rememberMe ? 'var(--accent)'       : 'var(--login-border)',
-              color:        rememberMe ? 'var(--accent-ink)'   : 'transparent',
+              background:  rememberMe ? 'var(--accent)'     : 'var(--field)',
+              borderColor: rememberMe ? 'var(--accent)'     : 'var(--field-border)',
+              color:       rememberMe ? 'var(--accent-ink)' : 'transparent',
             }}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" className="w-[13px] h-[13px]">

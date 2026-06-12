@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { AuthLayout } from '../components/AuthLayout'
-import { AuthInput } from '../components/AuthInput'
+import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { useResetPassword } from '../hooks/useResetPassword'
 
@@ -64,20 +64,20 @@ export default function ResetPasswordPage() {
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <AuthInput
+        <Input
           id="password"
           label="New password"
-          isPassword
+          type="password"
           placeholder="At least 8 characters"
           autoComplete="new-password"
           error={errors.password?.message}
           {...register('password')}
         />
 
-        <AuthInput
+        <Input
           id="password_confirmation"
           label="Confirm password"
-          isPassword
+          type="password"
           placeholder="Repeat your password"
           autoComplete="new-password"
           error={errors.password_confirmation?.message}

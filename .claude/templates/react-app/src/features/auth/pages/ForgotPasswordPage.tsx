@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { AuthLayout } from '../components/AuthLayout'
-import { AuthInput } from '../components/AuthInput'
+import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { useForgotPassword } from '../hooks/useForgotPassword'
 
@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <AuthInput
+            <Input
               id="email"
               label="Email"
               type="text"

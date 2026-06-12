@@ -264,19 +264,18 @@ replacing every occurrence of `"Project Name"` with the project name from `.clau
 6. `src/features/auth/hooks/useForgotPassword.ts`
 7. `src/features/auth/hooks/useResetPassword.ts`
 8. `src/features/auth/components/AuthLayout.tsx` — shared card shell used by all auth pages
-9. `src/features/auth/components/AuthInput.tsx` — login-scoped input with eye-toggle
-10. `src/features/auth/components/AuthGuard.tsx` — renders children if authenticated,
-    redirects to `/login`; shows a full-screen spinner while loading
-11. `src/features/auth/pages/LoginPage.tsx`
-12. `src/features/auth/pages/ForgotPasswordPage.tsx`
-13. `src/features/auth/pages/ResetPasswordPage.tsx`
+9. `src/features/auth/components/AuthGuard.tsx` — renders children if authenticated,
+   redirects to `/login`; shows a full-screen spinner while loading
+10. `src/features/auth/pages/LoginPage.tsx`
+11. `src/features/auth/pages/ForgotPasswordPage.tsx`
+12. `src/features/auth/pages/ResetPasswordPage.tsx`
 
-All three pages share `AuthLayout` — the same card, logo, and project name. They do NOT use
-the admin shell. Visual reference: `jsx/Login.html`.
+All three pages share `AuthLayout` — the same card, logo, and project name. They use the same
+shared `Input` and `Button` components as the admin area. Visual reference: `jsx/Login.html`.
 
 ### Layout
 
-Generate these files by following `.claude/templates/admin-layout/` exactly.
+Copy all of the following files from `.claude/templates/react-app/src/components/layout/` exactly.
 Read `.claude/ui-kit/design-system.md` § Shell layout for the required DOM structure.
 Use `jsx/SeppiaCms.html` and `jsx/hf-shell.jsx` as the visual reference.
 
