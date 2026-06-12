@@ -7,6 +7,10 @@ The visual reference for all components is `jsx/SeppiaCms.html` in this kit repo
 
 Claude must use these components (not re-implement them) when generating UI code.
 
+**Template files** — the following components are defined as exact template files in
+`.claude/templates/react-app/src/components/ui/` and must be copied verbatim, not regenerated:
+`Button.tsx`, `Input.tsx`, `Textarea.tsx`, `Select.tsx`, `Spinner.tsx`
+
 ---
 
 ## Button
