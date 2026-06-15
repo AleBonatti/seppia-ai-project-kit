@@ -47,8 +47,40 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
 
   templates/
     laravel-api/                 ← reference code: Action, DTO, Controller, Model, tests
-    react-app/                   ← reference code: axios, queryClient, auth hooks, router
-    admin-layout/                ← reference code: AdminLayout, Sidebar, Topbar
+    react-app/
+      src/
+        index.css                ← design system CSS tokens (Tailwind v4)
+        types/api.ts             ← shared API response types
+        lib/
+          axios.ts               ← Axios instance with Sanctum config
+          icons.tsx              ← Hugeicons adapter (all icons imported from here)
+        app/
+          queryClient.ts         ← React Query client
+          router.tsx             ← route definitions
+        components/
+          layout/
+            AdminLayout.tsx      ← CSS Grid shell (sidebar + main)
+            Sidebar.tsx          ← left nav with theme toggle and user card
+            Breadcrumb.tsx       ← floating pill breadcrumb above page content
+            useTheme.ts          ← data-theme attribute manager
+          ui/
+            Button.tsx           ← variants: primary, secondary, danger, ghost
+            Input.tsx            ← label, error, hint props; forwards ref
+            Textarea.tsx         ← same interface as Input
+            Select.tsx           ← label, error, options props; caret icon
+            Spinner.tsx          ← sizes: sm, md, lg
+        features/
+          auth/
+            types.ts             ← auth types + password reset payloads
+            api.ts               ← login, logout, me, forgotPassword, resetPassword
+            hooks/               ← useAuth, useLogin, useLogout, useForgotPassword, useResetPassword
+            components/
+              AuthLayout.tsx     ← shared card shell for all auth pages
+              AuthGuard.tsx      ← redirects to /login if unauthenticated
+            pages/
+              LoginPage.tsx      ← email + password + Google button + remember me
+              ForgotPasswordPage.tsx
+              ResetPasswordPage.tsx
 
 examples/
   booking-system/                ← complete filled-in spec: gym booking app
@@ -67,9 +99,43 @@ jsx/
 
 ---
 
+## Template files
+
+The `templates/` folder contains concrete source files that Claude copies verbatim when
+scaffolding a project. This eliminates drift — tokens, focus styles, `forwardRef` wiring,
+and component APIs are frozen in code, not reconstructed from prose on each generation.
+
+**Copied verbatim** (never regenerated from prose):
+
+| Template file | Destination in generated project |
+| --- | --- |
+| `react-app/src/index.css` | `frontend/src/index.css` |
+| `react-app/src/types/api.ts` | `frontend/src/types/api.ts` |
+| `react-app/src/lib/axios.ts` | `frontend/src/lib/axios.ts` |
+| `react-app/src/lib/icons.tsx` | `frontend/src/lib/icons.tsx` |
+| `react-app/src/app/queryClient.ts` | `frontend/src/app/queryClient.ts` |
+| `react-app/src/app/router.tsx` | `frontend/src/app/router.tsx` |
+| `react-app/src/components/layout/AdminLayout.tsx` | `frontend/src/components/layout/AdminLayout.tsx` |
+| `react-app/src/components/layout/Sidebar.tsx` | `frontend/src/components/layout/Sidebar.tsx` |
+| `react-app/src/components/layout/Breadcrumb.tsx` | `frontend/src/components/layout/Breadcrumb.tsx` |
+| `react-app/src/components/layout/useTheme.ts` | `frontend/src/components/layout/useTheme.ts` |
+| `react-app/src/components/ui/Button.tsx` | `frontend/src/components/ui/Button.tsx` |
+| `react-app/src/components/ui/Input.tsx` | `frontend/src/components/ui/Input.tsx` |
+| `react-app/src/components/ui/Textarea.tsx` | `frontend/src/components/ui/Textarea.tsx` |
+| `react-app/src/components/ui/Select.tsx` | `frontend/src/components/ui/Select.tsx` |
+| `react-app/src/components/ui/Spinner.tsx` | `frontend/src/components/ui/Spinner.tsx` |
+| `react-app/src/features/auth/**` | `frontend/src/features/auth/**` |
+
+**Generated from prose** (via `generate-project.md`): remaining UI components (`Card`, `Badge`,
+`Table`, `Modal`, etc.), the dashboard placeholder page, and all entity-specific code.
+
+---
+
 ## Previewing the UI prototypes
 
-The `jsx/` folder contains standalone HTML prototypes of the admin layout. They load `.jsx` component files at runtime, which requires an HTTP server (browsers block `file://` cross-origin requests).
+The `jsx/` folder contains standalone HTML prototypes of the admin layout. They load `.jsx`
+component files at runtime, which requires an HTTP server (browsers block `file://`
+cross-origin requests).
 
 ```bash
 cd jsx
@@ -110,11 +176,10 @@ CLAUDE.md                        → project root
   specs/
     project.md
   stacks/
-    laravel-react.md              ← you will fill this in next
-  templates/                     ← reference code Claude reads when generating files
+    laravel-react.md
+  templates/                     ← Claude copies these verbatim when generating files
     laravel-api/
     react-app/
-    admin-layout/
   ui-kit/
     design-system.md
     components.md
@@ -170,12 +235,12 @@ Claude will:
 
 1. Install Laravel in `api/` via `composer create-project`
 2. Install React + all required packages in `frontend/` via `npm create vite`
-3. Configure Tailwind, path aliases, and environment files
-4. Generate all base Laravel files (User model, auth controller, routes, migrations, seeder)
-5. Generate all base React files (axios, auth feature, layout, all UI components, router)
+3. Configure Tailwind v4, path aliases, and environment files
+4. Copy all template files verbatim (layout, auth, base UI components)
+5. Generate remaining UI components and the dashboard placeholder
 6. Run migrations and seed a default admin user
 
-After the prompt completes, configure your local database in `api/.env`, then start the servers:
+After the prompt completes, start the servers:
 
 ```bash
 cd api && php artisan serve       # Laravel on http://localhost:8000
@@ -223,7 +288,8 @@ Steps 2–4: Copy .claude/ kit files → fill in specs/project.md → fill in sp
       ▼
 Step 6: Paste generate-project.md prompt
         → Laravel + React installed from scratch
-        → full base scaffold generated
+        → template files copied verbatim (layout, auth, core UI components)
+        → remaining UI components and dashboard generated
         → login screen working at localhost:5173
       │
       ▼
