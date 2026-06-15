@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Moon02Icon, Sun03Icon } from '@/lib/icons'
-import { useTheme } from '@/components/layout/useTheme'
+import { useTheme } from '@/layouts/useTheme'
 
 interface AuthLayoutProps {
   children: ReactNode

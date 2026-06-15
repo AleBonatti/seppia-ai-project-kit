@@ -505,28 +505,47 @@ Loading indicator. Sizes: `sm` (16px), `md` (24px), `lg` (40px).
 
 ---
 
-## Layout components
+## Layout shells
 
-These live in `src/components/layout/` and are not part of `ui/`.
+These live in `src/layouts/` and are not part of `ui/`. Every route uses one of these as its
+outermost wrapper.
 
 ### AdminLayout
 
-**File:** `src/components/layout/AdminLayout.tsx`
+**File:** `src/layouts/AdminLayout.tsx`
 
 CSS Grid shell — sidebar + main content. See `design-system.md` § Layout.
 
+### AuthLayout
+
+**File:** `src/layouts/AuthLayout.tsx`
+
+Centered card shell used by login, forgot-password, and reset-password pages.
+
+### PublicLayout
+
+**File:** `src/layouts/PublicLayout.tsx`
+
+Placeholder for the public-facing frontend. Defined per-project.
+
 ### Sidebar
 
-**File:** `src/components/layout/Sidebar.tsx`
+**File:** `src/layouts/Sidebar.tsx`
 
-Left navigation. Contains: brand area, nav groups, user card with theme toggle and logout.
-Navigation items are defined per-project from `specs/project.md`.
+Left navigation inside `AdminLayout`. Contains: brand area, nav groups, user card with theme
+toggle and logout. Navigation items are defined per-project from `specs/project.md`.
 
-### Breadcrumb (layout-level)
+### Breadcrumb
 
-**File:** `src/components/layout/Breadcrumb.tsx`
+**File:** `src/layouts/Breadcrumb.tsx`
 
-Sits at the top of the main column. Uses the `Breadcrumb` UI component. Driven by current route.
+Floating pill at the top of the pagebox inside `AdminLayout`. Driven by current route.
+
+### useTheme
+
+**File:** `src/layouts/useTheme.ts`
+
+Manages `data-theme` attribute on `<html>`. Shared by `AdminLayout`, `AuthLayout`, and `Sidebar`.
 
 ---
 
@@ -535,8 +554,9 @@ Sits at the top of the main column. Uses the `Breadcrumb` UI component. Driven b
 When Claude generates a new feature, it must:
 
 1. Use components from this file — never re-implement Button, Input, Table, etc.
-2. Import from `@/components/ui/[Component]`
-3. Use CSS var tokens (`text-(--ink)`, `bg-(--box)`) — never hardcode hex colors
-4. Use Hugeicons for all icons — never Lucide or other libraries
-5. Only create new components in `src/components/ui/` if a genuinely new primitive is needed
-6. Keep feature-specific components inside `src/features/[entity]/components/`
+2. Import UI components from `@/components/ui/[Component]`
+3. Import layout shells from `@/layouts/[Layout]`
+4. Use CSS var tokens (`text-(--ink)`, `bg-(--box)`) — never hardcode hex colors
+5. Use icons from `@/lib/icons` — never import directly from `@hugeicons/react` or `@hugeicons/core-free-icons`
+6. Only create new components in `src/components/ui/` if a genuinely new primitive is needed
+7. Keep feature-specific components inside `src/features/[entity]/components/`

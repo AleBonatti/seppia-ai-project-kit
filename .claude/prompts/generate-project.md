@@ -84,12 +84,7 @@ npm install -D \
 In `frontend/vite.config.ts`, add the Tailwind Vite plugin.
 
 In `frontend/src/index.css`, copy the contents of `.claude/templates/react-app/src/index.css`
-exactly — do not paraphrase or reconstruct it. If the project spec defines a custom accent color,
-add an override after the `@layer base` block:
-
-```css
-:root { --accent: #2A6FDB; /* project-specific */ }
-```
+exactly — do not paraphrase or reconstruct it.
 
 In `frontend/index.html`, add the Figtree Google Font link tags inside `<head>` as documented
 in `.claude/ui-kit/design-system.md` § Font. Also set `data-theme="dark"` on `<html>` as the
@@ -162,11 +157,11 @@ Generate these files inside `api/`:
 
 4. `app/Http/Controllers/PasswordResetController.php` — two methods using Laravel's built-in
    Password broker (no extra packages):
-   - `sendResetLink(Request $request)`: validates `email`, calls `Password::sendResetLink()`,
-     returns 200 on success or 422 with the error message on failure
-   - `reset(Request $request)`: validates `token`, `email`, `password`, `password_confirmation`,
-     calls `Password::reset()` with a closure that updates the user's password and fires
-     `PasswordReset` event, returns 200 on success or 422 on failure
+    - `sendResetLink(Request $request)`: validates `email`, calls `Password::sendResetLink()`,
+      returns 200 on success or 422 with the error message on failure
+    - `reset(Request $request)`: validates `token`, `email`, `password`, `password_confirmation`,
+      calls `Password::reset()` with a closure that updates the user's password and fires
+      `PasswordReset` event, returns 200 on success or 422 on failure
 
 5. `app/Http/Requests/LoginRequest.php` — validate `email` and `password`
 
@@ -219,9 +214,9 @@ Generate these files inside `frontend/src/`:
    **All files in this project must import icons from `@/lib/icons`, never directly from
    `@hugeicons/react` or `@hugeicons/core-free-icons`.**
 
-   > **Why:** `@hugeicons/react` v1.x ships only the generic `HugeiconsIcon` renderer.
-   > Individual icon data ships in `@hugeicons/core-free-icons`. The adapter hides this
-   > split so the rest of the codebase uses familiar named components unchanged.
+    > **Why:** `@hugeicons/react` v1.x ships only the generic `HugeiconsIcon` renderer.
+    > Individual icon data ships in `@hugeicons/core-free-icons`. The adapter hides this
+    > split so the rest of the codebase uses familiar named components unchanged.
 
 5. `src/app/queryClient.ts` — React Query client with sensible defaults
 
@@ -240,16 +235,16 @@ Generate these files inside `frontend/src/`:
     - `/forgot-password` → `ForgotPasswordPage` (lazy)
     - `/reset-password` → `ResetPasswordPage` (lazy)
     - `/admin` → `AdminLayout` wrapped in `AuthGuard`, with `Outlet` for children
-      - index route → redirect to `/admin/dashboard`
-      - `/admin/dashboard` → `DashboardPage` (lazy)
-      - a `{ path: '*', element: <ComingSoonPage /> }` catch-all as the last child —
-        this handles every sidebar link before its real page is generated.
-        Do NOT add individual entity routes here — the catch-all covers all of them.
+        - index route → redirect to `/admin/dashboard`
+        - `/admin/dashboard` → `DashboardPage` (lazy)
+        - a `{ path: '*', element: <ComingSoonPage /> }` catch-all as the last child —
+          this handles every sidebar link before its real page is generated.
+          Do NOT add individual entity routes here — the catch-all covers all of them.
     - `*` → redirect to `/admin/dashboard`
 
-   Also generate `src/features/coming-soon/ComingSoonPage.tsx` — a simple placeholder
-   that reads the current path with `useLocation()`, derives the section name from it,
-   and shows a "not generated yet" message.
+    Also generate `src/features/coming-soon/ComingSoonPage.tsx` — a simple placeholder
+    that reads the current path with `useLocation()`, derives the section name from it,
+    and shows a "not generated yet" message.
 
 ### Auth feature
 
@@ -263,59 +258,58 @@ replacing every occurrence of `"Project Name"` with the project name from `.clau
 5. `src/features/auth/hooks/useLogout.ts`
 6. `src/features/auth/hooks/useForgotPassword.ts`
 7. `src/features/auth/hooks/useResetPassword.ts`
-8. `src/features/auth/components/AuthLayout.tsx` — shared card shell used by all auth pages
-9. `src/features/auth/components/AuthGuard.tsx` — renders children if authenticated,
+8. `src/features/auth/AuthGuard.tsx` — renders children if authenticated,
    redirects to `/login`; shows a full-screen spinner while loading
-10. `src/features/auth/pages/LoginPage.tsx`
-11. `src/features/auth/pages/ForgotPasswordPage.tsx`
-12. `src/features/auth/pages/ResetPasswordPage.tsx`
+9. `src/features/auth/pages/LoginPage.tsx`
+10. `src/features/auth/pages/ForgotPasswordPage.tsx`
+11. `src/features/auth/pages/ResetPasswordPage.tsx`
 
-All three pages share `AuthLayout` — the same card, logo, and project name. They use the same
+All three pages import `AuthLayout` from `@/layouts/AuthLayout` and use the same
 shared `Input` and `Button` components as the admin area. Visual reference: `jsx/Login.html`.
 
-### Layout
+### Layouts
 
-Copy all of the following files from `.claude/templates/react-app/src/components/layout/` exactly.
-Read `.claude/ui-kit/design-system.md` § Shell layout for the required DOM structure.
-Use `jsx/SeppiaCms.html` and `jsx/hf-shell.jsx` as the visual reference.
+Copy all of the following files verbatim from `.claude/templates/react-app/src/layouts/`.
+These are the two application shells — all routes use one or the other.
+Use `jsx/SeppiaCms.html` and `jsx/hf-shell.jsx` as the visual reference for the admin shell.
 
-1. `src/components/layout/AdminLayout.tsx` — CSS Grid shell (`grid-template-columns: var(--sb-w) 1fr`).
-    At module level (before any React code), apply stored theme AND sidebar state to avoid flash:
+1. `src/layouts/AdminLayout.tsx` — CSS Grid shell (`grid-template-columns: var(--sb-w) 1fr`).
+   Module-level statements before imports apply stored theme and sidebar to avoid flash.
+   Structure: `shell → sidebar | main → content (padding: var(--pad)) → pagebox (bg-(--box), rounded-2xl)`.
+   `<Breadcrumb />` renders inside the pagebox above `<Outlet />`.
 
-    ```ts
-    document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') ?? 'dark')
-    document.documentElement.setAttribute('data-sidebar', localStorage.getItem('sidebar') ?? 'comfortable')
-    ```
+2. `src/layouts/AuthLayout.tsx` — centered card shell for login, forgot-password, reset-password.
+   Shows brand mark + project name at the top. Theme toggle fixed top-right.
+   Uses global design tokens (`--bg`, `--box`, `--border`, `--shadow`).
 
-    Structure: `shell → sidebar | main → content (padding: var(--pad), padding-left: 0) → pagebox (bg-(--box), rounded-2xl)`.
-    The `<Outlet />` renders inside the pagebox. The `<Breadcrumb />` also renders inside the pagebox,
-    above the outlet — import and place it there directly in `AdminLayout.tsx`.
+3. `src/layouts/PublicLayout.tsx` — placeholder for the public-facing frontend.
+   Replace with project-specific design once defined.
 
-2. `src/components/layout/Sidebar.tsx` — follow the template exactly:
-    - Brand area: project name (large, 24px) + collapse toggle button
-    - Nav groups with uppercase group labels; nav items with icon + label
-    - **Active item style**: `bg-(--surface-2)` background + a 3px left accent bar
-      (`position: absolute; left: -14px; top/bottom: 9px; width: 3px; background: var(--accent)`)
-      — NOT a tinted `bg-(--accent)/15` background
-    - Collapse toggles `data-sidebar` attribute on `<html>` (comfortable ↔ icononly) and
-      persists to `localStorage` — never mutates `--sb-w` via inline style
-    - User card at bottom with dropdown menu containing:
-      - **Segmented Dark / Light control** (two buttons, active = `bg-(--accent) text-(--accent-ink)`)
-      - Sign out button
-    - Navigation items from `.claude/specs/project.md`; project name from spec as the brand label
-    - Uses `useTheme` (for `{ theme, setTheme }`) and `useLogout`
+4. `src/layouts/Sidebar.tsx` — left nav inside `AdminLayout`:
+   - Brand area: project name (large, 24px) + collapse toggle button
+   - Nav groups with uppercase group labels; nav items with icon + label
+   - **Active item style**: `bg-(--surface-2)` background + a 3px left accent bar
+     (`position: absolute; left: -14px; top/bottom: 9px; width: 3px; background: var(--accent)`)
+     — NOT a tinted `bg-(--accent)/15` background
+   - Collapse toggles `data-sidebar` attribute on `<html>` (comfortable ↔ icononly) and
+     persists to `localStorage` — never mutates `--sb-w` via inline style
+   - User card at bottom with dropdown menu containing:
+     - **Segmented Dark / Light control** (two buttons, active = `bg-(--accent) text-(--accent-ink)`)
+     - Sign out button
+   - Navigation items from `.claude/specs/project.md`; project name from spec as the brand label
+   - Imports `useTheme` from `@/layouts/useTheme` and `useLogout` from `@/features/auth/hooks/useLogout`
 
-3. `src/components/layout/Breadcrumb.tsx` — floating pill inside the pagebox above page content.
-    Style: `bg-(--panel) rounded-[7px] px-4 py-[11px] mb-[18px]`.
-    Derives crumb items from the current route path; Home icon + path segments + arrow separators.
-    Current (last) segment: `text-(--ink) font-semibold`. Ancestors: `text-(--muted)` links.
+5. `src/layouts/Breadcrumb.tsx` — floating pill inside the pagebox above page content.
+   Style: `bg-(--panel) rounded-[7px] px-4 py-[11px] mb-[18px]`.
+   Derives crumb items from the current route path; Home icon + path segments + arrow separators.
+   Current (last) segment: `text-(--ink) font-semibold`. Ancestors: `text-(--muted)` links.
 
-4. `src/components/layout/useTheme.ts` — manages `data-theme` attribute on `<html>`;
-    default dark; persists to `localStorage` under key `theme`; exports `{ theme, setTheme }`
+6. `src/layouts/useTheme.ts` — manages `data-theme` attribute on `<html>`;
+   default dark; persists to `localStorage` under key `theme`; exports `{ theme, setTheme }`
 
 ### Base UI components
 
-Copy the following files verbatim from `.claude/templates/react-app/src/components/ui/`:
+Copy the following files verbatim from `.claude/templates/react-app/src/components/ui/` into `src/components/ui/`:
 
 1. `Button.tsx`
 2. `Input.tsx`

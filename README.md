@@ -57,12 +57,14 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
         app/
           queryClient.ts         ← React Query client
           router.tsx             ← route definitions
+        layouts/
+          AdminLayout.tsx        ← CSS Grid shell (sidebar + main)
+          AuthLayout.tsx         ← centered card shell (login, forgot, reset)
+          PublicLayout.tsx       ← placeholder for public-facing frontend
+          Sidebar.tsx            ← left nav with theme toggle and user card
+          Breadcrumb.tsx         ← floating pill breadcrumb above page content
+          useTheme.ts            ← data-theme attribute manager (shared by all layouts)
         components/
-          layout/
-            AdminLayout.tsx      ← CSS Grid shell (sidebar + main)
-            Sidebar.tsx          ← left nav with theme toggle and user card
-            Breadcrumb.tsx       ← floating pill breadcrumb above page content
-            useTheme.ts          ← data-theme attribute manager
           ui/
             Button.tsx           ← variants: primary, secondary, danger, ghost
             Input.tsx            ← label, error, hint props; forwards ref
@@ -73,10 +75,8 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
           auth/
             types.ts             ← auth types + password reset payloads
             api.ts               ← login, logout, me, forgotPassword, resetPassword
+            AuthGuard.tsx        ← redirects to /login if unauthenticated
             hooks/               ← useAuth, useLogin, useLogout, useForgotPassword, useResetPassword
-            components/
-              AuthLayout.tsx     ← shared card shell for all auth pages
-              AuthGuard.tsx      ← redirects to /login if unauthenticated
             pages/
               LoginPage.tsx      ← email + password + Google button + remember me
               ForgotPasswordPage.tsx
@@ -115,10 +115,12 @@ and component APIs are frozen in code, not reconstructed from prose on each gene
 | `react-app/src/lib/icons.tsx` | `frontend/src/lib/icons.tsx` |
 | `react-app/src/app/queryClient.ts` | `frontend/src/app/queryClient.ts` |
 | `react-app/src/app/router.tsx` | `frontend/src/app/router.tsx` |
-| `react-app/src/components/layout/AdminLayout.tsx` | `frontend/src/components/layout/AdminLayout.tsx` |
-| `react-app/src/components/layout/Sidebar.tsx` | `frontend/src/components/layout/Sidebar.tsx` |
-| `react-app/src/components/layout/Breadcrumb.tsx` | `frontend/src/components/layout/Breadcrumb.tsx` |
-| `react-app/src/components/layout/useTheme.ts` | `frontend/src/components/layout/useTheme.ts` |
+| `react-app/src/layouts/AdminLayout.tsx` | `frontend/src/layouts/AdminLayout.tsx` |
+| `react-app/src/layouts/AuthLayout.tsx` | `frontend/src/layouts/AuthLayout.tsx` |
+| `react-app/src/layouts/PublicLayout.tsx` | `frontend/src/layouts/PublicLayout.tsx` |
+| `react-app/src/layouts/Sidebar.tsx` | `frontend/src/layouts/Sidebar.tsx` |
+| `react-app/src/layouts/Breadcrumb.tsx` | `frontend/src/layouts/Breadcrumb.tsx` |
+| `react-app/src/layouts/useTheme.ts` | `frontend/src/layouts/useTheme.ts` |
 | `react-app/src/components/ui/Button.tsx` | `frontend/src/components/ui/Button.tsx` |
 | `react-app/src/components/ui/Input.tsx` | `frontend/src/components/ui/Input.tsx` |
 | `react-app/src/components/ui/Textarea.tsx` | `frontend/src/components/ui/Textarea.tsx` |

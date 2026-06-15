@@ -1,8 +1,11 @@
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { Spinner } from '@/components/ui/Spinner'
-import { AdminLayout } from '@/components/layout/AdminLayout'
-import { AuthGuard } from '@/features/auth/components/AuthGuard'
+import { AdminLayout } from '@/layouts/AdminLayout'
+import { AuthGuard } from '@/features/auth/AuthGuard'
+
+const ForgotPasswordPage = lazy(() => import('@/features/auth/pages/ForgotPasswordPage'))
+const ResetPasswordPage  = lazy(() => import('@/features/auth/pages/ResetPasswordPage'))
 import { ComingSoonPage } from '@/features/coming-soon/ComingSoonPage'
 
 // ── Auth pages ────────────────────────────────────────────────────────────────
@@ -17,11 +20,10 @@ const DashboardPage = lazy(() => import('@/features/dashboard/pages/DashboardPag
 const loading = <div className="flex h-screen items-center justify-center"><Spinner /></div>
 
 export const router = createBrowserRouter([
-  // ── Public routes ───────────────────────────────────────────────────────────
-  {
-    path: '/login',
-    element: <Suspense fallback={loading}><LoginPage /></Suspense>,
-  },
+  // ── Auth routes ─────────────────────────────────────────────────────────────
+  { path: '/login',           element: <Suspense fallback={loading}><LoginPage /></Suspense> },
+  { path: '/forgot-password', element: <Suspense fallback={loading}><ForgotPasswordPage /></Suspense> },
+  { path: '/reset-password',  element: <Suspense fallback={loading}><ResetPasswordPage /></Suspense> },
 
   // ── Protected admin routes ──────────────────────────────────────────────────
   {

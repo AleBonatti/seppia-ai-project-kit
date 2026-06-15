@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { AuthLayout } from '../components/AuthLayout'
+import { AuthLayout } from '@/layouts/AuthLayout'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { useLogin } from '../hooks/useLogin'
@@ -69,24 +69,22 @@ export default function LoginPage() {
           {...register('email')}
         />
 
-        <div className="mb-[18px]">
-          <div className="flex items-center justify-between mb-1">
-            <label htmlFor="password" className="text-sm font-medium text-(--muted)">Password</label>
-            <Link
-              to="/forgot-password"
-              className="text-[13px] no-underline transition-colors whitespace-nowrap text-(--muted) hover:text-(--accent)"
-            >
-              Forgot password?
-            </Link>
-          </div>
-          <Input
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            autoComplete="current-password"
-            error={errors.password?.message}
-            {...register('password')}
-          />
+        <Input
+          id="password"
+          label="Password"
+          type="password"
+          placeholder="Enter your password"
+          autoComplete="current-password"
+          error={errors.password?.message}
+          {...register('password')}
+        />
+        <div className="text-right -mt-2 mb-4">
+          <Link
+            to="/forgot-password"
+            className="text-[13px] no-underline transition-colors text-(--muted) hover:text-(--accent)"
+          >
+            Forgot password?
+          </Link>
         </div>
 
         {/* Remember me */}
