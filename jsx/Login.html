@@ -56,7 +56,7 @@
   .field { margin-bottom: 18px; }
   .field .lbl-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
   label { font-size: 13.5px; font-weight: 600; white-space: nowrap; }
-  .forgot { white-space: nowrap; }
+  .forgot { white-space: nowrap; display: block; margin-top: 9px; text-align: right; }
   .forgot { font-size: 13px; color: var(--muted); text-decoration: none; }
   .forgot:hover { color: var(--accent); }
   .inwrap { position: relative; display: flex; align-items: center; }
@@ -116,12 +116,12 @@
     <div class="field">
       <div class="lbl-row">
         <label for="pass">Password</label>
-        <a class="forgot" href="#">Forgot password?</a>
       </div>
       <div class="inwrap">
         <input id="pass" type="password" placeholder="Enter your password" value="secret12" />
         <button type="button" class="eye" id="eye" title="Show password" aria-label="Show password"></button>
       </div>
+      <a class="forgot" href="#">Forgot password?</a>
     </div>
 
     <label class="remember">

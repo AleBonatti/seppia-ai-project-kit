@@ -180,14 +180,24 @@
 
   /* ============ MAIN ============ */
   .main { display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
-  .content { padding: var(--pad); padding-left: 0; overflow-y: auto; flex: 1; }
+  .content { padding: 13px 8px 13px 0; overflow: hidden; flex: 1; min-height: 0; }
   .pagebox {
     max-width: none; margin: 0; background: var(--box);
-    border-radius: 16px; padding: 18px; min-height: 100%;
+    border-radius: 16px; padding: 13px; height: 100%;
+    overflow-y: auto;
   }
-
+  .view-anim { animation: viewIn .28s cubic-bezier(.22,.61,.36,1) both; }
+  @keyframes viewIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) { .view-anim { animation: none; } }
   .crumbbar {
-    background: var(--panel); border-radius: 7px; padding: 11px 16px; margin-bottom: 18px;
+    position: sticky; top: 0; z-index: 20;
+    margin-bottom: 13px;
+    background: color-mix(in srgb, var(--panel) 72%, transparent);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-radius: 8px; padding: 11px 16px;
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   }
   .cb-item { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 13.5px; font-weight: 500; white-space: nowrap; }
@@ -268,6 +278,11 @@
   html[data-theme="light"] .badge.pub { color: #15803d; }
   .badge.draft { color: var(--faint); }
   .badge.review { color: #d99a2b; border-color: color-mix(in srgb, #d99a2b 30%, var(--border)); }
+  .badge.err { color: #e5484d; border-color: color-mix(in srgb, #e5484d 38%, var(--border)); }
+  .badge.warn { color: #d99a2b; border-color: color-mix(in srgb, #d99a2b 34%, var(--border)); }
+  .badge.info { color: var(--muted); }
+  .logcode { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 6px; background: var(--surface-2); color: var(--muted); flex: none; }
+  .logcount { font-size: 12.5px; color: var(--muted); }
 
   .check { width: 17px; height: 17px; border-radius: 5px; border: 1px solid var(--border); background: var(--box); display: inline-grid; place-items: center; color: transparent; cursor: pointer; }
   .check.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
@@ -428,7 +443,7 @@
         document.documentElement.style.setProperty('--accent', t.accent);
       }, [t.sidebar, t.density, t.accent]);
 
-      const Page = { dashboard: Dashboard, posts: PostsList, edit: EditPost, media: MediaLibrary, users: UsersList, useredit: UserEdit }[page] || Dashboard;
+      const Page = { dashboard: Dashboard, posts: PostsList, edit: EditPost, media: MediaLibrary, users: UsersList, useredit: UserEdit, logs: ErrorLogs }[page] || Dashboard;
 
       return (
         <div className="shell">
@@ -438,7 +453,9 @@
             <div className="content">
               <div className="pagebox">
                 <Breadcrumb page={page} />
-                <Page setPage={setPage} />
+                <div className="view-anim" key={page}>
+                  <Page setPage={setPage} />
+                </div>
               </div>
             </div>
           </div>

@@ -99,9 +99,9 @@ function Dashboard({ setPage }) {
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: 'var(--gap)' }}>
+      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', marginBottom: 'var(--gap)' }}>
         {STATS.map((s) => (
-          <div key={s.label} className="card stat">
+          <div key={s.label} className="card stat" style={{ minWidth: 0 }}>
             <div className="stat-top">
               <span className="label">{s.label}</span>
               <span className="ic"><Icon name={s.icon} size={17} /></span>
@@ -115,8 +115,8 @@ function Dashboard({ setPage }) {
         ))}
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '1.9fr 1fr', marginBottom: 'var(--gap)' }}>
-        <div className="card chart-card">
+      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', marginBottom: 'var(--gap)' }}>
+        <div className="card chart-card" style={{ minWidth: 0 }}>
           <div className="between" style={{ marginBottom: 16 }}>
             <div>
               <h3>Traffic</h3>
@@ -130,7 +130,7 @@ function Dashboard({ setPage }) {
           </div>
           <AreaChart vals={TRAFFIC} />
         </div>
-        <div className="card chart-card">
+        <div className="card chart-card" style={{ minWidth: 0 }}>
           <h3 style={{ marginBottom: 8 }}>Posts by category</h3>
           <div className="row" style={{ justifyContent: 'center', padding: '8px 0' }}>
             <Donut segs={CATS} />
@@ -376,21 +376,16 @@ function MediaLibrary({ setPage }) {
     <div className="page">
       <div className="page-head">
         <div><h1>Media Library</h1></div>
-        <div className="head-actions">
-          <button className="btn"><Icon name="filter" size={17} /> Filter</button>
-          <button className="btn btn-primary"><Icon name="upload" size={17} /> Upload</button>
-        </div>
       </div>
 
       <div className="row between wrap" style={{ marginBottom: 'var(--gap)', gap: 12 }}>
-        <div className="row wrap" style={{ gap: 8 }}>
-          <span className="chip on">All <span className="ct">312</span></span>
-          <span className="chip">Images</span>
-          <span className="chip">Documents</span>
-          <span className="chip">Video</span>
-          <span className="chip">Audio</span>
+        <div className="searchbox" style={{ maxWidth: 320 }}>
+          <Icon name="search" size={17} /><span>Search files…</span>
         </div>
-        <span className="chip">Newest <Icon name="caret" size={14} /></span>
+        <div className="row" style={{ gap: 8 }}>
+          <div className="input select" style={{ minWidth: 150, whiteSpace: 'nowrap' }}><span>All types</span><Icon name="caret" size={16} /></div>
+          <div className="input select" style={{ minWidth: 130, whiteSpace: 'nowrap' }}><span>Newest</span><Icon name="caret" size={16} /></div>
+        </div>
       </div>
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(188px, 1fr))' }}>
@@ -595,4 +590,84 @@ function UserEdit({ setPage }) {
   );
 }
 
-Object.assign(window, { Dashboard, PostsList, EditPost, MediaLibrary, UsersList, UserEdit });
+/* ---------- Error Logs ---------- */
+const LOGS = [
+  { level: 'error', code: '500', msg: 'Uncaught TypeError: cannot read property "slug" of undefined', src: 'api/posts/[id].js:42', time: 'Jun 16, 2026 · 09:41:22', count: 12 },
+  { level: 'error', code: 'DB', msg: 'Connection timeout while querying media_library', src: 'lib/db/pool.js:118', time: 'Jun 16, 2026 · 08:17:05', count: 3 },
+  { level: 'warn', code: '404', msg: 'Asset not found: /uploads/banner-news@2x.jpg', src: 'middleware/static.js:27', time: 'Jun 15, 2026 · 22:03:54', count: 47 },
+  { level: 'error', code: '403', msg: 'Permission denied: user "leo" attempted to publish without role', src: 'auth/guard.js:88', time: 'Jun 15, 2026 · 19:48:11', count: 1 },
+  { level: 'warn', code: 'CACHE', msg: 'Stale cache served for dashboard metrics (TTL exceeded)', src: 'lib/cache/redis.js:64', time: 'Jun 15, 2026 · 16:30:00', count: 8 },
+  { level: 'info', code: 'JOB', msg: 'Nightly backup completed in 42.6s', src: 'jobs/backup.js:12', time: 'Jun 15, 2026 · 03:00:42', count: 1 },
+  { level: 'error', code: '500', msg: 'Failed to render template: missing partial "post-card"', src: 'render/templates.js:203', time: 'Jun 14, 2026 · 14:22:39', count: 5 },
+];
+
+function levelBadge(l) {
+  if (l === 'error') return <span className="badge err">Error</span>;
+  if (l === 'warn') return <span className="badge warn">Warning</span>;
+  return <span className="badge info">Info</span>;
+}
+
+function ErrorLogs({ setPage }) {
+  return (
+    <div className="page">
+      <div className="page-head">
+        <div><h1>Log errori</h1></div>
+        <div className="head-actions">
+          <button className="btn"><Icon name="export" size={17} /> Export</button>
+          <button className="btn"><Icon name="trash" size={17} /> Clear logs</button>
+        </div>
+      </div>
+
+      <div className="row between wrap" style={{ marginBottom: 'var(--gap)', gap: 12 }}>
+        <div className="searchbox" style={{ maxWidth: 320 }}>
+          <Icon name="search" size={17} /><span>Search logs…</span>
+        </div>
+        <div className="row" style={{ gap: 8 }}>
+          <div className="input select" style={{ minWidth: 150, whiteSpace: 'nowrap' }}><span>All levels</span><Icon name="caret" size={16} /></div>
+          <div className="input select" style={{ minWidth: 140, whiteSpace: 'nowrap' }}><span>Last 24 hours</span><Icon name="caret" size={16} /></div>
+        </div>
+      </div>
+
+      <div className="card" style={{ padding: '18px var(--pad)' }}>
+        <table>
+          <thead>
+            <tr>
+              <th style={{ width: 90 }}>Level</th>
+              <th>Message</th><th style={{ width: 180 }}>Time</th><th style={{ width: 50 }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {LOGS.map((r, i) => (
+              <tr key={i}>
+                <td>{levelBadge(r.level)}</td>
+                <td>
+                  <div className="row" style={{ gap: 9 }}>
+                    <span className="logcode mono">{r.code}</span>
+                    <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.msg}</span>
+                  </div>
+                </td>
+                <td className="muted mono" style={{ fontSize: 12.5 }}>{r.time}</td>
+                <td>
+                  <button className="icon-btn" title="View detail" style={{ width: 34, height: 34 }}><Icon name="next" size={16} /></button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="row between wrap" style={{ marginTop: 'var(--gap)' }}>
+        <span className="anno">Showing 1–7 of 213 entries</span>
+        <div className="pag">
+          <span className="pg"><Icon name="back" size={16} /></span>
+          <span className="pg on">1</span><span className="pg">2</span><span className="pg">3</span>
+          <span className="anno" style={{ padding: '0 4px' }}>…</span>
+          <span className="pg">31</span>
+          <span className="pg"><Icon name="next" size={16} /></span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { Dashboard, PostsList, EditPost, MediaLibrary, UsersList, UserEdit, ErrorLogs });

@@ -39,6 +39,10 @@ const ICON_MAP = {
   video:       ['Video01Icon', 'PlayIcon'],
   audio:       ['MusicNote01Icon', 'AudioWave01Icon'],
   zip:         ['FolderZipIcon', 'Archive02Icon', 'Archive01Icon'],
+  errors:      ['Alert02Icon', 'AlertCircleIcon', 'AlertDiamondIcon'],
+  warn:        ['AlertCircleIcon', 'Alert02Icon'],
+  info:        ['InformationCircleIcon', 'InformationSquareIcon'],
+  copy:        ['Copy01Icon', 'Copy02Icon'],
 };
 
 function resolveIcon(name) {
@@ -76,10 +80,11 @@ const NAV = [
     { id: 'users', label: 'Users', icon: 'users' },
     { id: 'appearance', label: 'Appearance', icon: 'appearance' },
     { id: 'settings', label: 'Settings', icon: 'settings' },
+    { id: 'logs', label: 'Log errori', icon: 'errors', pill: '3' },
   ]},
 ];
 
-const LIVE = new Set(['dashboard', 'posts', 'edit', 'media', 'users', 'useredit']);
+const LIVE = new Set(['dashboard', 'posts', 'edit', 'media', 'users', 'useredit', 'logs']);
 
 function Sidebar({ page, setPage, sidebar, onToggleSidebar, theme, setTheme }) {
   const activeId = page === 'edit' ? 'posts' : page === 'useredit' ? 'users' : page;
@@ -152,6 +157,7 @@ const CRUMBS = {
   media:     [{ label: 'Home', icon: 'home' }, { label: 'Media', icon: 'media' }],
   users:     [{ label: 'Home', icon: 'home' }, { label: 'Users', icon: 'users' }],
   useredit:  [{ label: 'Home', icon: 'home' }, { label: 'Users', icon: 'users' }, { label: 'Catherine Robertson', icon: 'edit' }],
+  logs:      [{ label: 'Home', icon: 'home' }, { label: 'Log errori', icon: 'errors' }],
 };
 
 function Breadcrumb({ page }) {
