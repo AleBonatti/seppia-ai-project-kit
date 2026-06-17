@@ -346,6 +346,28 @@ Also copy `Pagination.tsx` verbatim from `.claude/templates/react-app/src/layout
 1. `src/features/dashboard/pages/DashboardPage.tsx` — a minimal page with a welcome message
    and `PageHeader`; no data fetching — just a static placeholder to confirm routing works
 
+### Page templates
+
+Copy the following page templates verbatim from `.claude/templates/react-app/src/features/`:
+
+1. `media/pages/MediaLibraryPage.tsx` → `src/features/media/pages/MediaLibraryPage.tsx`
+   Media Library: grid of file/image thumbnails with search, type filter, and pagination.
+
+2. `entity/pages/EntityListPage.tsx` → use as the base for every entity list page.
+   Rename "Entity/entity/entities" to the real entity name. Adapt columns, filters, and
+   badge logic to match the entity spec.
+
+3. `entity/pages/EntityEditPage.tsx` → use as the base for every entity create/edit page.
+   Two-column layout: content fields left, metadata sidebar right. Add/remove cards to
+   match the entity spec.
+
+4. `users/pages/UsersListPage.tsx` → `src/features/users/pages/UsersListPage.tsx`
+   Users list with avatar, role badge, search, role filter tabs, and pagination.
+
+5. `users/pages/UserEditPage.tsx` → `src/features/users/pages/UserEditPage.tsx`
+   User edit with tabbed layout (Profile / Notifications / Integrations), avatar upload,
+   and two-column form rows.
+
 ---
 
 ## Phase 3 — Wire up Laravel config

@@ -104,15 +104,17 @@ as described in its spec file.
    - Row actions (edit, delete)
 
 10. `src/features/[entity]/pages/[Entity]ListPage.tsx`
-    - AdminLayout wrapper
-    - [Entity]Table with pagination
-    - "Create new" button linking to create page
-    - Filters defined in the spec
+    - Start from `.claude/templates/react-app/src/features/entity/pages/EntityListPage.tsx`
+    - Replace "Entity/entity/entities" with the real entity name throughout
+    - Adapt columns, filter tabs, and badge logic to match the entity spec
+    - Wire the placeholder data to the real `use[Entity]List` hook
 
 11. `src/features/[entity]/pages/[Entity]CreatePage.tsx` (if in spec)
 12. `src/features/[entity]/pages/[Entity]EditPage.tsx`
-    - AdminLayout wrapper
-    - [Entity]Form pre-filled with existing data
+    - Start from `.claude/templates/react-app/src/features/entity/pages/EntityEditPage.tsx`
+    - Replace "Entity/entity" with the real entity name throughout
+    - Add/remove cards in left and right columns to match the entity spec fields
+    - Wire to the real `use[Entity]` and `use[Entity]Form` hooks
 
 ## Rules
 
