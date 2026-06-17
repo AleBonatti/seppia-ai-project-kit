@@ -53,11 +53,11 @@ List the main features of this project. Be specific — each item here maps to g
 
 List every domain entity. Each entity gets its own `specs/entities/[entity].md` file.
 
-| Entity       | Description                              | Admin CRUD | Public view |
-| ------------ | ---------------------------------------- | ---------- | ----------- |
-| User         | Authenticated users and admins           | ✅          | ❌           |
-| [Entity 2]   | [Short description]                      | ✅          | ✅           |
-| [Entity 3]   | [Short description]                      | ✅          | ❌           |
+| Entity     | Description                    | Admin CRUD | Public view |
+| ---------- | ------------------------------ | ---------- | ----------- |
+| User       | Authenticated users and admins | ✅         | ❌          |
+| [Entity 2] | [Short description]            | ✅         | ✅          |
+| [Entity 3] | [Short description]            | ✅         | ❌          |
 
 ---
 
@@ -89,11 +89,11 @@ The admin dashboard (`/admin/dashboard`) should display:
 
 ### Stats cards
 
-| Metric         | Value source                        | Notes                          |
-| -------------- | ----------------------------------- | ------------------------------ |
-| [e.g. Total pages] | `COUNT(pages)`                  | [e.g. link to pages list]      |
-| [e.g. Active pages] | `COUNT(pages WHERE active=true)` | [e.g. highlighted in green]   |
-| [e.g. Total users] | `COUNT(users)`                  | [e.g. superadmin only]         |
+| Metric              | Value source                     | Notes                       |
+| ------------------- | -------------------------------- | --------------------------- |
+| [e.g. Total pages]  | `COUNT(pages)`                   | [e.g. link to pages list]   |
+| [e.g. Active pages] | `COUNT(pages WHERE active=true)` | [e.g. highlighted in green] |
+| [e.g. Total users]  | `COUNT(users)`                   | [e.g. superadmin only]      |
 
 ### Recent activity (optional)
 
@@ -110,16 +110,6 @@ The admin dashboard (`/admin/dashboard`) should display:
 
 - [e.g. "Stats are fetched from dedicated `/api/v1/admin/dashboard` endpoint"]
 - [e.g. "No real-time updates — standard React Query polling interval"]
-
----
-
-## UI style
-
-- **Aesthetic:** [e.g. "clean and minimal", "bold and editorial", "friendly and colorful"]
-- **Reference:** [e.g. "similar to Linear", "inspired by Stripe dashboard", "warm tones like Notion"]
-- **Primary color:** [e.g. "#2563eb" (blue) or "neutral gray with green accents"]
-- **Font:** [e.g. "Inter (default)" or "Geist"]
-- **Dark mode:** [yes | no | optional]
 
 ---
 

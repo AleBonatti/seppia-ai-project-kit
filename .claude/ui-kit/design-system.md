@@ -112,14 +112,17 @@ Add to `frontend/src/index.css`:
 
 ### Accent color per project
 
-The default accent is `#66FF4C` (lime green). Each project can override it in `specs/project.md`.
-When generating a project, set the override in `index.css`:
+The default accent is `#66FF4C` (lime green). Each project can override it in `specs/style.md`.
+When generating a project, read `specs/style.md` — if an accent override is defined there, apply it in `index.css`:
 
 ```css
 :root {
-  --accent: #2A6FDB; /* project-specific */
+  --accent: #2A6FDB;     /* from specs/style.md */
+  --accent-ink: #0c1f4a; /* update to match */
 }
 ```
+
+If no override is defined in `specs/style.md`, use the kit default `#66FF4C` — never invent a color.
 
 ### Semantic colors (badges, status)
 

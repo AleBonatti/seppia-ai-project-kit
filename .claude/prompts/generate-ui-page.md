@@ -17,8 +17,8 @@ Use this prompt to generate a single custom page that doesn't fit the standard e
 ```text
 Read the following files before doing anything:
 - CLAUDE.md
-- CLAUDE.md
 - .claude/specs/project.md
+- .claude/specs/style.md
 - .claude/stacks/laravel-react.md
 - .claude/rules/frontend.md
 - .claude/rules/typescript.md
@@ -73,4 +73,4 @@ Examples:
 
 - If the page needs a new API endpoint, describe it clearly and the backend will be generated too
 - For dashboard-style pages, be explicit about which metrics and which entities feed them
-- Reference the design style in `.claude/specs/project.md` — the AI will match it
+- Reference the design style in `.claude/specs/style.md` — the AI will match it

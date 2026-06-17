@@ -19,6 +19,7 @@ Use this prompt at the start of a new project to bootstrap and scaffold everythi
 Read the following files before doing anything:
 - CLAUDE.md
 - .claude/specs/project.md
+- .claude/specs/style.md
 - .claude/stacks/laravel-react.md
 - .claude/rules/backend.md
 - .claude/rules/frontend.md
@@ -406,7 +407,7 @@ Run: `php artisan db:seed --class=AdminUserSeeder`
 
 - Follow all rules in `.claude/rules/backend.md`, `.claude/rules/frontend.md`, `.claude/rules/typescript.md`
 - Generate complete, working files — no stubs or TODOs
-- Use the entity names and UI style from `.claude/specs/project.md` throughout
+- Use entity names from `.claude/specs/project.md` and visual style from `.claude/specs/style.md` throughout
 - After completing all phases, confirm:
     1. That migrations ran successfully
     2. The URL to open: `http://localhost:5173/login`

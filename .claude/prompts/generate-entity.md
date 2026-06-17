@@ -18,6 +18,7 @@ Use this prompt to generate all code for a single domain entity.
 Read the following files before doing anything:
 - CLAUDE.md
 - .claude/specs/project.md
+- .claude/specs/style.md
 - .claude/specs/entities/[entity-name].md   ← e.g. .claude/specs/entities/product.md
 - .claude/stacks/laravel-react.md
 - .claude/rules/backend.md
@@ -120,7 +121,7 @@ as described in its spec file.
 - Use explicit types everywhere — no `any`
 - Business rules from the spec must be implemented in Actions, not controllers
 - Permissions from the spec must be implemented in the Policy
-- Match the UI style described in .claude/specs/project.md
+- Match the UI style described in .claude/specs/style.md
 
 ## After generating all files
 

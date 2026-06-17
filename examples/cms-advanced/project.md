@@ -46,13 +46,13 @@ Public/unauthenticated access:
 
 ## Domain entities
 
-| Entity             | Description                                                         | Admin CRUD         | Public API     |
-| ------------------ | ------------------------------------------------------------------- | ------------------ | -------------- |
-| User               | Admin accounts with role (superadmin / admin)                       | superadmin only    | ❌              |
-| Page               | A content page with multi-language fields and optional attachments  | ✅                  | ✅ (active only)|
-| PageTranslation    | Per-language content for a page (title, short_text, full_text, slug)| via Page editing   | via Page       |
-| Media              | An uploaded file in the media library (image, document, etc.)       | ✅                  | ✅              |
-| Attachment         | A media item attached to a specific page, with page-specific metadata | via Page editing | via Page       |
+| Entity          | Description                                                           | Admin CRUD       | Public API       |
+| --------------- | --------------------------------------------------------------------- | ---------------- | ---------------- |
+| User            | Admin accounts with role (superadmin / admin)                         | superadmin only  | ❌               |
+| Page            | A content page with multi-language fields and optional attachments    | ✅               | ✅ (active only) |
+| PageTranslation | Per-language content for a page (title, short_text, full_text, slug)  | via Page editing | via Page         |
+| Media           | An uploaded file in the media library (image, document, etc.)         | ✅               | ✅               |
+| Attachment      | A media item attached to a specific page, with page-specific metadata | via Page editing | via Page         |
 
 > `PageTranslation` and `Attachment` are not managed independently — they are always edited
 > through their parent (Page). They do not have their own top-level admin screens.
