@@ -76,3 +76,17 @@
     color: var(--selected);
   }
 }
+
+/* Page transition — replayed whenever the keyed wrapper remounts on route change */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: pageIn .28s cubic-bezier(.22, .61, .36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter { animation: none; }
+}

@@ -2,11 +2,13 @@
 document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') ?? 'dark')
 document.documentElement.setAttribute('data-sidebar', localStorage.getItem('sidebar') ?? 'comfortable')
 
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Breadcrumb } from './Breadcrumb'
 
 export function AdminLayout() {
+  const { pathname } = useLocation()
+
   return (
     <div
       className="h-screen overflow-hidden"
@@ -19,7 +21,10 @@ export function AdminLayout() {
           {/* pagebox: scroll lives here, not on the wrapper */}
           <div className="bg-(--box) min-h-full overflow-y-auto" style={{ borderRadius: 16, padding: 13 }}>
             <Breadcrumb />
-            <Outlet />
+            {/* key=pathname remounts this div on every route change, replaying the animation */}
+            <div key={pathname} className="page-enter">
+              <Outlet />
+            </div>
           </div>
         </div>
       </div>
