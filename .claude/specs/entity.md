@@ -16,28 +16,28 @@
 
 List every field. Be precise — these map directly to database columns, DTOs, and TypeScript types.
 
-| Field         | Type       | Required | Validation                        | Notes                                 |
-| ------------- | ---------- | -------- | --------------------------------- | ------------------------------------- |
-| `id`          | integer    | auto     | —                                 | Primary key, auto-increment           |
-| `title`       | string     | yes      | max:255                           |                                       |
-| `slug`        | string     | auto     | unique, generated from title      | Auto-generated in CreateAction        |
-| `body`        | text       | yes      | min:10                            |                                       |
-| `status`      | enum       | yes      | draft \| published \| archived    |                                       |
-| `price`       | decimal    | no       | min:0, 2 decimal places           | Nullable if not always applicable     |
-| `user_id`     | foreignId  | yes      | exists:users,id                   | Belongs to User                       |
-| `published_at`| timestamp  | no       | nullable                          |                                       |
-| `created_at`  | timestamp  | auto     | —                                 |                                       |
-| `updated_at`  | timestamp  | auto     | —                                 |                                       |
+| Field          | Type      | Required | Validation                     | Notes                             |
+| -------------- | --------- | -------- | ------------------------------ | --------------------------------- |
+| `id`           | integer   | auto     | —                              | Primary key, auto-increment       |
+| `title`        | string    | yes      | max:255                        |                                   |
+| `slug`         | string    | auto     | unique, generated from title   | Auto-generated in CreateAction    |
+| `body`         | text      | yes      | min:10                         |                                   |
+| `status`       | enum      | yes      | draft \| published \| archived |                                   |
+| `price`        | decimal   | no       | min:0, 2 decimal places        | Nullable if not always applicable |
+| `user_id`      | foreignId | yes      | exists:users,id                | Belongs to User                   |
+| `published_at` | timestamp | no       | nullable                       |                                   |
+| `created_at`   | timestamp | auto     | —                              |                                   |
+| `updated_at`   | timestamp | auto     | —                              |                                   |
 
 ---
 
 ## Relationships
 
-| Relation   | Type        | Target entity | Notes                              |
-| ---------- | ----------- | ------------- | ---------------------------------- |
-| `author`   | belongsTo   | User          | The user who created this entity   |
-| `tags`     | belongsToMany | Tag         | Via pivot table `[entity]_tag`     |
-| `images`   | hasMany     | Image         | Polymorphic if shared across types |
+| Relation      | Type          | Target entity | Notes                              |
+| ------------- | ------------- | ------------- | ---------------------------------- |
+| `author`.     | belongsTo     | User          | The user who created this entity   |
+| `tags`        | belongsToMany | Tag           | Via pivot table `[entity]_tag`     |
+| `attachments` | hasMany       | Attachment    | Polymorphic if shared across types |
 
 ---
 
@@ -45,25 +45,25 @@ List every field. Be precise — these map directly to database columns, DTOs, a
 
 Who can do what with this entity?
 
-| Action    | Admin | User (owner) | User (other) | Public |
-| --------- | ----- | ------------ | ------------ | ------ |
-| list      | ✅     | ✅ (own only) | ❌            | ❌      |
-| view      | ✅     | ✅            | ❌            | ✅      |
-| create    | ✅     | ✅            | ❌            | ❌      |
-| update    | ✅     | ✅ (own only) | ❌            | ❌      |
-| delete    | ✅     | ❌            | ❌            | ❌      |
+| Action | Admin | User (owner)  | User (other) | Public |
+| ------ | ----- | ------------- | ------------ | ------ |
+| list   | ✅    | ✅ (own only) | ❌           | ❌     |
+| view   | ✅    | ✅            | ❌           | ✅     |
+| create | ✅    | ✅            | ❌           | ❌     |
+| update | ✅    | ✅ (own only) | ❌           | ❌     |
+| delete | ✅    | ❌            | ❌           | ❌     |
 
 ---
 
 ## API endpoints
 
-| Method | Path                   | Description           | Auth required |
-| ------ | ---------------------- | --------------------- | ------------- |
-| GET    | `/api/v1/[entities]`   | Paginated list        | yes           |
-| GET    | `/api/v1/[entities]/{id}` | Single resource    | yes           |
-| POST   | `/api/v1/[entities]`   | Create                | yes           |
-| PATCH  | `/api/v1/[entities]/{id}` | Update             | yes           |
-| DELETE | `/api/v1/[entities]/{id}` | Delete             | yes (admin)   |
+| Method | Path                      | Description     | Auth required |
+| ------ | ------------------------- | --------------- | ------------- |
+| GET    | `/api/v1/[entities]`      | Paginated list  | yes           |
+| GET    | `/api/v1/[entities]/{id}` | Single resource | yes           |
+| POST   | `/api/v1/[entities]`      | Create          | yes           |
+| PATCH  | `/api/v1/[entities]/{id}` | Update          | yes           |
+| DELETE | `/api/v1/[entities]/{id}` | Delete          | yes (admin)   |
 
 ---
 
