@@ -27,13 +27,9 @@ Read the following files before doing anything:
 - .claude/ui-kit/components.md
 - .claude/templates/laravel-api/ (all files)
 - .claude/templates/react-app/ (all files)
-- .claude/templates/admin-layout/ (all files)
-- jsx/SeppiaCms.html (visual reference — read the CSS tokens and component HTML structure)
-- jsx/hf-pages.jsx (visual reference — read the page layouts and component patterns)
 
-The templates are reference implementations — generate the project files to match them exactly,
-adapting only what the project spec requires (project name, entity names, nav items, etc.).
-The jsx files are the visual source of truth — all generated UI must match their look and feel.
+The templates are the source of truth — copy them exactly, adapting only what the project spec
+requires (project name, entity names, nav items, etc.).
 
 Then bootstrap and scaffold the full project from zero.
 Work through the phases below in order. Do not skip any phase.
@@ -265,13 +261,12 @@ replacing every occurrence of `"Project Name"` with the project name from `.clau
 11. `src/features/auth/pages/ResetPasswordPage.tsx`
 
 All three pages import `AuthLayout` from `@/layouts/AuthLayout` and use the same
-shared `Input` and `Button` components as the admin area. Visual reference: `jsx/Login.html`.
+shared `Input` and `Button` components as the admin area.
 
 ### Layouts
 
 Copy all of the following files verbatim from `.claude/templates/react-app/src/layouts/`.
-These are the two application shells — all routes use one or the other.
-Use `jsx/SeppiaCms.html` and `jsx/hf-shell.jsx` as the visual reference for the admin shell.
+These are the application shells — all routes use one or the other.
 
 1. `src/layouts/AdminLayout.tsx` — CSS Grid shell (`grid-template-columns: var(--sb-w) 1fr`).
    Module-level statements before imports apply stored theme and sidebar to avoid flash.
@@ -330,36 +325,20 @@ Copy the following files verbatim from `.claude/templates/react-app/src/componen
     `TableCell`, `TableCheckCell`, `RowTitle`. Row height from `--row-h` CSS var.
     Header cells: `bg-(--surface-2)` with rounded pill ends. Row dividers: `border-t border-(--border)`.
 
+Also copy the following files verbatim from `.claude/templates/react-app/src/components/ui/`:
+
+1. `Chip.tsx`
+2. `Avatar.tsx`
+3. `Tabs.tsx`
+4. `Modal.tsx`
+5. `EmptyState.tsx`
+6. `PageHeader.tsx`
+7. `StatCard.tsx`
+8. `SaveBar.tsx`
+9. `Dropzone.tsx`
+
 Also copy `Pagination.tsx` verbatim from `.claude/templates/react-app/src/layouts/` into
 `src/layouts/Pagination.tsx` (it lives in `layouts/`, not `components/ui/`).
-
-Generate complete, working implementations for the remaining components in `src/components/ui/`.
-Follow `.claude/ui-kit/components.md` for props and styling. Use CSS var tokens
-(`bg-(--box)`, `text-(--ink)`, etc.) — never hardcode hex colors. Use icons from `@/lib/icons`.
-Visual reference: `jsx/SeppiaCms.html`.
-
-1. `Chip.tsx` — filter toggle; `active` prop switches to `bg-(--accent) text-(--accent-ink)`;
-   optional `count` badge
-
-2. `Avatar.tsx` — initials circle; sizes: `sm` (28px), `md` (34px), `lg` (80px);
-   `bg-(--accent) text-(--accent-ink)`
-
-3. `Tabs.tsx` — underline style; `tabs`, `active`, `onChange` props;
-   active tab: `border-b-2 border-(--accent) text-(--accent)`
-
-4. `Modal.tsx` — controlled; backdrop `bg-black/60`; panel `bg-(--box) border-(--border) rounded-xl`
-
-5. `EmptyState.tsx` — `icon`, `title`, `description`, `action` props
-
-6. `PageHeader.tsx` — `title`, `description`, `action`, optional `backHref` props;
-   back button uses `ArrowLeft01Icon` from `@/lib/icons`
-
-7. `StatCard.tsx` — `label`, `value`, `icon`, optional `delta` and `deltaUp`;
-   icon container: `bg-(--accent)/15 text-(--accent)`
-
-8. `SaveBar.tsx` — sticky bottom bar; `lastSaved`, `onSave`, `onDiscard`, `isLoading` props
-
-9. `Dropzone.tsx` — drag-and-drop file upload area; drag-over state: `border-(--accent) bg-(--accent)/5`
 
 ### Dashboard placeholder
 

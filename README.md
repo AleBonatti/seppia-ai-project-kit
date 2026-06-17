@@ -77,6 +77,15 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
             Card.tsx             ← Card, CardHeader, CardFooter; flush prop
             Calendar.tsx         ← DatePicker (popover) + InlineCalendar; react-day-picker v9
             Table.tsx            ← Table, TableHeader/Body/Row/Head/Cell, TableCheckCell, RowTitle
+            Chip.tsx             ← filter toggle; active uses color-mix accent tint
+            Avatar.tsx           ← initials circle; sm/md/lg; optional src image
+            Tabs.tsx             ← underline style; active tab accent border-b
+            Modal.tsx            ← backdrop + panel; Escape to close; sm/md/lg sizes
+            EmptyState.tsx       ← icon, title, description, action
+            PageHeader.tsx       ← title, description, action, backHref
+            StatCard.tsx         ← label, value, icon, delta, deltaUp
+            SaveBar.tsx          ← lastSaved timestamp + Cancel / Save actions
+            Dropzone.tsx         ← drag-and-drop; click-to-browse fallback
         features/
           auth/
             types.ts             ← auth types + password reset payloads
@@ -138,10 +147,18 @@ and component APIs are frozen in code, not reconstructed from prose on each gene
 | `react-app/src/components/ui/Card.tsx` | `frontend/src/components/ui/Card.tsx` |
 | `react-app/src/components/ui/Calendar.tsx` | `frontend/src/components/ui/Calendar.tsx` |
 | `react-app/src/components/ui/Table.tsx` | `frontend/src/components/ui/Table.tsx` |
+| `react-app/src/components/ui/Chip.tsx` | `frontend/src/components/ui/Chip.tsx` |
+| `react-app/src/components/ui/Avatar.tsx` | `frontend/src/components/ui/Avatar.tsx` |
+| `react-app/src/components/ui/Tabs.tsx` | `frontend/src/components/ui/Tabs.tsx` |
+| `react-app/src/components/ui/Modal.tsx` | `frontend/src/components/ui/Modal.tsx` |
+| `react-app/src/components/ui/EmptyState.tsx` | `frontend/src/components/ui/EmptyState.tsx` |
+| `react-app/src/components/ui/PageHeader.tsx` | `frontend/src/components/ui/PageHeader.tsx` |
+| `react-app/src/components/ui/StatCard.tsx` | `frontend/src/components/ui/StatCard.tsx` |
+| `react-app/src/components/ui/SaveBar.tsx` | `frontend/src/components/ui/SaveBar.tsx` |
+| `react-app/src/components/ui/Dropzone.tsx` | `frontend/src/components/ui/Dropzone.tsx` |
 | `react-app/src/features/auth/**` | `frontend/src/features/auth/**` |
 
-**Generated from prose** (via `generate-project.md`): remaining UI components (`Chip`, `Avatar`,
-`Modal`, `Tabs`, etc.), the dashboard placeholder page, and all entity-specific code.
+**Generated from prose** (via `generate-project.md`): the dashboard placeholder page and all entity-specific code.
 
 ---
 

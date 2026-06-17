@@ -11,7 +11,9 @@ Claude must use these components (not re-implement them) when generating UI code
 copied verbatim, not regenerated:
 
 - `src/components/ui/`: `Button.tsx`, `Input.tsx`, `Textarea.tsx`, `Select.tsx`, `Spinner.tsx`,
-  `Checkbox.tsx`, `Badge.tsx`, `Card.tsx`, `Calendar.tsx`, `Table.tsx`
+  `Checkbox.tsx`, `Badge.tsx`, `Card.tsx`, `Calendar.tsx`, `Table.tsx`, `Chip.tsx`, `Avatar.tsx`,
+  `Tabs.tsx`, `Modal.tsx`, `EmptyState.tsx`, `PageHeader.tsx`, `StatCard.tsx`, `SaveBar.tsx`,
+  `Dropzone.tsx`
 - `src/layouts/`: `AdminLayout.tsx`, `AuthLayout.tsx`, `PublicLayout.tsx`, `Sidebar.tsx`,
   `Breadcrumb.tsx`, `Pagination.tsx`, `useTheme.ts`
 
@@ -290,7 +292,7 @@ Month nav arrows: `ArrowLeft01Icon` / `ArrowRight01Icon` via `Chevron` component
 
 ## Chip
 
-**File:** `src/components/ui/Chip.tsx`
+**File:** `src/components/ui/Chip.tsx` ← copy verbatim from template
 
 Filter toggle button. Used above tables to filter by status, type, etc.
 
@@ -323,7 +325,7 @@ Count badge: `bg-black/20 rounded-full px-1.5 text-xs ml-1`
 
 ## Avatar
 
-**File:** `src/components/ui/Avatar.tsx`
+**File:** `src/components/ui/Avatar.tsx` ← copy verbatim from template
 
 User initials circle. No image support needed unless specified.
 
@@ -392,7 +394,7 @@ Sub-components: `Table` (outer `<div px-(--pad)>` + `<table>`) / `TableHeader` (
 
 ## Tabs
 
-**File:** `src/components/ui/Tabs.tsx`
+**File:** `src/components/ui/Tabs.tsx` ← copy verbatim from template
 
 Underline-style tab bar. Used in entity edit pages (e.g. Profile / Notifications / Integrations).
 
@@ -414,7 +416,7 @@ Inactive: `text-(--muted) hover:text-(--ink)`
 
 ## Modal
 
-**File:** `src/components/ui/Modal.tsx`
+**File:** `src/components/ui/Modal.tsx` ← copy verbatim from template
 
 Dialog overlay for confirmations and small forms.
 
@@ -438,7 +440,7 @@ Panel: `bg-(--box) border border-(--border) rounded-xl shadow-(--shadow)`
 
 ## PageHeader
 
-**File:** `src/components/ui/PageHeader.tsx`
+**File:** `src/components/ui/PageHeader.tsx` ← copy verbatim from template
 
 Consistent page title + action area. Used at the top of every admin page, below the breadcrumb.
 
@@ -462,7 +464,7 @@ Back button (when `backHref` provided): ghost button with `ArrowLeft01Icon`
 
 ## StatCard
 
-**File:** `src/components/ui/StatCard.tsx`
+**File:** `src/components/ui/StatCard.tsx` ← copy verbatim from template
 
 Dashboard metric card with icon, value, and optional delta indicator.
 
@@ -487,7 +489,7 @@ Delta up: `text-green-400`, delta down: `text-red-400`
 
 ## SaveBar
 
-**File:** `src/components/ui/SaveBar.tsx`
+**File:** `src/components/ui/SaveBar.tsx` ← copy verbatim from template
 
 Sticky bottom action bar. Used on entity edit pages.
 
@@ -509,7 +511,7 @@ Timestamp: `text-xs text-(--faint)`
 
 ## Dropzone
 
-**File:** `src/components/ui/Dropzone.tsx`
+**File:** `src/components/ui/Dropzone.tsx` ← copy verbatim from template
 
 File drag-and-drop upload area.
 
@@ -531,7 +533,7 @@ Drag-over: `border-(--accent) bg-(--accent)/5`
 
 ## EmptyState
 
-**File:** `src/components/ui/EmptyState.tsx`
+**File:** `src/components/ui/EmptyState.tsx` ← copy verbatim from template
 
 Shown when a list has no items.
 
