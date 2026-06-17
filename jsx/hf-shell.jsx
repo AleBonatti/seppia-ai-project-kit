@@ -84,7 +84,7 @@ const NAV = [
   ]},
 ];
 
-const LIVE = new Set(['dashboard', 'posts', 'edit', 'media', 'users', 'useredit', 'logs']);
+const LIVE = new Set(['dashboard', 'posts', 'edit', 'media', 'users', 'useredit', 'settings', 'logs']);
 
 function Sidebar({ page, setPage, sidebar, onToggleSidebar, theme, setTheme }) {
   const activeId = page === 'edit' ? 'posts' : page === 'useredit' ? 'users' : page;
@@ -131,8 +131,8 @@ function Sidebar({ page, setPage, sidebar, onToggleSidebar, theme, setTheme }) {
                 </button>
               </div>
               <div className="um-sep"></div>
-              <button className="um-item"><span className="ico"><Icon name="account" size={17} /></span> Account settings</button>
-              <button className="um-item"><span className="ico"><Icon name="settings" size={17} /></span> Preferences</button>
+              <button className="um-item" onClick={() => { setMenuOpen(false); setPage('settings'); }}><span className="ico"><Icon name="account" size={17} /></span> Account settings</button>
+              <button className="um-item" onClick={() => { setMenuOpen(false); setPage('settings'); }}><span className="ico"><Icon name="settings" size={17} /></span> Preferences</button>
               <div className="um-sep"></div>
               <button className="um-item" onClick={() => { window.location.href = 'Login.html'; }}><span className="ico"><Icon name="logout" size={17} /></span> Sign out</button>
             </div>
@@ -158,6 +158,7 @@ const CRUMBS = {
   users:     [{ label: 'Home', icon: 'home' }, { label: 'Users', icon: 'users' }],
   useredit:  [{ label: 'Home', icon: 'home' }, { label: 'Users', icon: 'users' }, { label: 'Catherine Robertson', icon: 'edit' }],
   logs:      [{ label: 'Home', icon: 'home' }, { label: 'Log errori', icon: 'errors' }],
+  settings:  [{ label: 'Home', icon: 'home' }, { label: 'Settings', icon: 'settings' }, { label: 'Account', icon: 'account' }],
 };
 
 function Breadcrumb({ page }) {

@@ -63,6 +63,7 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
           PublicLayout.tsx       ← placeholder for public-facing frontend
           Sidebar.tsx            ← left nav with theme toggle and user card
           Breadcrumb.tsx         ← floating pill breadcrumb above page content
+          Pagination.tsx         ← page window with prev/next and ellipsis
           useTheme.ts            ← data-theme attribute manager (shared by all layouts)
         components/
           ui/
@@ -71,6 +72,11 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
             Textarea.tsx         ← same interface as Input
             Select.tsx           ← label, error, options props; caret icon
             Spinner.tsx          ← sizes: sm, md, lg
+            Checkbox.tsx         ← forwardRef; peer-checked accent fill
+            Badge.tsx            ← success/warning/error/info/neutral; dot + pill
+            Card.tsx             ← Card, CardHeader, CardFooter; flush prop
+            Calendar.tsx         ← DatePicker (popover) + InlineCalendar; react-day-picker v9
+            Table.tsx            ← Table, TableHeader/Body/Row/Head/Cell, TableCheckCell, RowTitle
         features/
           auth/
             types.ts             ← auth types + password reset payloads
@@ -120,16 +126,22 @@ and component APIs are frozen in code, not reconstructed from prose on each gene
 | `react-app/src/layouts/PublicLayout.tsx` | `frontend/src/layouts/PublicLayout.tsx` |
 | `react-app/src/layouts/Sidebar.tsx` | `frontend/src/layouts/Sidebar.tsx` |
 | `react-app/src/layouts/Breadcrumb.tsx` | `frontend/src/layouts/Breadcrumb.tsx` |
+| `react-app/src/layouts/Pagination.tsx` | `frontend/src/layouts/Pagination.tsx` |
 | `react-app/src/layouts/useTheme.ts` | `frontend/src/layouts/useTheme.ts` |
 | `react-app/src/components/ui/Button.tsx` | `frontend/src/components/ui/Button.tsx` |
 | `react-app/src/components/ui/Input.tsx` | `frontend/src/components/ui/Input.tsx` |
 | `react-app/src/components/ui/Textarea.tsx` | `frontend/src/components/ui/Textarea.tsx` |
 | `react-app/src/components/ui/Select.tsx` | `frontend/src/components/ui/Select.tsx` |
 | `react-app/src/components/ui/Spinner.tsx` | `frontend/src/components/ui/Spinner.tsx` |
+| `react-app/src/components/ui/Checkbox.tsx` | `frontend/src/components/ui/Checkbox.tsx` |
+| `react-app/src/components/ui/Badge.tsx` | `frontend/src/components/ui/Badge.tsx` |
+| `react-app/src/components/ui/Card.tsx` | `frontend/src/components/ui/Card.tsx` |
+| `react-app/src/components/ui/Calendar.tsx` | `frontend/src/components/ui/Calendar.tsx` |
+| `react-app/src/components/ui/Table.tsx` | `frontend/src/components/ui/Table.tsx` |
 | `react-app/src/features/auth/**` | `frontend/src/features/auth/**` |
 
-**Generated from prose** (via `generate-project.md`): remaining UI components (`Card`, `Badge`,
-`Table`, `Modal`, etc.), the dashboard placeholder page, and all entity-specific code.
+**Generated from prose** (via `generate-project.md`): remaining UI components (`Chip`, `Avatar`,
+`Modal`, `Tabs`, etc.), the dashboard placeholder page, and all entity-specific code.
 
 ---
 

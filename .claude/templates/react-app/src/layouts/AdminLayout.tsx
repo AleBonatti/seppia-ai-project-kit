@@ -14,8 +14,10 @@ export function AdminLayout() {
     >
       <Sidebar />
       <div className="flex flex-col overflow-hidden min-w-0">
-        <div className="flex-1 overflow-y-auto" style={{ padding: 'var(--pad)', paddingLeft: 0 }}>
-          <div className="bg-(--box) rounded-2xl p-[18px] min-h-full">
+        {/* content: padding 13px on all sides except left (sidebar handles that gap) */}
+        <div className="flex-1 overflow-hidden" style={{ padding: '13px 8px 13px 0' }}>
+          {/* pagebox: scroll lives here, not on the wrapper */}
+          <div className="bg-(--box) min-h-full overflow-y-auto" style={{ borderRadius: 16, padding: 13 }}>
             <Breadcrumb />
             <Outlet />
           </div>

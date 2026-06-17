@@ -204,67 +204,67 @@ const POSTS = [
 function PostsList({ setPage }) {
   return (
     <div className="page">
-      <div className="page-head">
-        <div>
-          <h1>Posts</h1>
+      <div className="card list-card">
+        <div className="lc-head">
+          <div><h1>Posts</h1></div>
+          <div className="lc-actions">
+            <button className="btn"><Icon name="export" size={17} /> Export</button>
+            <button className="btn btn-primary" onClick={() => setPage('edit')}><Icon name="plus" size={17} /> New Post</button>
+          </div>
         </div>
-        <div className="head-actions">
-          <button className="btn"><Icon name="export" size={17} /> Export</button>
-          <button className="btn btn-primary" onClick={() => setPage('edit')}><Icon name="plus" size={17} /> New Post</button>
-        </div>
-      </div>
 
-      <div className="row between wrap" style={{ marginBottom: 'var(--gap)', gap: 12 }}>
-        <div className="searchbox" style={{ maxWidth: 320 }}>
-          <Icon name="search" size={17} /><span>Search posts…</span>
+        <div className="lc-toolbar">
+          <div className="searchbox" style={{ maxWidth: 320 }}>
+            <Icon name="search" size={17} /><span>Search posts…</span>
+          </div>
+          <div className="row wrap" style={{ gap: 8 }}>
+            <span className="chip on">All <span className="ct">128</span></span>
+            <span className="chip">Published</span>
+            <span className="chip">Drafts</span>
+          </div>
         </div>
-        <div className="row wrap" style={{ gap: 8 }}>
-          <span className="chip on">All <span className="ct">128</span></span>
-          <span className="chip">Published</span>
-          <span className="chip">Drafts</span>
-        </div>
-      </div>
 
-      <div className="card" style={{ padding: '18px var(--pad)' }}>
-        <table>
-          <thead>
-            <tr>
-              <th style={{ width: 28 }}></th>
-              <th>Title</th><th>Author</th><th>Language</th><th>Status</th><th>Date</th><th style={{ textAlign: 'right' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {POSTS.map((r, i) => (
-              <tr key={i}>
-                <td><span className={"check" + (i === 0 ? ' on' : '')}><Icon name="check" size={13} strokeWidth={2.6} /></span></td>
-                <td>
-                  <div className="row-title">{r.title}</div>
-                  <div className="row-sub">/{r.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 26)}</div>
-                </td>
-                <td className="muted">{r.author}</td>
-                <td><Flags langs={r.langs} /></td>
-                <td>{statusBadge(r.status)}</td>
-                <td className="muted mono" style={{ fontSize: 13 }}>{r.date}</td>
-                <td>
-                  <div className="row" style={{ justifyContent: 'flex-end', gap: 4 }}>
-                    <button className="icon-btn" title="Edit" style={{ width: 34, height: 34 }} onClick={() => setPage('edit')}><Icon name="edit" size={17} /></button>
-                    <button className="icon-btn" title="Delete" style={{ width: 34, height: 34 }}><Icon name="trash" size={17} /></button>
-                  </div>
-                </td>
+        <div className="lc-table">
+          <table>
+            <thead>
+              <tr>
+                <th className="cb-cell"></th>
+                <th>Title</th><th>Author</th><th>Language</th><th>Status</th><th>Date</th><th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {POSTS.map((r, i) => (
+                <tr key={i}>
+                  <td className="cb-cell"><span className={"check" + (i === 0 ? ' on' : '')}><Icon name="check" size={13} strokeWidth={2.6} /></span></td>
+                  <td>
+                    <div className="row-title">{r.title}</div>
+                    <div className="row-sub">/{r.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 26)}</div>
+                  </td>
+                  <td className="muted">{r.author}</td>
+                  <td><Flags langs={r.langs} /></td>
+                  <td>{statusBadge(r.status)}</td>
+                  <td className="muted mono" style={{ fontSize: 13 }}>{r.date}</td>
+                  <td>
+                    <div className="row" style={{ justifyContent: 'flex-end', gap: 4 }}>
+                      <button className="icon-btn" title="Edit" style={{ width: 34, height: 34 }} onClick={() => setPage('edit')}><Icon name="edit" size={17} /></button>
+                      <button className="icon-btn" title="Delete" style={{ width: 34, height: 34 }}><Icon name="trash" size={17} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      <div className="row between wrap" style={{ marginTop: 'var(--gap)' }}>
-        <span className="anno">Showing 1–7 of 128 posts</span>
-        <div className="pag">
-          <span className="pg"><Icon name="back" size={16} /></span>
-          <span className="pg on">1</span><span className="pg">2</span><span className="pg">3</span>
-          <span className="anno" style={{ padding: '0 4px' }}>…</span>
-          <span className="pg">18</span>
-          <span className="pg"><Icon name="next" size={16} /></span>
+        <div className="lc-foot">
+          <span className="anno">Showing 1–7 of 128 posts</span>
+          <div className="pag">
+            <span className="pg"><Icon name="back" size={16} /></span>
+            <span className="pg on">1</span><span className="pg">2</span><span className="pg">3</span>
+            <span className="anno" style={{ padding: '0 4px' }}>…</span>
+            <span className="pg">18</span>
+            <span className="pg"><Icon name="next" size={16} /></span>
+          </div>
         </div>
       </div>
     </div>
@@ -374,43 +374,50 @@ const MEDIA = [
 function MediaLibrary({ setPage }) {
   return (
     <div className="page">
-      <div className="page-head">
-        <div><h1>Media Library</h1></div>
-      </div>
-
-      <div className="row between wrap" style={{ marginBottom: 'var(--gap)', gap: 12 }}>
-        <div className="searchbox" style={{ maxWidth: 320 }}>
-          <Icon name="search" size={17} /><span>Search files…</span>
-        </div>
-        <div className="row" style={{ gap: 8 }}>
-          <div className="input select" style={{ minWidth: 150, whiteSpace: 'nowrap' }}><span>All types</span><Icon name="caret" size={16} /></div>
-          <div className="input select" style={{ minWidth: 130, whiteSpace: 'nowrap' }}><span>Newest</span><Icon name="caret" size={16} /></div>
-        </div>
-      </div>
-
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(188px, 1fr))' }}>
-        {MEDIA.map((m, i) => (
-          <div key={i} className="card media-card">
-            <div className="media-thumb">
-              {m.type === 'image'
-                ? <Icon name="media" size={26} />
-                : <div style={{ textAlign: 'center' }}><Icon name={m.icon} size={28} /><div className="ftype">{m.ext}</div></div>}
-              <span className="kebab"><Icon name="dots" size={16} /></span>
-            </div>
-            <div className="row-title" style={{ fontSize: 13.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.name}</div>
-            <div className="anno" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.meta}</div>
+      <div className="card list-card">
+        <div className="lc-head">
+          <div><h1>Media Library</h1></div>
+          <div className="lc-actions">
+            <button className="btn btn-primary"><Icon name="upload" size={17} /> Upload</button>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div className="row between wrap" style={{ marginTop: 'var(--gap)' }}>
-        <span className="anno">Showing 1–12 of 312 files</span>
-        <div className="pag">
-          <span className="pg"><Icon name="back" size={16} /></span>
-          <span className="pg on">1</span><span className="pg">2</span><span className="pg">3</span>
-          <span className="anno" style={{ padding: '0 4px' }}>…</span>
-          <span className="pg">26</span>
-          <span className="pg"><Icon name="next" size={16} /></span>
+        <div className="lc-toolbar">
+          <div className="searchbox" style={{ maxWidth: 320 }}>
+            <Icon name="search" size={17} /><span>Search files…</span>
+          </div>
+          <div className="row" style={{ gap: 8 }}>
+            <div className="input select" style={{ minWidth: 150, whiteSpace: 'nowrap' }}><span>All types</span><Icon name="caret" size={16} /></div>
+            <div className="input select" style={{ minWidth: 130, whiteSpace: 'nowrap' }}><span>Newest</span><Icon name="caret" size={16} /></div>
+          </div>
+        </div>
+
+        <div className="lc-body">
+          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(188px, 1fr))' }}>
+            {MEDIA.map((m, i) => (
+              <div key={i} className="card media-card">
+                <div className="media-thumb">
+                  {m.type === 'image'
+                    ? <Icon name="media" size={26} />
+                    : <div style={{ textAlign: 'center' }}><Icon name={m.icon} size={28} /><div className="ftype">{m.ext}</div></div>}
+                  <span className="kebab"><Icon name="dots" size={16} /></span>
+                </div>
+                <div className="row-title" style={{ fontSize: 13.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.name}</div>
+                <div className="anno" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.meta}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="lc-foot">
+          <span className="anno">Showing 1–12 of 312 files</span>
+          <div className="pag">
+            <span className="pg"><Icon name="back" size={16} /></span>
+            <span className="pg on">1</span><span className="pg">2</span><span className="pg">3</span>
+            <span className="anno" style={{ padding: '0 4px' }}>…</span>
+            <span className="pg">26</span>
+            <span className="pg"><Icon name="next" size={16} /></span>
+          </div>
         </div>
       </div>
     </div>
@@ -435,64 +442,66 @@ function roleBadge(r) {
 function UsersList({ setPage }) {
   return (
     <div className="page">
-      <div className="page-head">
-        <div><h1>Users</h1></div>
-        <div className="head-actions">
-          <button className="btn"><Icon name="export" size={17} /> Export</button>
-          <button className="btn btn-primary" onClick={() => setPage('useredit')}><Icon name="plus" size={17} /> New User</button>
+      <div className="card list-card">
+        <div className="lc-head">
+          <div><h1>Users</h1></div>
+          <div className="lc-actions">
+            <button className="btn"><Icon name="export" size={17} /> Export</button>
+            <button className="btn btn-primary" onClick={() => setPage('useredit')}><Icon name="plus" size={17} /> New User</button>
+          </div>
         </div>
-      </div>
 
-      <div className="row between wrap" style={{ marginBottom: 'var(--gap)', gap: 12 }}>
-        <div className="searchbox" style={{ maxWidth: 320 }}>
-          <Icon name="search" size={17} /><span>Search users…</span>
+        <div className="lc-toolbar">
+          <div className="searchbox" style={{ maxWidth: 320 }}>
+            <Icon name="search" size={17} /><span>Search users…</span>
+          </div>
+          <div className="row wrap" style={{ gap: 8 }}>
+            <span className="chip on">All <span className="ct">24</span></span>
+            <span className="chip">Admins</span>
+            <span className="chip">Editors</span>
+            <span className="chip">Authors</span>
+          </div>
         </div>
-        <div className="row wrap" style={{ gap: 8 }}>
-          <span className="chip on">All <span className="ct">24</span></span>
-          <span className="chip">Admins</span>
-          <span className="chip">Editors</span>
-          <span className="chip">Authors</span>
-        </div>
-      </div>
 
-      <div className="card" style={{ padding: '18px var(--pad)' }}>
-        <table>
-          <thead>
-            <tr>
-              <th style={{ width: 28 }}></th>
-              <th style={{ width: 50 }}></th>
-              <th>Name</th><th>Email</th><th>Phone</th><th style={{ textAlign: 'right' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {USERS.map((u, i) => (
-              <tr key={i}>
-                <td><span className="check"><Icon name="check" size={13} strokeWidth={2.6} /></span></td>
-                <td><div className="avatar" style={{ width: 38, height: 38, fontSize: 13 }}>{u.init}</div></td>
-                <td>
-                  <div className="row-title">{u.name}</div>
-                  <div style={{ marginTop: 3 }}>{roleBadge(u.role)}</div>
-                </td>
-                <td className="muted mono" style={{ fontSize: 13 }}>{u.email}</td>
-                <td className="muted mono" style={{ fontSize: 13 }}>{u.phone}</td>
-                <td>
-                  <div className="row" style={{ justifyContent: 'flex-end', gap: 4 }}>
-                    <button className="icon-btn" title="Edit" style={{ width: 34, height: 34 }} onClick={() => setPage('useredit')}><Icon name="edit" size={17} /></button>
-                    <button className="icon-btn" title="Delete" style={{ width: 34, height: 34 }}><Icon name="trash" size={17} /></button>
-                  </div>
-                </td>
+        <div className="lc-table">
+          <table>
+            <thead>
+              <tr>
+                <th className="cb-cell"></th>
+                <th style={{ width: 50 }}></th>
+                <th>Name</th><th>Email</th><th>Phone</th><th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {USERS.map((u, i) => (
+                <tr key={i}>
+                  <td className="cb-cell"><span className="check"><Icon name="check" size={13} strokeWidth={2.6} /></span></td>
+                  <td><div className="avatar" style={{ width: 38, height: 38, fontSize: 13 }}>{u.init}</div></td>
+                  <td>
+                    <div className="row-title">{u.name}</div>
+                    <div style={{ marginTop: 3 }}>{roleBadge(u.role)}</div>
+                  </td>
+                  <td className="muted mono" style={{ fontSize: 13 }}>{u.email}</td>
+                  <td className="muted mono" style={{ fontSize: 13 }}>{u.phone}</td>
+                  <td>
+                    <div className="row" style={{ justifyContent: 'flex-end', gap: 4 }}>
+                      <button className="icon-btn" title="Edit" style={{ width: 34, height: 34 }} onClick={() => setPage('useredit')}><Icon name="edit" size={17} /></button>
+                      <button className="icon-btn" title="Delete" style={{ width: 34, height: 34 }}><Icon name="trash" size={17} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      <div className="row between wrap" style={{ marginTop: 'var(--gap)' }}>
-        <span className="anno">Showing 1–6 of 24 users</span>
-        <div className="pag">
-          <span className="pg"><Icon name="back" size={16} /></span>
-          <span className="pg on">1</span><span className="pg">2</span><span className="pg">3</span><span className="pg">4</span>
-          <span className="pg"><Icon name="next" size={16} /></span>
+        <div className="lc-foot">
+          <span className="anno">Showing 1–6 of 24 users</span>
+          <div className="pag">
+            <span className="pg"><Icon name="back" size={16} /></span>
+            <span className="pg on">1</span><span className="pg">2</span><span className="pg">3</span><span className="pg">4</span>
+            <span className="pg"><Icon name="next" size={16} /></span>
+          </div>
         </div>
       </div>
     </div>
@@ -590,6 +599,153 @@ function UserEdit({ setPage }) {
   );
 }
 
+/* ---------- Account settings ---------- */
+function PwField({ value, reveal, placeholder, onChange, onToggle }) {
+  return (
+    <div className="input pwd">
+      <input type={reveal ? 'text' : 'password'} value={value} placeholder={placeholder} onChange={onChange} />
+      <button type="button" className="pwd-toggle" onClick={onToggle}>{reveal ? 'Hide' : 'Show'}</button>
+    </div>
+  );
+}
+
+function Settings({ setPage }) {
+  const fileRef = React.useRef(null);
+  const [avatar, setAvatar] = React.useState(null);
+  const [name, setName] = React.useState('David Dev');
+  const [email] = React.useState('david@seppiacms.com');
+  const [pw, setPw] = React.useState({ current: '', next: '', confirm: '' });
+  const [show, setShow] = React.useState({ current: false, next: false, confirm: false });
+
+  function onPick(e) {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => setAvatar(r.result);
+    r.readAsDataURL(f);
+  }
+
+  const score = (() => {
+    const v = pw.next;
+    if (!v) return 0;
+    let s = 0;
+    if (v.length >= 8) s++;
+    if (/[0-9]/.test(v)) s++;
+    if (/[^A-Za-z0-9]/.test(v)) s++;
+    if (/[A-Z]/.test(v) && /[a-z]/.test(v)) s++;
+    return s;
+  })();
+  const strengthLabel = ['Too short', 'Weak', 'Fair', 'Good', 'Strong'][score];
+  const match = pw.next.length > 0 && pw.next === pw.confirm;
+
+  const setField = (id) => (e) => setPw((p) => ({ ...p, [id]: e.target.value }));
+  const toggle = (id) => () => setShow((s) => ({ ...s, [id]: !s[id] }));
+
+  return (
+    <div className="page">
+      <div className="page-head">
+        <div>
+          <h1>Account settings</h1>
+          <div className="sub">Manage your personal details, photo and password.</div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="sec-head">Profile photo</div>
+        <div className="sec-sub">This image appears next to your name across SeppiaCms.</div>
+        <div className="frow" style={{ paddingBottom: 0, borderTop: 'none' }}>
+          <div className="flabel">Avatar</div>
+          <div className="row" style={{ gap: 16 }}>
+            <div className="avatar-pic">
+              {avatar ? <img src={avatar} alt="Avatar preview" /> : 'DD'}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <input ref={fileRef} type="file" accept="image/*" onChange={onPick} style={{ display: 'none' }} />
+              <div className="row" style={{ gap: 8 }}>
+                <button className="btn btn-sm" onClick={() => fileRef.current && fileRef.current.click()}><Icon name="upload" size={15} /> Upload new</button>
+                <button className="btn btn-sm btn-ghost" onClick={() => setAvatar(null)}>Remove</button>
+              </div>
+              <div className="fhelp">JPG, PNG or GIF. Max size 1 MB. Recommended 256×256px.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="card" style={{ marginTop: 'var(--gap)' }}>
+        <div className="sec-head">Personal info</div>
+        <div className="sec-sub">Update your name and the email you sign in with.</div>
+
+        <div className="frow">
+          <div className="flabel">Full name</div>
+          <div>
+            <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
+            <div className="fhelp">Shown across the workspace and on your posts.</div>
+          </div>
+        </div>
+        <div className="frow">
+          <div className="flabel">Email</div>
+          <div>
+            <div className="input mono" style={{ justifyContent: 'space-between' }}>
+              <span>{email}</span>
+              <span className="badge pub">Verified</span>
+            </div>
+            <div className="fhelp">The email you use to sign in. Contact an admin to change it.</div>
+          </div>
+        </div>
+
+        <div className="save-bar">
+          <span className="anno">Last saved Jun 12, 2026 · 14:09</span>
+          <div className="row" style={{ marginLeft: 'auto', gap: 9 }}>
+            <button className="btn" onClick={() => setPage('dashboard')}>Cancel</button>
+            <button className="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="card" style={{ marginTop: 'var(--gap)' }}>
+        <div className="sec-head">Password</div>
+        <div className="sec-sub">Choose a strong password you don't reuse on other sites.</div>
+
+        <div className="frow">
+          <div className="flabel">Current password</div>
+          <div><PwField value={pw.current} reveal={show.current} placeholder="Enter current password" onChange={setField('current')} onToggle={toggle('current')} /></div>
+        </div>
+        <div className="frow">
+          <div className="flabel">New password</div>
+          <div>
+            <PwField value={pw.next} reveal={show.next} placeholder="Enter new password" onChange={setField('next')} onToggle={toggle('next')} />
+            <div className="pw-strength">
+              {[0, 1, 2, 3].map((i) => (
+                <span key={i} className={"pw-bar" + (i < score ? ' on' : '')}></span>
+              ))}
+            </div>
+            <div className="fhelp">{pw.next ? strengthLabel + ' — at least 8 characters with a number and a symbol.' : 'At least 8 characters with a number and a symbol.'}</div>
+          </div>
+        </div>
+        <div className="frow">
+          <div className="flabel">Confirm password</div>
+          <div>
+            <PwField value={pw.confirm} reveal={show.confirm} placeholder="Re-enter new password" onChange={setField('confirm')} onToggle={toggle('confirm')} />
+            {pw.confirm.length > 0 && (
+              <div className="fhelp" style={{ color: match ? 'var(--accent)' : '#e5484d' }}>
+                {match ? 'Passwords match.' : "Passwords don't match yet."}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="save-bar">
+          <span className="anno">Last changed 3 months ago</span>
+          <div className="row" style={{ marginLeft: 'auto', gap: 9 }}>
+            <button className="btn">Cancel</button>
+            <button className="btn btn-primary">Update password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- Error Logs ---------- */
 const LOGS = [
   { level: 'error', code: '500', msg: 'Uncaught TypeError: cannot read property "slug" of undefined', src: 'api/posts/[id].js:42', time: 'Jun 16, 2026 · 09:41:22', count: 12 },
@@ -610,64 +766,66 @@ function levelBadge(l) {
 function ErrorLogs({ setPage }) {
   return (
     <div className="page">
-      <div className="page-head">
-        <div><h1>Log errori</h1></div>
-        <div className="head-actions">
-          <button className="btn"><Icon name="export" size={17} /> Export</button>
-          <button className="btn"><Icon name="trash" size={17} /> Clear logs</button>
+      <div className="card list-card">
+        <div className="lc-head">
+          <div><h1>Log errori</h1></div>
+          <div className="lc-actions">
+            <button className="btn"><Icon name="export" size={17} /> Export</button>
+            <button className="btn"><Icon name="trash" size={17} /> Clear logs</button>
+          </div>
         </div>
-      </div>
 
-      <div className="row between wrap" style={{ marginBottom: 'var(--gap)', gap: 12 }}>
-        <div className="searchbox" style={{ maxWidth: 320 }}>
-          <Icon name="search" size={17} /><span>Search logs…</span>
+        <div className="lc-toolbar">
+          <div className="searchbox" style={{ maxWidth: 320 }}>
+            <Icon name="search" size={17} /><span>Search logs…</span>
+          </div>
+          <div className="row" style={{ gap: 8 }}>
+            <div className="input select" style={{ minWidth: 150, whiteSpace: 'nowrap' }}><span>All levels</span><Icon name="caret" size={16} /></div>
+            <div className="input select" style={{ minWidth: 140, whiteSpace: 'nowrap' }}><span>Last 24 hours</span><Icon name="caret" size={16} /></div>
+          </div>
         </div>
-        <div className="row" style={{ gap: 8 }}>
-          <div className="input select" style={{ minWidth: 150, whiteSpace: 'nowrap' }}><span>All levels</span><Icon name="caret" size={16} /></div>
-          <div className="input select" style={{ minWidth: 140, whiteSpace: 'nowrap' }}><span>Last 24 hours</span><Icon name="caret" size={16} /></div>
-        </div>
-      </div>
 
-      <div className="card" style={{ padding: '18px var(--pad)' }}>
-        <table>
-          <thead>
-            <tr>
-              <th style={{ width: 90 }}>Level</th>
-              <th>Message</th><th style={{ width: 180 }}>Time</th><th style={{ width: 50 }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {LOGS.map((r, i) => (
-              <tr key={i}>
-                <td>{levelBadge(r.level)}</td>
-                <td>
-                  <div className="row" style={{ gap: 9 }}>
-                    <span className="logcode mono">{r.code}</span>
-                    <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.msg}</span>
-                  </div>
-                </td>
-                <td className="muted mono" style={{ fontSize: 12.5 }}>{r.time}</td>
-                <td>
-                  <button className="icon-btn" title="View detail" style={{ width: 34, height: 34 }}><Icon name="next" size={16} /></button>
-                </td>
+        <div className="lc-table">
+          <table>
+            <thead>
+              <tr>
+                <th style={{ width: 90 }}>Level</th>
+                <th>Message</th><th style={{ width: 180 }}>Time</th><th style={{ width: 50 }}></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {LOGS.map((r, i) => (
+                <tr key={i}>
+                  <td>{levelBadge(r.level)}</td>
+                  <td>
+                    <div className="row" style={{ gap: 9 }}>
+                      <span className="logcode mono">{r.code}</span>
+                      <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.msg}</span>
+                    </div>
+                  </td>
+                  <td className="muted mono" style={{ fontSize: 12.5 }}>{r.time}</td>
+                  <td>
+                    <button className="icon-btn" title="View detail" style={{ width: 34, height: 34 }}><Icon name="next" size={16} /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      <div className="row between wrap" style={{ marginTop: 'var(--gap)' }}>
-        <span className="anno">Showing 1–7 of 213 entries</span>
-        <div className="pag">
-          <span className="pg"><Icon name="back" size={16} /></span>
-          <span className="pg on">1</span><span className="pg">2</span><span className="pg">3</span>
-          <span className="anno" style={{ padding: '0 4px' }}>…</span>
-          <span className="pg">31</span>
-          <span className="pg"><Icon name="next" size={16} /></span>
+        <div className="lc-foot">
+          <span className="anno">Showing 1–7 of 213 entries</span>
+          <div className="pag">
+            <span className="pg"><Icon name="back" size={16} /></span>
+            <span className="pg on">1</span><span className="pg">2</span><span className="pg">3</span>
+            <span className="anno" style={{ padding: '0 4px' }}>…</span>
+            <span className="pg">31</span>
+            <span className="pg"><Icon name="next" size={16} /></span>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-Object.assign(window, { Dashboard, PostsList, EditPost, MediaLibrary, UsersList, UserEdit, ErrorLogs });
+Object.assign(window, { Dashboard, PostsList, EditPost, MediaLibrary, UsersList, UserEdit, PwField, Settings, ErrorLogs });

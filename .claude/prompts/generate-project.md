@@ -316,45 +316,50 @@ Copy the following files verbatim from `.claude/templates/react-app/src/componen
 3. `Textarea.tsx`
 4. `Select.tsx`
 5. `Spinner.tsx`
+6. `Checkbox.tsx` — `forwardRef`; native checkbox hidden with `sr-only peer`; custom 17×17px box with accent fill when checked
+7. `Badge.tsx` — variants: `success`, `warning`, `error`, `info`, `neutral`; dot + pill; `color-mix()` tinted borders
+8. `Card.tsx` — exports `Card`, `CardHeader`, `CardFooter`; `flush` prop removes padding for list-card use
+9. `Calendar.tsx` — exports `DatePicker` (trigger + popover) and `InlineCalendar` (always visible).
+   Install `react-day-picker` and `date-fns` before copying this file:
+
+   ```bash
+   npm install react-day-picker date-fns
+   ```
+
+10. `Table.tsx` — exports `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`,
+    `TableCell`, `TableCheckCell`, `RowTitle`. Row height from `--row-h` CSS var.
+    Header cells: `bg-(--surface-2)` with rounded pill ends. Row dividers: `border-t border-(--border)`.
+
+Also copy `Pagination.tsx` verbatim from `.claude/templates/react-app/src/layouts/` into
+`src/layouts/Pagination.tsx` (it lives in `layouts/`, not `components/ui/`).
 
 Generate complete, working implementations for the remaining components in `src/components/ui/`.
 Follow `.claude/ui-kit/components.md` for props and styling. Use CSS var tokens
 (`bg-(--box)`, `text-(--ink)`, etc.) — never hardcode hex colors. Use icons from `@/lib/icons`.
 Visual reference: `jsx/SeppiaCms.html`.
 
-1. `Card.tsx` — `title`, `description`, `footer`, `children`; `bg-(--box) border-(--border) rounded-xl`
-
-2. `Badge.tsx` — variants: `success`, `warning`, `error`, `info`, `neutral`;
-   colors from semantic palette in `design-system.md`
-
-3. `Chip.tsx` — filter toggle; `active` prop switches to `bg-(--accent) text-(--accent-ink)`;
+1. `Chip.tsx` — filter toggle; `active` prop switches to `bg-(--accent) text-(--accent-ink)`;
    optional `count` badge
 
-4. `Avatar.tsx` — initials circle; sizes: `sm` (28px), `md` (34px), `lg` (80px);
+2. `Avatar.tsx` — initials circle; sizes: `sm` (28px), `md` (34px), `lg` (80px);
    `bg-(--accent) text-(--accent-ink)`
 
-5. `Table.tsx` — composable: `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`;
-   rows: `hover:bg-(--surface-2)`; dividers: `divide-y divide-(--border-soft)`
-
-6. `Tabs.tsx` — underline style; `tabs`, `active`, `onChange` props;
+3. `Tabs.tsx` — underline style; `tabs`, `active`, `onChange` props;
    active tab: `border-b-2 border-(--accent) text-(--accent)`
 
-7. `Modal.tsx` — controlled; backdrop `bg-black/60`; panel `bg-(--box) border-(--border) rounded-xl`
+4. `Modal.tsx` — controlled; backdrop `bg-black/60`; panel `bg-(--box) border-(--border) rounded-xl`
 
-8. `EmptyState.tsx` — `icon`, `title`, `description`, `action` props
+5. `EmptyState.tsx` — `icon`, `title`, `description`, `action` props
 
-9. `Pagination.tsx` — `currentPage`, `totalPages`, `onPageChange`;
-   active page: `bg-(--accent) text-(--accent-ink)`
+6. `PageHeader.tsx` — `title`, `description`, `action`, optional `backHref` props;
+   back button uses `ArrowLeft01Icon` from `@/lib/icons`
 
-10. `PageHeader.tsx` — `title`, `description`, `action`, optional `backHref` props;
-    back button uses `ArrowLeft01Icon` from `@/lib/icons`
+7. `StatCard.tsx` — `label`, `value`, `icon`, optional `delta` and `deltaUp`;
+   icon container: `bg-(--accent)/15 text-(--accent)`
 
-11. `StatCard.tsx` — `label`, `value`, `icon`, optional `delta` and `deltaUp`;
-    icon container: `bg-(--accent)/15 text-(--accent)`
+8. `SaveBar.tsx` — sticky bottom bar; `lastSaved`, `onSave`, `onDiscard`, `isLoading` props
 
-12. `SaveBar.tsx` — sticky bottom bar; `lastSaved`, `onSave`, `onDiscard`, `isLoading` props
-
-13. `Dropzone.tsx` — drag-and-drop file upload area; drag-over state: `border-(--accent) bg-(--accent)/5`
+9. `Dropzone.tsx` — drag-and-drop file upload area; drag-over state: `border-(--accent) bg-(--accent)/5`
 
 ### Dashboard placeholder
 
