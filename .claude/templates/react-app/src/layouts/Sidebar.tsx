@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 import type { HugeiconsProps } from '@hugeicons/react'
 import {
   DashboardSquare01Icon,
@@ -7,7 +7,7 @@ import {
   Moon02Icon,
   Sun03Icon,
   Logout01Icon,
-  ArrowDown01Icon,
+  ArrowUp01Icon,
   Settings01Icon,
   UserAccountIcon,
 } from '@/lib/icons'
@@ -65,11 +65,19 @@ function toggleSidebarAttr(next: 'comfortable' | 'icononly') {
 export function Sidebar() {
   const { data: user } = useAuth()
   const logout = useLogout()
+  const navigate = useNavigate()
   const { theme, setTheme } = useTheme()
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem('sidebar') === 'icononly'
   )
+
+  // Measure the menu body so the slide transform knows exactly how far to travel.
+  const menuBodyRef = useRef<HTMLDivElement>(null)
+  const [menuBodyH, setMenuBodyH] = useState(264)
+  useLayoutEffect(() => {
+    if (menuBodyRef.current) setMenuBodyH(menuBodyRef.current.scrollHeight)
+  }, [theme, collapsed])
 
   const toggleCollapse = () => {
     const next = !collapsed
@@ -87,7 +95,7 @@ export function Sidebar() {
         'flex items-center gap-[5px] px-2 pb-[18px]',
         collapsed && 'flex-col gap-3.5 px-0',
       )}>
-        {/* Logo mark — replace SVG path with project logo if needed */}
+        {/* Logo mark — replace SVG with project logo if needed */}
         {!collapsed && (
           <span
             className="flex-none grid place-items-center"
@@ -119,12 +127,14 @@ export function Sidebar() {
       {/* Navigation */}
       {NAV.filter(g => g.items.length > 0).map(({ group, items }) => (
         <div key={group}>
-          <p className={cn(
-            'text-[10.5px] font-semibold uppercase tracking-[.09em] text-(--faint) px-3 pt-4 pb-[7px]',
-            collapsed && 'text-center text-[8.5px] px-0',
-          )}>
-            {group}
-          </p>
+          {/* Group label: text when expanded, 1px rule when collapsed */}
+          {collapsed ? (
+            <div className="mx-3.5 my-2 mt-[15px] h-px" style={{ background: 'color-mix(in srgb, var(--faint) 42%, transparent)' }} />
+          ) : (
+            <p className="text-[10.5px] font-semibold uppercase tracking-[.09em] text-(--faint) px-3 pt-4 pb-[7px] whitespace-nowrap overflow-hidden">
+              {group}
+            </p>
+          )}
           <div>
             {items.map(item => (
               <NavLink
@@ -133,7 +143,7 @@ export function Sidebar() {
                 title={item.label}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-3 rounded-(--r-sm) px-3 py-[9px] text-[14.5px] font-medium transition-colors relative border-none w-full text-left cursor-pointer',
+                    'flex items-center gap-3 rounded-(--r-sm) px-3 py-[9px] text-[14.5px] font-medium transition-colors relative border-none w-full text-left cursor-pointer no-underline',
                     collapsed && 'justify-center px-0 py-[11px]',
                     isActive
                       ? 'text-(--selected) bg-(--surface-2) font-semibold'
@@ -172,27 +182,85 @@ export function Sidebar() {
         </div>
       ))}
 
-      {/* User card + menu */}
+      {/* User card + slide-up menu */}
       <div className="mt-auto pt-3">
-        <div className="relative">
-          {userMenuOpen && (
-            <div className="fixed inset-0 z-55" onClick={() => setUserMenuOpen(false)} />
-          )}
+        {/* Overlay closes the menu on outside click */}
+        {menuOpen && (
+          <div className="fixed inset-0 z-55" onClick={() => setMenuOpen(false)} />
+        )}
 
-          {/* Dropdown menu */}
-          {userMenuOpen && (
-            <div className={cn(
-              'absolute bottom-[calc(100%+8px)] left-0 right-0 min-w-[234px]',
-              'bg-(--box) border border-(--border) rounded-(--r) p-2 z-60 flex flex-col gap-[3px]',
-              'shadow-(--shadow)',
-              collapsed && 'right-auto w-[234px]',
-            )}>
-              {/* Appearance label */}
-              <p className="text-[10.5px] font-semibold uppercase tracking-[.07em] text-(--faint) px-2 pt-1.5 pb-1">
-                Appearance
-              </p>
+        {/*
+          Wrapper clips the panel while it's translated below.
+          Height accounts for the usercard (66px) + the menu body.
+        */}
+        <div
+          className="relative overflow-hidden"
+          style={{ height: menuBodyH + 66 }}
+        >
+          {/*
+            Panel: always in the DOM, slides up via translateY.
+            When closed, translateY = bodyH so only the usercard is visible.
+            When open, translateY = 0 so the full panel (menu + card) is shown.
+          */}
+          <div
+            className={cn(
+              'absolute left-0 right-0 bottom-0 z-60 flex flex-col rounded-(--r) border',
+              'transition-[transform,background,border-color,box-shadow] duration-340',
+              menuOpen
+                ? 'bg-(--box) border-(--border) shadow-(--shadow) translate-y-0'
+                : 'bg-transparent border-transparent shadow-none',
+            )}
+            style={{
+              transform: menuOpen ? 'translateY(0)' : `translateY(${menuBodyH}px)`,
+              // override Tailwind translate class when closed so the JS value wins
+              willChange: 'transform',
+            }}
+          >
+            {/* User card — acts as the trigger, sits at the top of the panel */}
+            <button
+              type="button"
+              onClick={() => setMenuOpen(o => !o)}
+              className={cn(
+                'flex w-full items-center gap-2.5 p-2 cursor-pointer bg-(--box) border border-(--border) rounded-(--r) text-left text-(--ink) transition-colors',
+                menuOpen
+                  ? 'rounded-b-none border-transparent hover:bg-(--box)'
+                  : 'hover:bg-(--surface-2)',
+                collapsed && 'justify-center p-[7px] w-10 h-10 mx-auto box-content',
+              )}
+            >
+              <div
+                className="shrink-0 grid place-items-center rounded-full bg-(--surface-2) text-(--ink) border border-(--border) text-[13px] font-semibold"
+                style={collapsed ? { width: 24, height: 24, fontSize: 10 } : { width: 34, height: 34 }}
+              >
+                {user ? initials(user.name) : '?'}
+              </div>
+              {!collapsed && (
+                <>
+                  <div className="flex-1 flex flex-col min-w-0 leading-tight">
+                    <span className="text-[13.5px] font-semibold truncate">{user?.name}</span>
+                    <span className="text-[11.5px] text-(--muted)">{user?.role}</span>
+                  </div>
+                  <span
+                    className="text-(--muted) flex-none transition-transform duration-180"
+                    style={{ transform: menuOpen ? 'rotate(0deg)' : 'rotate(180deg)' }}
+                  >
+                    <ArrowUp01Icon size={16} strokeWidth={1.8} />
+                  </span>
+                </>
+              )}
+            </button>
+
+            {/* Menu body — measured for the slide distance */}
+            <div
+              ref={menuBodyRef}
+              className={cn(
+                'flex flex-col gap-[3px] px-2 pt-1 pb-2 border-t border-(--border)',
+                !menuOpen && 'pointer-events-none',
+                collapsed && 'w-[234px]',
+              )}
+            >
               {/* Dark / Light segmented control */}
-              <div className="flex gap-[5px] px-0.5 pb-1">
+              <div className="flex gap-[5px] py-1">
                 <button
                   type="button"
                   onClick={() => setTheme('dark')}
@@ -214,66 +282,38 @@ export function Sidebar() {
                   <Sun03Icon size={15} strokeWidth={1.8} /> Light
                 </button>
               </div>
+
               <div className="h-px bg-(--border) my-[5px]" />
-              {/* Account settings */}
+
               <button
                 type="button"
-                className="flex items-center gap-[11px] px-2 py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors"
+                onClick={() => { setMenuOpen(false); navigate('/admin/settings') }}
+                className="flex items-center gap-[11px] px-2 py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors w-full"
               >
                 <span className="text-(--muted)"><UserAccountIcon size={17} strokeWidth={1.8} /></span>
                 Account settings
               </button>
-              {/* Preferences */}
               <button
                 type="button"
-                className="flex items-center gap-[11px] px-2 py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors"
+                onClick={() => { setMenuOpen(false); navigate('/admin/settings') }}
+                className="flex items-center gap-[11px] px-2 py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors w-full"
               >
                 <span className="text-(--muted)"><Settings01Icon size={17} strokeWidth={1.8} /></span>
                 Preferences
               </button>
+
               <div className="h-px bg-(--border) my-[5px]" />
-              {/* Sign out */}
+
               <button
                 type="button"
-                onClick={() => { logout.mutate(); setUserMenuOpen(false) }}
-                className="flex items-center gap-[11px] px-2 py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors"
+                onClick={() => { logout.mutate(); setMenuOpen(false) }}
+                className="flex items-center gap-[11px] px-2 py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors w-full"
               >
                 <span className="text-(--muted)"><Logout01Icon size={17} strokeWidth={1.8} /></span>
                 Sign out
               </button>
             </div>
-          )}
-
-          {/* User card button */}
-          <button
-            type="button"
-            onClick={() => setUserMenuOpen(o => !o)}
-            className={cn(
-              'flex w-full items-center gap-[10px] p-2 cursor-pointer bg-transparent border border-(--border) rounded-(--r) text-left text-(--ink) transition-colors hover:bg-(--surface-2)',
-              collapsed && 'justify-center p-[7px]',
-            )}
-          >
-            <div
-              className="shrink-0 grid place-items-center rounded-full bg-(--surface-2) text-(--ink) border border-(--border) text-[13px] font-semibold"
-              style={{ width: 34, height: 34 }}
-            >
-              {user ? initials(user.name) : '?'}
-            </div>
-            {!collapsed && (
-              <>
-                <div className="flex-1 flex flex-col min-w-0 leading-[1.25]">
-                  <span className="text-[13.5px] font-semibold truncate">{user?.name}</span>
-                  <span className="text-[11.5px] text-(--muted)">{user?.role}</span>
-                </div>
-                <span
-                  className="text-(--muted) flex-none transition-transform duration-180"
-                  style={{ transform: userMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <ArrowDown01Icon size={16} strokeWidth={1.8} />
-                </span>
-              </>
-            )}
-          </button>
+          </div>
         </div>
       </div>
     </aside>

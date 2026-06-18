@@ -89,6 +89,11 @@ const LIVE = new Set(['dashboard', 'posts', 'edit', 'media', 'users', 'useredit'
 function Sidebar({ page, setPage, sidebar, onToggleSidebar, theme, setTheme }) {
   const activeId = page === 'edit' ? 'posts' : page === 'useredit' ? 'users' : page;
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const bodyRef = React.useRef(null);
+  const [bodyH, setBodyH] = React.useState(264);
+  React.useLayoutEffect(() => {
+    if (bodyRef.current) setBodyH(bodyRef.current.scrollHeight);
+  }, [theme, sidebar]);
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -102,7 +107,7 @@ function Sidebar({ page, setPage, sidebar, onToggleSidebar, theme, setTheme }) {
 
       {NAV.map((sec) => (
         <div key={sec.group}>
-          <div className="group-label">{sec.group}</div>
+          <div className="group-label"><span className="gl-text">{sec.group}</span></div>
           {sec.items.map((it) => (
             <button key={it.id}
               className={"nav-item" + (activeId === it.id ? " active" : "")}
@@ -118,10 +123,16 @@ function Sidebar({ page, setPage, sidebar, onToggleSidebar, theme, setTheme }) {
 
       <div className="sb-foot">
         {menuOpen && <div className="um-overlay" onClick={() => setMenuOpen(false)}></div>}
-        <div className="usercard-wrap">
-          {menuOpen && (
-            <div className="usermenu">
-              <div className="um-label">Appearance</div>
+        <div className="usercard-wrap" style={{ height: (bodyH + 66) + 'px' }}>
+          <div className={"um-panel" + (menuOpen ? " open" : "")} style={{ '--um-body-h': bodyH + 'px' }}>
+            <button className={"usercard" + (menuOpen ? " open" : "")} onClick={() => setMenuOpen((v) => !v)}>
+              <div className="avatar" style={{ width: 34, height: 34, fontSize: 13 }}>DD</div>
+              <div className="uname">
+                <b>David Dev</b><span>Administrator</span>
+              </div>
+              <span className="uc-caret"><Icon name="caret-up" size={16} /></span>
+            </button>
+            <div className="um-body" ref={bodyRef}>
               <div className="um-seg">
                 <button className={theme === 'dark' ? 'on' : ''} onClick={() => setTheme('dark')}>
                   <Icon name="moon" size={15} /> Dark
@@ -136,14 +147,7 @@ function Sidebar({ page, setPage, sidebar, onToggleSidebar, theme, setTheme }) {
               <div className="um-sep"></div>
               <button className="um-item" onClick={() => { window.location.href = 'Login.html'; }}><span className="ico"><Icon name="logout" size={17} /></span> Sign out</button>
             </div>
-          )}
-          <button className={"usercard" + (menuOpen ? " open" : "")} onClick={() => setMenuOpen((v) => !v)}>
-            <div className="avatar" style={{ width: 34, height: 34, fontSize: 13 }}>DD</div>
-            <div className="uname">
-              <b>David Dev</b><span>Administrator</span>
-            </div>
-            <span className="uc-caret"><Icon name="caret-up" size={16} /></span>
-          </button>
+          </div>
         </div>
       </div>
     </aside>

@@ -377,9 +377,6 @@ function MediaLibrary({ setPage }) {
       <div className="card list-card">
         <div className="lc-head">
           <div><h1>Media Library</h1></div>
-          <div className="lc-actions">
-            <button className="btn btn-primary"><Icon name="upload" size={17} /> Upload</button>
-          </div>
         </div>
 
         <div className="lc-toolbar">
