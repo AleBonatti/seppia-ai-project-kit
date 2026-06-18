@@ -9,35 +9,34 @@
 
 ## Fields
 
-| Field        | Type      | Required | Validation                        | Notes                                             |
-| ------------ | --------- | -------- | --------------------------------- | ------------------------------------------------- |
-| `id`         | integer   | auto     | —                                 | Primary key                                       |
-| `name`       | string    | yes      | max:255                           |                                                   |
-| `email`      | string    | yes      | email, unique:users,email, max:255|                                                   |
-| `password`   | string    | yes      | min:8 (hashed)                    | Never returned in API responses                   |
-| `role`       | enum      | yes      | `superadmin` \| `admin`           | Default: `admin`                                  |
-| `created_at` | timestamp | auto     | —                                 |                                                   |
-| `updated_at` | timestamp | auto     | —                                 |                                                   |
+| Field                | Type      | Required | Validation                         | Notes                           |
+| -------------------- | --------- | -------- | ---------------------------------- | ------------------------------- |
+| `id`                 | integer   | auto     | —                                  | Primary key                     |
+| `name`               | string    | yes      | max:255                            |                                 |
+| `email`              | string    | yes      | email, unique:users,email, max:255 |                                 |
+| `password`           | string    | yes      | min:8 (hashed)                     | Never returned in API responses |
+| `role`               | enum      | yes      | `superadmin` \| `admin`            | Default: `admin`                |
+| `profile_photo_path` | string    | no       | -                                  | Default: null                   |
+| `created_at`         | timestamp | auto     | —                                  |                                 |
+| `updated_at`         | timestamp | auto     | —                                  |                                 |
 
 ---
 
 ## Relationships
 
-| Relation        | Type    | Target | Notes                                     |
-| --------------- | ------- | ------ | ----------------------------------------- |
-| `createdPages`  | hasMany | Page   | Pages this user created (`created_by` FK) |
+None
 
 ---
 
 ## Permissions
 
-| Action    | Superadmin | Admin |
-| --------- | ---------- | ----- |
-| list      | ✅          | ❌     |
-| view      | ✅          | ❌     |
-| create    | ✅          | ❌     |
-| update    | ✅          | ❌     |
-| delete    | ✅          | ❌     |
+| Action | Superadmin | Admin |
+| ------ | ---------- | ----- |
+| list   | ✅         | ✅    |
+| view   | ✅         | ✅    |
+| create | ✅         | ✅    |
+| update | ✅         | ✅    |
+| delete | ✅         | ✅    |
 
 A user cannot delete their own account (prevent accidental lockout).
 
@@ -45,22 +44,22 @@ A user cannot delete their own account (prevent accidental lockout).
 
 ## API endpoints
 
-| Method | Path                         | Description              | Auth        |
-| ------ | ---------------------------- | ------------------------ | ----------- |
-| GET    | `/api/v1/admin/users`        | Paginated list           | superadmin  |
-| GET    | `/api/v1/admin/users/{id}`   | Single user              | superadmin  |
-| POST   | `/api/v1/admin/users`        | Create new admin         | superadmin  |
-| PATCH  | `/api/v1/admin/users/{id}`   | Update name, email, role | superadmin  |
-| DELETE | `/api/v1/admin/users/{id}`   | Delete admin             | superadmin  |
+| Method | Path                       | Description              | Auth       |
+| ------ | -------------------------- | ------------------------ | ---------- |
+| GET    | `/api/v1/admin/users`      | Paginated list           | superadmin |
+| GET    | `/api/v1/admin/users/{id}` | Single user              | superadmin |
+| POST   | `/api/v1/admin/users`      | Create new admin         | superadmin |
+| PATCH  | `/api/v1/admin/users/{id}` | Update name, email, role | superadmin |
+| DELETE | `/api/v1/admin/users/{id}` | Delete admin             | superadmin |
 
 ---
 
 ## Admin UI
 
 - **List page** — table: name, email, role badge, created date, actions (edit, delete)
-  - Delete button disabled/hidden for the currently logged-in user
+    - Delete button disabled/hidden for the currently logged-in user
 - **Create page** — form: name, email, password, role selector
-- **Edit page** — form: name, email, role selector; password change is a separate optional field (blank = no change)
+- **Edit page** — form: name, email, role selector; password change not allowed: user itself can change from its settings page
 
 Filters:
 
@@ -70,17 +69,16 @@ Filters:
 
 ## Business rules
 
-- Only superadmins can access the Users section — hide it from the sidebar for admins
-- A superadmin cannot delete their own account
+- All type of admins roles (admins and superadmins) can access the Users section — But only superadmin can create other superadmins
+- A user cannot delete their own account
 - Password is hashed with bcrypt; never returned in any API response
 - When updating a user, if the `password` field is blank or absent, the password is not changed
-- There must always be at least one superadmin in the system (enforce in DeleteUserAction)
 
 ---
 
 ## Notes for code generation
 
 - Use Laravel's built-in `User` model as the base — add `role` cast as a string enum
+- add `profile_photo_path` field to store an avatar picture. The upload will be placed in the suer personal settings page, and will be handled by the user itself.
 - `role` is checked in middleware/policies — define a `isSuperAdmin()` helper method on the model
 - The `UserResource` must never include the `password` field
-- Superadmin-only routes should use a dedicated middleware: `EnsureSuperAdmin` (checks `$request->user()->role === 'superadmin'`)

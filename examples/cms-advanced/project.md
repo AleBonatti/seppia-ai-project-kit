@@ -1,8 +1,8 @@
-# Project Specification — CMS Advanced
+# Project Specification
 
 ## Project identity
 
-- **Name:** CMS Advanced
+- **Name:** SeppiaCms
 - **Client:** Generic multi-admin CMS
 - **Type:** web application with admin backoffice
 - **Description:** A headless CMS with a backoffice accessible at `/login`. Admins manage pages with multi-language content and a media library. Pages can have multiple file attachments, each with page-specific metadata.
@@ -18,10 +18,10 @@
 
 ## Users and roles
 
-Two roles exist within the admin system. There is no public registration — admin accounts are created by a superadmin.
+List the types of users and what they can do.
 
 - **Superadmin** — full access to everything: manage all pages, all media, all admin users, system settings
-- **Admin** — can manage pages and media, but cannot manage other admin accounts or access system settings
+- **Admin** — can manage pages and media, can manage other admin but not superadmin accounts (superadmin role is hidden for them) or access system settings
 
 Public/unauthenticated access:
 
@@ -32,9 +32,11 @@ Public/unauthenticated access:
 
 ## Core features
 
-- [x] Authentication — login, logout, password reset (admin only, no self-registration)
-- [x] Backoffice at `/login` with redirect to `/admin/dashboard`
-- [x] Multiple admin accounts — created by superadmin only
+List the main features of this project. Be specific — each item here maps to generated code.
+
+- [*] Authentication (login, logout, password reset) (admin only, no self-registration)
+- [x] Backoffice at login at `/login` with redirect to `/admin/dashboard` once logged. Everything under `/admin` route is part of the protected backoffice
+- [x] Multiple admin accounts — created by superadmin and admin
 - [x] Role management — two roles: `superadmin` and `admin`
 - [x] Pages management — create, edit, delete pages with multi-language fields
 - [x] Multi-language content — Italian and English per page (title, short_text, full_text, slug)
@@ -46,16 +48,15 @@ Public/unauthenticated access:
 
 ## Domain entities
 
-| Entity          | Description                                                           | Admin CRUD       | Public API       |
+List every domain entity. Each entity gets its own `specs/entities/[entity].md` file.
+
+| Entity          | Description                                                           | Admin CRUD       | Public view      |
 | --------------- | --------------------------------------------------------------------- | ---------------- | ---------------- |
-| User            | Admin accounts with role (superadmin / admin)                         | superadmin only  | ❌               |
+| User            | Authenticated users and admins                                        | ✅               | ❌               |
 | Page            | A content page with multi-language fields and optional attachments    | ✅               | ✅ (active only) |
 | PageTranslation | Per-language content for a page (title, short_text, full_text, slug)  | via Page editing | via Page         |
 | Media           | An uploaded file in the media library (image, document, etc.)         | ✅               | ✅               |
 | Attachment      | A media item attached to a specific page, with page-specific metadata | via Page editing | via Page         |
-
-> `PageTranslation` and `Attachment` are not managed independently — they are always edited
-> through their parent (Page). They do not have their own top-level admin screens.
 
 ---
 
@@ -63,35 +64,59 @@ Public/unauthenticated access:
 
 ### Admin panel sidebar
 
-```text
+```
 Dashboard
+--- Contents (group label separator)
 Pages        (list + create + edit)
+--- Media (group label separator)
 Media        (library grid + upload)
+--- Settings (group label separator)
 Users        (superadmin only — list + create + edit)
+Settings    (user account settings page)
+```
+
+### Public site (if applicable)
+
+```
+No public site in this version, we are just testing the admin backend.
 ```
 
 ---
 
-## UI style
+## Dashboard
 
-- **Aesthetic:** clean, professional, neutral — typical backoffice feel
-- **Reference:** Ghost CMS admin, Directus
-- **Primary color:** `#2563eb` (blue)
-- **Font:** Inter
-- **Dark mode:** yes (admin panel only)
+The admin dashboard (`/admin/dashboard`) should display:
+
+### Stats cards
+
+| Metric        | Value source   | Notes                |
+| ------------- | -------------- | -------------------- |
+| [Total pages] | `COUNT(pages)` | [link to pages list] |
+| [Total media] | `COUNT(media)` |                      |
+| [Total users] | `COUNT(users)` | [link to pages list] |
+
+### Recent activity
+
+- [*] Last 5 pages created — show title, date, author
+- [*] Last 5 media uploads — show filename, size, date
+
+### Login statistics
+
+- [*] Last 5 succeffull login attempts, show admin name and datetime
 
 ---
 
 ## API notes
 
 - **API prefix:** `/api/v1`
-- **Authentication:** Laravel Sanctum (SPA cookie auth)
-- **Admin routes:** all under `/api/v1/admin/` — require `auth:sanctum`
-- **Public routes:** `/api/v1/pages` and `/api/v1/media` — no auth, active content only
+- **Authentication:** Laravel Sanctum (SPA cookie)
+- **Special requirements:** [any non-standard API needs, e.g. "webhook for payment provider"]
 
 ---
 
 ## Integrations
+
+List any third-party services this project connects to.
 
 - [ ] None
 

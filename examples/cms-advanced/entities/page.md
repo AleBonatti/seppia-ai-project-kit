@@ -16,7 +16,7 @@
 | `id`           | integer   | auto     | —                         | Primary key                                            |
 | `date`         | date      | no       | nullable                  | Optional editorial date (e.g. publication date)        |
 | `order_column` | integer   | yes      | min:0, default:0          | Used for manual sorting in lists                       |
-| `date`         | datetim   | No       | nullable.                 | Used in news or post type, will be remove              |
+| `date`         | datetime  | No       | nullable.                 | Used in news or post type, will be remove              |
 | `active`       | boolean   | yes      | default:false             | Only active pages are visible in the public API        |
 | `created_by`   | foreignId | no       | nullable, exists:users,id | Set to NULL if the user is deleted (onDelete:SET NULL) |
 | `created_at`   | timestamp | auto     | —                         |                                                        |
@@ -95,29 +95,29 @@
 - Sortable by `order_column` — drag to reorder or inline numeric input
 - Filters:
     - [ ] Filter by active / inactive
-    - [ ] Search by title (searches across all locales)
+    - [ ] Search by title (searches across all locales. should start searching on typing, with 300ms debounce)
 
 ### Create / Edit page
 
-The edit form is a single page with two sections:
+The edit form is a single page with two main sections: a left column and a right column (check layout page). Each column is divided in multiple Cards blocks
 
-**Section 1 — Page settings (locale-independent)**
+**Left column**
 
-- Date (date picker, optional)
-- Order (numeric input)
-- Active (toggle)
+- Card 1 (locale dependent):
+    - Tab switcher: `IT` | `EN`
+    - Title (textbox)
+    - Slug (textbox)
+    - Short text (3 rows textarea)
+    - Full text (5 rows rich text / textarea)
 
-**Section 2 — Content (locale tabs)**
+- Card 2 - Media:
+    - File upload
+    - Grid of currently attached media (thumbnail + title + delete button)
 
-- Tab switcher: `IT` | `EN`
-- Per tab: Slug (auto-generated from title, editable), Title, Short text (textarea), Full text (rich text / textarea)
+**Right column**
 
-**Section 3 — Attachments**
-
-- Grid of currently attached media (thumbnail + title + position)
-- "Add attachment" button → opens Media Library picker modal
-- Inline editing of attachment title, description, position
-- Remove attachment button (removes the attachment link, not the media file itself)
+- Active (toggle, default to true on create)
+- Date (datetime field)
 
 ---
 
@@ -125,7 +125,7 @@ The edit form is a single page with two sections:
 
 - `created_by` is set automatically to the authenticated user on creation; never editable
 - `order_column` defaults to the current max + 1 (so new pages go to the end)
-- Slug is auto-generated from the title when the user starts typing; can be manually overridden
+- Slug is auto-generated from the title. Text field is filled when title is blurred; can be manually overridden
 - Slug must be unique per locale — validate in `StorePageRequest` and `UpdatePageRequest`
 - Deleting a page permanently deletes all its translations and attachments (DB cascade)
 - Deleting a page does NOT delete the media files — only the attachment records are removed
