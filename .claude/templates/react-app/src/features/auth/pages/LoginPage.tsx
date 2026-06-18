@@ -113,11 +113,18 @@ export default function LoginPage() {
           Remember Me
         </label>
 
-        {login.isError && (
-          <p className="mb-4 text-[13px] text-red-400 text-center">
-            Invalid email or password.
-          </p>
-        )}
+        {login.isError && (() => {
+          const status = login.error?.response?.status
+          const message = login.error?.response?.data?.message
+          const isLocked = status === 429
+          return (
+            <p className={`mb-4 text-[13px] text-center ${isLocked ? 'text-orange-400' : 'text-red-400'}`}>
+              {isLocked
+                ? (message ?? 'Too many attempts. Please wait before trying again.')
+                : 'Invalid email or password.'}
+            </p>
+          )
+        })()}
 
         <Button type="submit" variant="primary" size="lg" isLoading={login.isPending} className="w-full">
           Sign in

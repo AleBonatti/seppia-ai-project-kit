@@ -33,6 +33,7 @@ The kit exists only to give Claude consistent instructions.
    - `.claude/ui-kit/components.md`
    - `.claude/specs/project.md` ← **fill this in for the specific project**
    - `.claude/specs/style.md` ← **fill this in: accent color, font, dark mode**
+   - `.claude/specs/auth.md` ← auth system reference — copy as-is, no edits needed
    - `.claude/templates/` (entire folder) ← reference code Claude reads when generating files
 3. For each domain entity, copy `.claude/specs/entity.md` from the kit into `.claude/specs/entities/[entity-name].md` and fill it in
    - Example: `.claude/specs/entities/product.md`, `.claude/specs/entities/order.md`
@@ -56,6 +57,12 @@ The kit exists only to give Claude consistent instructions.
 ## Rules Claude must always follow
 
 When generating or modifying code in this project:
+
+### Auth
+
+- Read and follow `.claude/specs/auth.md` before generating or modifying any auth code
+- Use Sanctum SPA cookie auth — never JWT, never Bearer tokens, never localStorage
+- Always use `useAuth()` hook for auth state — never call `/me` directly in components
 
 ### Backend (Laravel)
 - Read and follow `.claude/rules/backend.md`

@@ -20,6 +20,7 @@ Read the following files before doing anything:
 - CLAUDE.md
 - .claude/specs/project.md
 - .claude/specs/style.md
+- .claude/specs/auth.md
 - .claude/stacks/laravel-react.md
 - .claude/rules/backend.md
 - .claude/rules/frontend.md
