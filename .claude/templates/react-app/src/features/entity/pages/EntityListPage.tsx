@@ -61,7 +61,7 @@ export default function EntityListPage() {
         </div>
 
         {/* Toolbar */}
-        <div className="flex items-center gap-3 flex-wrap px-(--pad) pb-4 border-b border-(--border)">
+        <div className="flex items-center gap-3 flex-wrap px-(--pad) pb-4">
           <div className="flex items-center gap-2 border border-(--field-border) bg-(--field) rounded-(--r-sm) px-3 h-9 flex-1 min-w-[200px] max-w-[320px]">
             <SearchMdIcon size={16} strokeWidth={1.8} className="text-(--faint) flex-none" />
             <input
