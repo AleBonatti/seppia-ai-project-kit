@@ -37,7 +37,9 @@ import {
 } from '@hugeicons/core-free-icons'
 import type { FC } from 'react'
 
-function wrap(data: object): FC<HugeiconsProps> {
+type IconData = Parameters<typeof HugeiconsIcon>[0]['icon']
+
+function wrap(data: IconData): FC<HugeiconsProps> {
   const Comp: FC<HugeiconsProps> = (props) => <HugeiconsIcon icon={data} {...props} />
   return Comp
 }
