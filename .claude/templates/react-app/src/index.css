@@ -77,6 +77,11 @@
   }
 }
 
+/* Sidebar collapse — transitions grid-template-columns when data-sidebar changes */
+.shell {
+  transition: grid-template-columns .3s cubic-bezier(.4, 0, .2, 1);
+}
+
 /* Page transition — replayed whenever the keyed wrapper remounts on route change */
 @keyframes pageIn {
   from { opacity: 0; transform: translateY(8px); }

@@ -11,7 +11,7 @@ export function AdminLayout() {
 
   return (
     <div
-      className="h-screen overflow-hidden"
+      className="shell h-screen overflow-hidden"
       style={{ display: 'grid', gridTemplateColumns: 'var(--sb-w) 1fr' }}
     >
       <Sidebar />

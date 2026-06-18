@@ -53,19 +53,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Three methods, no business logic:
 
-| Method     | Endpoint              | Description                                                                              |
-| ---------- | --------------------- | ---------------------------------------------------------------------------------------- |
+| Method     | Endpoint              | Description                                                                               |
+| ---------- | --------------------- | ----------------------------------------------------------------------------------------- |
 | `login()`  | `POST /api/v1/login`  | Validates credentials, records the attempt, applies rate limiting, returns `UserResource` |
-| `logout()` | `POST /api/v1/logout` | Calls `Auth::guard('web')->logout()`, invalidates session                                |
-| `me()`     | `GET /api/v1/me`      | Returns the authenticated `UserResource` — used to rehydrate auth state on page load     |
+| `logout()` | `POST /api/v1/logout` | Calls `Auth::guard('web')->logout()`, invalidates session                                 |
+| `me()`     | `GET /api/v1/me`      | Returns the authenticated `UserResource` — used to rehydrate auth state on page load      |
 
 `login()` responses:
 
-| Status | Condition | Body |
-| --- | --- | --- |
-| 200 | Credentials valid | `{ data: UserResource }` |
-| 422 | Wrong credentials | `{ message: 'These credentials do not match our records.' }` |
-| 429 | Too many attempts | `{ message: 'Too many login attempts. Please try again in N seconds.' }` |
+| Status | Condition         | Body                                                                     |
+| ------ | ----------------- | ------------------------------------------------------------------------ |
+| 200    | Credentials valid | `{ data: UserResource }`                                                 |
+| 422    | Wrong credentials | `{ message: 'These credentials do not match our records.' }`             |
+| 429    | Too many attempts | `{ message: 'Too many login attempts. Please try again in N seconds.' }` |
 
 ### Login attempt logging
 
@@ -73,18 +73,19 @@ Every login attempt (successful or failed) is recorded in the `login_attempts` t
 
 **Table: `login_attempts`**
 
-| Column | Type | Notes |
-| --- | --- | --- |
-| `id` | bigint | Primary key |
-| `email` | string | The submitted email |
-| `ip_address` | string(45) | Client IP — supports IPv6 |
-| `user_agent` | text | Browser / client string |
-| `successful` | boolean | `true` on valid credentials |
-| `created_at` | timestamp | Set at insert, no `updated_at` |
+| Column       | Type       | Notes                          |
+| ------------ | ---------- | ------------------------------ |
+| `id`         | bigint     | Primary key                    |
+| `email`      | string     | The submitted email            |
+| `ip_address` | string(45) | Client IP — supports IPv6      |
+| `user_agent` | text       | Browser / client string        |
+| `successful` | boolean    | `true` on valid credentials    |
+| `created_at` | timestamp  | Set at insert, no `updated_at` |
 
 No updates are ever made to this table — rows are append-only.
 
 **Files:**
+
 - `app/Models/LoginAttempt.php`
 - `app/DTOs/Auth/LoginAttemptData.php`
 - `app/Actions/Auth/RecordLoginAttemptAction.php`
@@ -156,6 +157,10 @@ src/features/auth/
 ```ts
 const { user, isLoading, isAuthenticated } = useAuth();
 ```
+
+Add 500ms timeout on login attempt.
+
+On login fail, clear password field.
 
 On login success, `useLogin` seeds the cache directly with `queryClient.setQueryData(['auth', 'me'], user)` — no extra `/me` round-trip needed.
 
