@@ -27,16 +27,16 @@ A `Media` file can be attached to multiple pages. Each attachment is independent
 
 ### `attachments` table
 
-| Field         | Type      | Required | Validation              | Notes                                                |
-| ------------- | --------- | -------- | ----------------------- | ---------------------------------------------------- |
-| `id`          | integer   | auto     | —                       | Primary key (not a composite key — easier to work with in APIs) |
-| `page_id`     | foreignId | yes      | exists:pages,id         | Cascade delete when page is deleted                  |
-| `media_id`    | foreignId | yes      | exists:media,id         | Restrict delete — cannot delete media with attachments |
-| `title`       | string    | no       | nullable, max:255       | Override label for this file on this page            |
-| `description` | text      | no       | nullable                | Optional caption or description on this page         |
-| `position`    | integer   | yes      | min:0, default:0        | Display order among attachments on this page         |
-| `created_at`  | timestamp | auto     | —                       |                                                      |
-| `updated_at`  | timestamp | auto     | —                       |                                                      |
+| Field         | Type      | Required | Validation        | Notes                                                           |
+| ------------- | --------- | -------- | ----------------- | --------------------------------------------------------------- |
+| `id`          | integer   | auto     | —                 | Primary key (not a composite key — easier to work with in APIs) |
+| `page_id`     | foreignId | yes      | exists:pages,id   | Cascade delete when page is deleted                             |
+| `media_id`    | foreignId | yes      | exists:media,id   | Restrict delete — cannot delete media with attachments          |
+| `title`       | string    | no       | nullable, max:255 | Override label for this file on this page                       |
+| `description` | text      | no       | nullable          | Optional caption or description on this page                    |
+| `position`    | integer   | yes      | min:0, default:0  | Display order among attachments on this page                    |
+| `created_at`  | timestamp | auto     | —                 |                                                                 |
+| `updated_at`  | timestamp | auto     | —                 |                                                                 |
 
 > Unique constraint on `(page_id, media_id)` — the same media cannot be attached
 > to the same page twice.
@@ -45,10 +45,10 @@ A `Media` file can be attached to multiple pages. Each attachment is independent
 
 ## Relationships
 
-| Relation | Type      | Target | Notes                                        |
-| -------- | --------- | ------ | -------------------------------------------- |
-| `page`   | belongsTo | Page   | The page this attachment belongs to          |
-| `media`  | belongsTo | Media  | The underlying media file                    |
+| Relation | Type      | Target | Notes                               |
+| -------- | --------- | ------ | ----------------------------------- |
+| `page`   | belongsTo | Page   | The page this attachment belongs to |
+| `media`  | belongsTo | Media  | The underlying media file           |
 
 ---
 
@@ -56,12 +56,12 @@ A `Media` file can be attached to multiple pages. Each attachment is independent
 
 Attachments are managed as part of page editing — no standalone access control beyond page permissions.
 
-| Action | Superadmin | Admin | Public          |
-| ------ | ---------- | ----- | --------------- |
-| create | ✅          | ✅     | ❌               |
-| update | ✅          | ✅     | ❌               |
-| delete | ✅          | ✅     | ❌               |
-| view   | via Page   | via Page | via Page     |
+| Action | Superadmin | Admin    | Public   |
+| ------ | ---------- | -------- | -------- |
+| create | ✅         | ✅       | ❌       |
+| update | ✅         | ✅       | ❌       |
+| delete | ✅         | ✅       | ❌       |
+| view   | via Page   | via Page | via Page |
 
 ---
 
@@ -69,25 +69,27 @@ Attachments are managed as part of page editing — no standalone access control
 
 All attachment endpoints are admin-only. There are no standalone public attachment endpoints — attachments are included in the page response.
 
-| Method | Path                                          | Description                             | Auth  |
-| ------ | --------------------------------------------- | --------------------------------------- | ----- |
-| POST   | `/api/v1/admin/pages/{page}/attachments`      | Attach a media to a page                | admin |
-| PATCH  | `/api/v1/admin/attachments/{attachment}`      | Update title, description, position     | admin |
-| DELETE | `/api/v1/admin/attachments/{attachment}`      | Remove attachment (media file kept)     | admin |
+| Method | Path                                     | Description                         | Auth  |
+| ------ | ---------------------------------------- | ----------------------------------- | ----- |
+| POST   | `/api/v1/admin/pages/{page}/attachments` | Attach a media to a page            | admin |
+| PATCH  | `/api/v1/admin/attachments/{attachment}` | Update title, description, position | admin |
+| DELETE | `/api/v1/admin/attachments/{attachment}` | Remove attachment (media file kept) | admin |
 
 > There is no GET endpoint for attachments — they are always loaded as part of
 > `GET /api/v1/admin/pages/{id}` (included in the `PageResource`).
 
 ### Reorder endpoint
 
-| Method | Path                                              | Description                          | Auth  |
-| ------ | ------------------------------------------------- | ------------------------------------ | ----- |
-| POST   | `/api/v1/admin/pages/{page}/attachments/reorder`  | Bulk update positions for all attachments | admin |
+| Method | Path                                             | Description                               | Auth  |
+| ------ | ------------------------------------------------ | ----------------------------------------- | ----- |
+| POST   | `/api/v1/admin/pages/{page}/attachments/reorder` | Bulk update positions for all attachments | admin |
 
 Reorder request body:
+
 ```json
 { "order": [3, 1, 5, 2] }
 ```
+
 Where the array contains attachment IDs in the desired order — positions are reassigned 0, 1, 2, 3...
 
 ---
@@ -114,9 +116,9 @@ The attachment UI lives inside the **Page edit page** — there is no standalone
 
 - Each attachment row shows: media thumbnail/icon, original filename, type + size, editable title, editable description, reorder controls, remove button
 - Clicking "Add attachment" opens the **Media Library picker modal**:
-  - Displays the full media library grid (paginated)
-  - Includes an "Upload new file" tab for uploading directly from the page editor
-  - Single-select: clicking a media item creates the attachment and closes the modal
+    - Displays the full media library grid (paginated)
+    - Includes an "Upload new file" tab for uploading directly from the page editor
+    - Single-select: clicking a media item creates the attachment and closes the modal
 - Reordering: use up/down buttons or drag-and-drop (positions saved on drop/move)
 - Removing: clicking "Remove" deletes the `Attachment` record — the `Media` file is kept
 - Changes to attachment metadata (title, description) are auto-saved or saved with the page form
@@ -167,9 +169,9 @@ The attachment UI lives inside the **Page edit page** — there is no standalone
 - `Attachment` is a regular Eloquent model (not just a pivot) — it has its own `id` and dedicated routes
 - `AttachmentController` handles store, update, destroy — always scoped to a page
 - `CreateAttachmentAction`:
-  1. Check the media is not already attached to this page (unique check)
-  2. Set `position` to `Attachment::where('page_id', $pageId)->max('position') + 1`
-  3. Create the `Attachment` record
+    1. Check the media is not already attached to this page (unique check)
+    2. Set `position` to `Attachment::where('page_id', $pageId)->max('position') + 1`
+    3. Create the `Attachment` record
 - `ReorderAttachmentsAction`: accepts ordered array of IDs, updates `position` on each
 - The `PageResource` eager-loads `attachments.media` — always include in the response
 

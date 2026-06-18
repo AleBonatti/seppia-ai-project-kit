@@ -25,6 +25,14 @@ Read the following files before doing anything:
 - .claude/rules/frontend.md
 - .claude/rules/typescript.md
 
+## Dependency check
+
+Before generating any code, read the "Entity generation order" section in `.claude/specs/project.md`.
+
+If [ENTITY_NAME] depends on one or more other entities that have not been generated yet
+(i.e. their migration table does not exist in `api/database/migrations/`), generate those
+dependency entities first — in the order listed — then generate [ENTITY_NAME].
+
 Generate all backend and frontend code for the [ENTITY_NAME] entity
 as described in its spec file.
 

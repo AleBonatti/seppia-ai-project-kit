@@ -187,6 +187,10 @@ tests/Feature/
 > Those are created exclusively by `generate-entity.md`, one entity at a time, after this
 > project scaffold is complete. Generating them now causes schema conflicts because the
 > database is migrated in Phase 3 before the entity specs are finalised.
+>
+> When running `generate-entity.md` later, always follow the order defined in the
+> "Entity generation order" section of `.claude/specs/project.md`. Entities with
+> foreign-key dependencies must be generated after the entities they depend on.
 
 ---
 

@@ -61,6 +61,24 @@ List every domain entity. Each entity gets its own `specs/entities/[entity].md` 
 
 ---
 
+## Entity generation order
+
+List entities in the order they must be generated. An entity that another depends on must appear first.
+If no entity depends on another, alphabetical order is fine.
+
+```
+1. [Entity A]           — no dependencies
+2. [Entity B]           — no dependencies
+3. [Entity C]           — depends on Entity A (foreign key to entity_a_id)
+4. [Entity D]           — depends on Entity A and Entity B
+```
+
+> Claude reads this section before starting `generate-entity.md`.
+> If you ask it to generate an entity whose dependency has not been generated yet,
+> it will generate the dependency first, then the requested entity.
+
+---
+
 ## Navigation structure
 
 ### Admin panel sidebar

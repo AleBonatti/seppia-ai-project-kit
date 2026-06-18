@@ -11,20 +11,20 @@
 
 ### `media` table
 
-| Field         | Type      | Required | Validation                                          | Notes                                              |
-| ------------- | --------- | -------- | --------------------------------------------------- | -------------------------------------------------- |
-| `id`          | integer   | auto     | —                                                   | Primary key                                        |
-| `filename`    | string    | yes      | max:255                                             | Original filename as uploaded (e.g. `photo.jpg`)   |
-| `disk_name`   | string    | yes      | max:255, unique                                     | Stored filename on disk (UUID-based, e.g. `a1b2c3.jpg`) |
-| `path`        | string    | yes      | max:500                                             | Full storage path (e.g. `media/2024/05/a1b2c3.jpg`)|
-| `mime_type`   | string    | yes      | max:127                                             | e.g. `image/jpeg`, `application/pdf`               |
-| `media_type`  | enum      | yes      | `image` \| `document` \| `video` \| `other`         | Derived from mime_type at upload time              |
-| `size`        | integer   | yes      | min:0                                               | File size in bytes                                 |
-| `width`       | integer   | no       | nullable                                            | Image width in px — null for non-images            |
-| `height`      | integer   | no       | nullable                                            | Image height in px — null for non-images           |
-| `uploaded_by` | foreignId | no       | nullable, exists:users,id                           | Set to NULL if the user is deleted                 |
-| `created_at`  | timestamp | auto     | —                                                   |                                                    |
-| `updated_at`  | timestamp | auto     | —                                                   |                                                    |
+| Field         | Type      | Required | Validation                                  | Notes                                                   |
+| ------------- | --------- | -------- | ------------------------------------------- | ------------------------------------------------------- |
+| `id`          | integer   | auto     | —                                           | Primary key                                             |
+| `filename`    | string    | yes      | max:255                                     | Original filename as uploaded (e.g. `photo.jpg`)        |
+| `disk_name`   | string    | yes      | max:255, unique                             | Stored filename on disk (UUID-based, e.g. `a1b2c3.jpg`) |
+| `path`        | string    | yes      | max:500                                     | Full storage path (e.g. `media/2024/05/a1b2c3.jpg`)     |
+| `mime_type`   | string    | yes      | max:127                                     | e.g. `image/jpeg`, `application/pdf`                    |
+| `media_type`  | enum      | yes      | `image` \| `document` \| `video` \| `other` | Derived from mime_type at upload time                   |
+| `size`        | integer   | yes      | min:0                                       | File size in bytes                                      |
+| `width`       | integer   | no       | nullable                                    | Image width in px — null for non-images                 |
+| `height`      | integer   | no       | nullable                                    | Image height in px — null for non-images                |
+| `uploaded_by` | foreignId | no       | nullable, exists:users,id                   | Set to NULL if the user is deleted                      |
+| `created_at`  | timestamp | auto     | —                                           |                                                         |
+| `updated_at`  | timestamp | auto     | —                                           |                                                         |
 
 ---
 
@@ -32,20 +32,20 @@
 
 These are appended to the `MediaResource` — not stored in the DB:
 
-| Attribute    | Description                                                      |
-| ------------ | ---------------------------------------------------------------- |
-| `url`        | Public URL to access the file (`/storage/media/2024/05/...`)     |
-| `is_image`   | Boolean shortcut — `media_type === 'image'`                      |
-| `size_human` | Human-readable size — e.g. `"1.2 MB"` (formatted in Resource)   |
+| Attribute    | Description                                                   |
+| ------------ | ------------------------------------------------------------- |
+| `url`        | Public URL to access the file (`/storage/media/2024/05/...`)  |
+| `is_image`   | Boolean shortcut — `media_type === 'image'`                   |
+| `size_human` | Human-readable size — e.g. `"1.2 MB"` (formatted in Resource) |
 
 ---
 
 ## Relationships
 
-| Relation      | Type      | Target      | Notes                                              |
-| ------------- | --------- | ----------- | -------------------------------------------------- |
-| `attachments` | hasMany   | Attachment  | All page attachments that reference this media     |
-| `uploader`    | belongsTo | User        | Admin who uploaded the file                        |
+| Relation      | Type      | Target     | Notes                                          |
+| ------------- | --------- | ---------- | ---------------------------------------------- |
+| `attachments` | hasMany   | Attachment | All page attachments that reference this media |
+| `uploader`    | belongsTo | User       | Admin who uploaded the file                    |
 
 ---
 
@@ -53,10 +53,10 @@ These are appended to the `MediaResource` — not stored in the DB:
 
 | Action | Superadmin | Admin | Public          |
 | ------ | ---------- | ----- | --------------- |
-| list   | ✅          | ✅     | ✅ (basic info) |
-| view   | ✅          | ✅     | ✅              |
-| upload | ✅          | ✅     | ❌              |
-| delete | ✅          | ✅     | ❌              |
+| list   | ✅         | ✅    | ✅ (basic info) |
+| view   | ✅         | ✅    | ✅              |
+| upload | ✅         | ✅    | ❌              |
+| delete | ✅         | ✅    | ❌              |
 
 > A media file cannot be deleted if it has any active attachments.
 > Admins can delete any media (not just their own uploads).
@@ -67,22 +67,22 @@ These are appended to the `MediaResource` — not stored in the DB:
 
 ### Admin (authenticated)
 
-| Method | Path                         | Description                                 | Auth  |
-| ------ | ---------------------------- | ------------------------------------------- | ----- |
-| GET    | `/api/v1/admin/media`        | Paginated library grid (filter by type)     | admin |
-| GET    | `/api/v1/admin/media/{id}`   | Single media item                           | admin |
-| POST   | `/api/v1/admin/media`        | Upload a new file (multipart/form-data)     | admin |
-| DELETE | `/api/v1/admin/media/{id}`   | Delete file from disk and DB                | admin |
+| Method | Path                       | Description                             | Auth  |
+| ------ | -------------------------- | --------------------------------------- | ----- |
+| GET    | `/api/v1/admin/media`      | Paginated library grid (filter by type) | admin |
+| GET    | `/api/v1/admin/media/{id}` | Single media item                       | admin |
+| POST   | `/api/v1/admin/media`      | Upload a new file (multipart/form-data) | admin |
+| DELETE | `/api/v1/admin/media/{id}` | Delete file from disk and DB            | admin |
 
 > There is no PATCH/update for Media — the file itself is immutable once uploaded.
 > The only editable metadata lives on the `Attachment`, not the `Media`.
 
 ### Public (no auth)
 
-| Method | Path                  | Description                     | Auth |
-| ------ | --------------------- | ------------------------------- | ---- |
-| GET    | `/api/v1/media`       | Paginated list (basic info only)| no   |
-| GET    | `/api/v1/media/{id}`  | Single media item               | no   |
+| Method | Path                 | Description                      | Auth |
+| ------ | -------------------- | -------------------------------- | ---- |
+| GET    | `/api/v1/media`      | Paginated list (basic info only) | no   |
+| GET    | `/api/v1/media/{id}` | Single media item                | no   |
 
 ---
 
@@ -92,21 +92,20 @@ These are appended to the `MediaResource` — not stored in the DB:
 
 - Grid view (not table) — thumbnail for images, file icon for documents
 - Each card shows: thumbnail/icon, filename, size, type badge, upload date
-- "Upload" button → drag-and-drop upload zone or file picker (multiple files at once)
+- There's no upload in Media Library: file uploads will happen in attachment section, on each specific entity
 - Click a media card → opens a detail side panel (not a new page):
-  - Full preview (image) or download link (document)
-  - Metadata: filename, size, dimensions (if image), mime type, uploaded by, upload date
-  - Delete button (disabled if the file has active attachments — show tooltip explaining why)
+    - Full preview (image) or download link (document)
+    - Metadata: filename, size, dimensions (if image), mime type, uploaded by, upload date
+    - Delete button (disabled if the file has active attachments — show tooltip explaining why)
 - Filters:
-  - [ ] Filter by media_type (image / document / video / other)
-  - [ ] Search by filename
+    - [ ] Filter by media_type (image / document / video / other)
+    - [ ] Search by filename
 
 ### Media picker modal (used from Page edit → Add attachment)
 
 - Same grid as the library, but in a modal
 - Single-select — clicking a media selects it and closes the modal
 - Search by filename
-- Upload tab — allows uploading a new file directly from the picker without leaving the page editor
 
 ---
 
@@ -115,10 +114,10 @@ These are appended to the `MediaResource` — not stored in the DB:
 - `disk_name` is generated at upload time: `Str::uuid() . '.' . $extension`
 - `path` follows `media/{year}/{month}/{disk_name}` — organises files by upload date
 - `media_type` is derived from `mime_type` at upload time:
-  - `image/*` → `image`
-  - `application/pdf`, `application/msword`, `application/vnd.*`, `text/*` → `document`
-  - `video/*` → `video`
-  - anything else → `other`
+    - `image/*` → `image`
+    - `application/pdf`, `application/msword`, `application/vnd.*`, `text/*` → `document`
+    - `video/*` → `video`
+    - anything else → `other`
 - `width` and `height` are extracted at upload time for image files (use PHP `getimagesize()` or Intervention Image)
 - A media file **cannot be deleted** if it has one or more `Attachment` records pointing to it — return a 422 with a clear error message
 - `uploaded_by` is set automatically from the authenticated user; set to NULL if that user is deleted (onDelete: SET NULL)
@@ -131,16 +130,16 @@ These are appended to the `MediaResource` — not stored in the DB:
 ### Backend
 
 - File upload handled in `UploadMediaAction`:
-  1. Validate file (max size 20MB, any mime type)
-  2. Generate `disk_name` (UUID + extension)
-  3. Store file to `storage/app/public/media/{year}/{month}/`
-  4. Extract dimensions if image
-  5. Derive `media_type` from mime_type
-  6. Create `Media` record
+    1. Validate file (max size 20MB, any mime type)
+    2. Generate `disk_name` (UUID + extension)
+    3. Store file to `storage/app/public/media/{year}/{month}/`
+    4. Extract dimensions if image
+    5. Derive `media_type` from mime_type
+    6. Create `Media` record
 - `DeleteMediaAction`:
-  1. Check no attachments exist — throw if so
-  2. Delete file from disk (`Storage::delete($media->path)`)
-  3. Delete DB record
+    1. Check no attachments exist — throw if so
+    2. Delete file from disk (`Storage::delete($media->path)`)
+    3. Delete DB record
 - `MediaResource` appends `url` via `Storage::url($this->path)`
 - The upload endpoint accepts `multipart/form-data` with a `file` field
 
