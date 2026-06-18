@@ -154,13 +154,8 @@ src/features/auth/
 - `retry: false` — a 401 means the user is not logged in, not a transient error
 - `staleTime: Infinity` — auth state never goes stale on its own; it's updated explicitly on login/logout
 
-```ts
+````ts
 const { user, isLoading, isAuthenticated } = useAuth();
-```
-
-Add 500ms timeout on login attempt.
-
-On login fail, clear password field.
 
 On login success, `useLogin` seeds the cache directly with `queryClient.setQueryData(['auth', 'me'], user)` — no extra `/me` round-trip needed.
 
@@ -180,7 +175,7 @@ api.interceptors.response.use(
         return Promise.reject(error);
     },
 );
-```
+````
 
 This catches session expiry anywhere in the app, not just on auth routes.
 
@@ -228,6 +223,12 @@ Every project seeds one admin user via `AdminUserSeeder`:
 | Email    | `la.seppia@gmail.com` |
 | Password | `password`            |
 | Role     | `superadmin`          |
+
+### Layout
+
+Add 500ms timeout on every api call when clicking action button (login attempt, send reset email, password reset).
+
+On login fail, clear password field.
 
 ---
 
