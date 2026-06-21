@@ -54,6 +54,17 @@
 
   *, *::before, *::after { box-sizing: border-box; }
 
+  /* Suppress browser autofill background — use a long transition to keep the
+     field color from flashing; the transition never completes during normal use. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px var(--field) inset !important;
+    -webkit-text-fill-color: var(--ink) !important;
+    caret-color: var(--ink);
+    transition: background-color 99999s ease-in-out 0s;
+  }
+
   html, body, #root {
     height: 100%;
     margin: 0;
