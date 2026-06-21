@@ -283,8 +283,22 @@ Log in with the seeded admin credentials (Claude will tell you what they are).
 
 ### Step 7 — Generate each entity
 
-For each entity, open `.claude/prompts/generate-entity.md` from this kit, copy the prompt text,
-replace `[entity-name]` with your entity's filename, and paste it into Claude Code.
+Open `.claude/prompts/generate-entity.md` from this kit, copy the prompt text, and paste it
+into Claude Code. There are two ways to use it:
+
+**Generate all remaining entities at once** — paste the prompt as-is, without adding anything.
+Claude will list all files in `.claude/specs/entities/`, check which migrations already exist,
+and generate every remaining entity in the order defined in the "Entity generation order" section
+of `project.md`.
+
+**Generate a specific entity** — append the entity name at the end of the prompt:
+
+```text
+generate the Product entity
+```
+
+Claude respects dependencies automatically: if the entity you request depends on another that
+hasn't been generated yet, it generates the dependency first.
 
 Claude will generate for each entity:
 
@@ -293,8 +307,6 @@ API resource, policy, route registration, Pest feature tests.
 
 **Frontend:** TypeScript types, API functions, React Query hooks, form component, table
 component, list page, create/edit pages.
-
-Run this prompt once per entity, in any order.
 
 ### Step 8 — Generate custom pages (optional)
 

@@ -1,14 +1,15 @@
 # Prompt: Generate Entity (Backend + Frontend)
 
-Use this prompt to generate all code for a single domain entity.
+Use this prompt to generate all code for one or more domain entities.
+You can either name a specific entity or let Claude discover them automatically.
 
 ---
 
 ## When to use
 
 - The project scaffold already exists (run `generate-project.md` first)
-- You have filled in `.claude/specs/entities/[entity].md`
-- You want to generate the full backend + frontend for one entity
+- You have filled in the relevant `.claude/specs/entities/[entity].md` files
+- You want to generate the full backend + frontend for one entity or all remaining entities
 
 ---
 
@@ -23,22 +24,29 @@ Read the following files before doing anything:
 - CLAUDE.md
 - .claude/specs/project.md
 - .claude/specs/style.md
-- .claude/specs/entities/[entity-name].md   ← e.g. .claude/specs/entities/product.md
 - .claude/stacks/laravel-react.md
 - .claude/rules/backend.md
 - .claude/rules/frontend.md
 - .claude/rules/typescript.md
 
+## Which entity to generate
+
+If this prompt names a specific entity (e.g. "generate the Product entity"), generate that one.
+
+Otherwise, list all files in `.claude/specs/entities/` to discover available entities,
+then check `api/database/migrations/` to identify which ones have not been generated yet.
+Generate all remaining entities, one at a time, in the order defined in the
+"Entity generation order" section of `.claude/specs/project.md`.
+
+For each entity, read its spec file at `.claude/specs/entities/[entity-name].md` before generating.
+
 ## Dependency check
 
-Before generating any code, read the "Entity generation order" section in `.claude/specs/project.md`.
+Before generating each entity, verify that any entity it depends on (foreign key relationship)
+already has a migration file in `api/database/migrations/`. If a dependency is missing,
+generate it first, then continue with the originally requested entity.
 
-If [ENTITY_NAME] depends on one or more other entities that have not been generated yet
-(i.e. their migration table does not exist in `api/database/migrations/`), generate those
-dependency entities first — in the order listed — then generate [ENTITY_NAME].
-
-Generate all backend and frontend code for the [ENTITY_NAME] entity
-as described in its spec file.
+Generate all backend and frontend code for each entity as described in its spec file.
 
 ## Backend — generate these files (inside api/)
 
@@ -153,8 +161,10 @@ Then confirm the new table exists and the migration ran without errors before re
 
 ## After running this prompt
 
-1. Add the new entity routes to `frontend/src/app/router.tsx`
-2. Add the new entity to `frontend/src/components/layout/Sidebar.tsx`
-3. Register the Policy in `api/app/Providers/AuthServiceProvider.php`
+For each generated entity:
+
+1. Add its routes to `frontend/src/app/router.tsx`
+2. Add it to `frontend/src/components/layout/Sidebar.tsx`
+3. Register its Policy in `api/app/Providers/AuthServiceProvider.php`
 4. Run migrations: `cd api && php artisan migrate`
 5. Run tests: `cd api && php artisan test --filter=[Entity]`
