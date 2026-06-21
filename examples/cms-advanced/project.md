@@ -85,24 +85,7 @@ No public site in this version, we are just testing the admin backend.
 
 ## Dashboard
 
-The admin dashboard (`/admin/dashboard`) should display:
-
-### Stats cards
-
-| Metric        | Value source   | Notes                |
-| ------------- | -------------- | -------------------- |
-| [Total pages] | `COUNT(pages)` | [link to pages list] |
-| [Total media] | `COUNT(media)` |                      |
-| [Total users] | `COUNT(users)` | [link to pages list] |
-
-### Recent activity
-
-- [*] Last 5 pages created — show title, date, author
-- [*] Last 5 media uploads — show filename, size, date
-
-### Login statistics
-
-- [*] Last 5 succeffull login attempts, show admin name and datetime
+See `.claude/specs/dashboard.md` for the full dashboard specification.
 
 ---
 

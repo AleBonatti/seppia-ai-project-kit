@@ -228,8 +228,10 @@ Open `.claude/specs/project.md` in the new project and fill in every section:
 - Core features (checklist of what to build)
 - Domain entities (the main "things" — products, posts, orders, etc.)
 - Navigation structure (sidebar items for the admin panel)
-- UI style (aesthetic, primary color, dark mode preference)
 - Integrations and out-of-scope items
+
+Also fill in `.claude/specs/style.md` (accent color, font, dark mode) and
+`.claude/specs/dashboard.md` (stat cards, recent activity, quick actions).
 
 See `examples/` in this kit for complete filled-in examples to use as reference.
 
@@ -308,6 +310,16 @@ API resource, policy, route registration, Pest feature tests.
 **Frontend:** TypeScript types, API functions, React Query hooks, form component, table
 component, list page, create/edit pages.
 
+### Step 7.5 — Generate the dashboard
+
+Open `.claude/prompts/generate-dashboard.md` from this kit, copy the prompt text, and paste it
+into Claude Code. Claude will read `.claude/specs/dashboard.md` and generate:
+
+- A `DashboardController` with a single `/api/v1/admin/dashboard` endpoint
+- A `GetDashboardStatsAction` that runs all the counts and recent-item queries
+- `useDashboardStats` React Query hook
+- The real `DashboardPage.tsx`, replacing the placeholder generated in Step 6
+
 ### Step 8 — Generate custom pages (optional)
 
 For any page that doesn't fit the standard entity CRUD pattern — a dashboard with stats,
@@ -336,8 +348,12 @@ Step 6: Paste generate-project.md prompt
         → login screen working at localhost:5173
       │
       ▼
-Step 7: Paste generate-entity.md prompt (once per entity)
+Step 7: Paste generate-entity.md prompt (once per entity, or all at once)
         → full backend + frontend per entity
+      │
+      ▼
+Step 7.5: Paste generate-dashboard.md prompt
+        → real dashboard replacing the placeholder
       │
       ▼
 Step 8: Paste generate-ui-page.md prompt (optional)
