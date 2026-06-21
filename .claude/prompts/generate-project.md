@@ -16,6 +16,10 @@ Use this prompt at the start of a new project to bootstrap and scaffold everythi
 ## Prompt
 
 ````text
+IMPORTANT: All files you read, create, or modify must be inside this project folder.
+Never read files from parent directories or sibling folders. The kit docs listed below
+are already present inside this project under .claude/ — read them from there.
+
 Read the following files before doing anything:
 - CLAUDE.md
 - .claude/specs/project.md
