@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Add01Icon, SearchMdIcon, PencilEdit01Icon, Delete01Icon } from '@/lib/icons'
-import { Button } from '@/components/ui/Button'
+import { Button, ButtonLink } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardFooter } from '@/components/ui/Card'
 import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell, TableCheckCell, RowTitle } from '@/components/ui/Table'
@@ -54,9 +54,7 @@ export default function EntityListPage() {
           <h1 className="text-[20px] font-semibold text-(--ink)">Entities</h1>
           <div className="flex gap-[9px]">
             <Button variant="secondary">Export</Button>
-            <Button variant="primary" leftIcon={<Add01Icon size={16} strokeWidth={1.8} />} asChild>
-              <Link to="/admin/entities/create">New Entity</Link>
-            </Button>
+            <ButtonLink as={Link} to="/admin/entities/create" variant="primary" leftIcon={<Add01Icon size={16} strokeWidth={1.8} />}>New Entity</ButtonLink>
           </div>
         </div>
 

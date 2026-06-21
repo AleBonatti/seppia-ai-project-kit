@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Add01Icon, SearchMdIcon, PencilEdit01Icon, Delete01Icon } from '@/lib/icons'
-import { Button } from '@/components/ui/Button'
+import { Button, ButtonLink } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardFooter } from '@/components/ui/Card'
@@ -77,9 +77,7 @@ export default function UsersListPage() {
           <h1 className="text-[20px] font-semibold text-(--ink)">Users</h1>
           <div className="flex gap-[9px]">
             <Button variant="secondary">Export</Button>
-            <Button variant="primary" leftIcon={<Add01Icon size={16} strokeWidth={1.8} />} asChild>
-              <Link to="/admin/users/create">New User</Link>
-            </Button>
+            <ButtonLink as={Link} to="/admin/users/create" variant="primary" leftIcon={<Add01Icon size={16} strokeWidth={1.8} />}>New User</ButtonLink>
           </div>
         </div>
 

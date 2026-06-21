@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft01Icon, Upload01Icon } from "@/lib/icons";
-import { Button } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -55,9 +55,7 @@ export default function UserEditPage() {
                     </div>
                 </div>
                 <div className="flex gap-[9px]">
-                    <Button variant="secondary" asChild>
-                        <Link to="/admin/users">Cancel</Link>
-                    </Button>
+                    <ButtonLink as={Link} to="/admin/users" variant="secondary">Cancel</ButtonLink>
                     <Button variant="primary">Save</Button>
                 </div>
             </div>
@@ -126,9 +124,7 @@ export default function UserEditPage() {
                 <div className="flex items-center justify-between gap-3 flex-wrap border-t border-(--border) pt-5 mt-5">
                     <span className="text-[12.5px] text-(--faint)">Last saved Feb 10, 2026 · 06:16</span>
                     <div className="flex gap-[9px] ml-auto">
-                        <Button variant="secondary" asChild>
-                            <Link to="/admin/users">Cancel</Link>
-                        </Button>
+                        <ButtonLink as={Link} to="/admin/users" variant="secondary">Cancel</ButtonLink>
                         <Button variant="primary">Save changes</Button>
                     </div>
                 </div>

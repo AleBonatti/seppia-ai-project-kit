@@ -5,7 +5,7 @@
 
 import { Link } from 'react-router-dom'
 import { ArrowLeft01Icon } from '@/lib/icons'
-import { Button } from '@/components/ui/Button'
+import { Button, ButtonLink } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
@@ -82,9 +82,7 @@ export default function EntityEditPage() {
           </div>
         </div>
         <div className="flex gap-[9px]">
-          <Button variant="secondary" asChild>
-            <Link to="/admin/entities">Cancel</Link>
-          </Button>
+          <ButtonLink as={Link} to="/admin/entities" variant="secondary">Cancel</ButtonLink>
           <Button variant="primary">Save</Button>
         </div>
       </div>
