@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Upload01Icon, SearchMdIcon, ArrowLeft01Icon, ArrowRight01Icon } from "@/lib/icons";
+import { Upload01Icon, Search01Icon, ArrowLeft01Icon, ArrowRight01Icon } from "@/lib/icons";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card, CardFooter } from "@/components/ui/Card";
@@ -88,7 +88,7 @@ export default function MediaLibraryPage() {
                 {/* Toolbar */}
                 <div className="flex items-center gap-3 flex-wrap px-(--pad) pb-4 border-b border-(--border)">
                     <div className="flex items-center gap-2 border border-(--field-border) bg-(--field) rounded-(--r-sm) px-3 h-9 flex-1 min-w-[200px] max-w-[320px]">
-                        <SearchMdIcon size={16} strokeWidth={1.8} className="text-(--faint) flex-none" />
+                        <Search01Icon size={16} strokeWidth={1.8} className="text-(--faint) flex-none" />
                         <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search files…" className="bg-transparent border-none outline-none text-[13.5px] text-(--ink) placeholder:text-(--faint) w-full" />
                     </div>
                     <div className="flex gap-2">
