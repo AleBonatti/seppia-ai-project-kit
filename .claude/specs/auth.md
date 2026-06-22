@@ -224,11 +224,12 @@ Every project seeds one admin user via `AdminUserSeeder`:
 | Password | `password`            |
 | Role     | `superadmin`          |
 
-### Layout
+### UX behaviour
 
-Add 500ms timeout on every api call when clicking action button (login attempt, send reset email, password reset).
+These rules apply to the auth pages and hooks — implement them when generating auth files:
 
-On login fail, clear password field.
+- Add a 500ms artificial delay before every auth API call (login attempt, send reset email, password reset). Use `await new Promise(r => setTimeout(r, 500))` at the start of each `mutationFn`.
+- On login failure (any non-200 response), clear the password field by calling `setValue('password', '')` via React Hook Form.
 
 ---
 

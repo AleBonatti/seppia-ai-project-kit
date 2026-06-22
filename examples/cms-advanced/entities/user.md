@@ -16,7 +16,7 @@
 | `email`              | string    | yes      | email, unique:users,email, max:255 |                                 |
 | `password`           | string    | yes      | min:8 (hashed)                     | Never returned in API responses |
 | `role`               | enum      | yes      | `superadmin` \| `admin`            | Default: `admin`                |
-| `profile_photo_path` | string    | no       | -                                  | Default: null                   |
+| `profile_photo_path` | string    | no       | —                                  |                                 |
 | `created_at`         | timestamp | auto     | —                                  |                                 |
 | `updated_at`         | timestamp | auto     | —                                  |                                 |
 

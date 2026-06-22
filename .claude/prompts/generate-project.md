@@ -247,8 +247,10 @@ Generate these files inside `frontend/src/`:
 
 ### Auth feature
 
-Copy all of the following files from `.claude/templates/react-app/src/features/auth/` exactly,
-replacing every occurrence of `"Project Name"` with the project name from `.claude/specs/project.md`:
+Copy all of the following files from `.claude/templates/react-app/src/features/auth/`,
+replacing every occurrence of `"Project Name"` with the project name from `.claude/specs/project.md`.
+After copying, apply the UX behaviour rules from `.claude/specs/auth.md` § "UX behaviour" —
+these are not in the template files and must be added manually.
 
 1. `src/features/auth/types.ts`
 2. `src/features/auth/api.ts`
