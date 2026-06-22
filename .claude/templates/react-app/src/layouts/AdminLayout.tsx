@@ -17,9 +17,9 @@ export function AdminLayout() {
       <Sidebar />
       <div className="flex flex-col overflow-hidden min-w-0">
         {/* content: padding 13px on all sides except left (sidebar handles that gap) */}
-        <div className="flex-1 overflow-hidden" style={{ padding: '13px 8px 13px 0' }}>
+        <div className="flex-1 min-h-0 overflow-hidden" style={{ padding: '13px 8px 13px 0' }}>
           {/* pagebox: scroll lives here, not on the wrapper */}
-          <div className="bg-(--box) min-h-full overflow-y-auto" style={{ borderRadius: 16, padding: 13 }}>
+          <div className="bg-(--box) h-full overflow-y-auto" style={{ borderRadius: 16, padding: 13 }}>
             <Breadcrumb />
             {/* key=pathname remounts this div on every route change, replaying the animation */}
             <div key={pathname} className="page-enter">
