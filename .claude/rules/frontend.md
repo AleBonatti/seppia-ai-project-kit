@@ -73,6 +73,49 @@ export function useCreatePost(onSuccess?: () => void) {
 - Query keys must be consistent: `['entity']` for lists, `['entity', id]` for singles
 - Always invalidate related queries after mutations
 
+## List page search and filters
+
+Search and filters on list pages **always go through the API** — never filter client-side.
+
+- `search` and filter values (e.g. `status`, `role`) are held in `useState` in the page component
+- Search input uses a **300ms debounce** before updating the query — use a local `useDebounce` hook:
+
+  ```ts
+  // src/hooks/useDebounce.ts
+  import { useState, useEffect } from 'react'
+
+  export function useDebounce<T>(value: T, delay = 300): T {
+    const [debounced, setDebounced] = useState(value)
+    useEffect(() => {
+      const t = setTimeout(() => setDebounced(value), delay)
+      return () => clearTimeout(t)
+    }, [value, delay])
+    return debounced
+  }
+  ```
+
+- The list hook accepts `search` and filter params and passes them to the API:
+
+  ```ts
+  export function useEntityList(params: { search?: string; status?: string }) {
+    return useQuery({
+      queryKey: ['entities', params],
+      queryFn: () => entitiesApi.list(params),
+    })
+  }
+  ```
+
+- The API function appends non-empty params as query string:
+
+  ```ts
+  list(params: { search?: string; status?: string }) {
+    return axios.get('/entities', { params })
+  }
+  ```
+
+- Include `search` and filter params in the React Query key so the query re-runs automatically when they change
+- Never filter, sort, or paginate the returned array in the frontend — all of that is done by the backend via Spatie QueryBuilder
+
 ---
 
 ## State management

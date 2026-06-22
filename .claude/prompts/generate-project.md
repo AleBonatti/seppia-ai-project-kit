@@ -219,7 +219,9 @@ Generate these files inside `frontend/src/`:
 
 5. `src/app/queryClient.ts` — React Query client with sensible defaults
 
-6. `frontend/.env.example`:
+6. `src/hooks/useDebounce.ts` — copy verbatim from `.claude/templates/react-app/src/hooks/useDebounce.ts`
+
+7. `frontend/.env.example`:
 
     ```env
     VITE_API_URL=http://localhost:8000/api/v1
