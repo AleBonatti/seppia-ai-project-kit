@@ -84,7 +84,7 @@ const STRENGTH_LABEL = ['Too short', 'Weak', 'Fair', 'Good', 'Strong']
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AccountSettingsPage() {
-  const { data: user } = useAuth()
+  const { user } = useAuth()
 
   // Profile photo
   const fileRef = useRef<HTMLInputElement>(null)
