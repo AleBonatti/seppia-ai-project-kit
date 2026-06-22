@@ -117,7 +117,7 @@ export default function UsersListPage() {
                                     <input type="checkbox" className="w-4 h-4 accent-(--accent) cursor-pointer" />
                                 </TableCheckCell>
                                 <TableCell>
-                                    <Avatar initials={user.initials} size={38} />
+                                    <Avatar initials={user.initials} size="md" />
                                 </TableCell>
                                 <TableCell>
                                     <RowTitle title={user.name} />
