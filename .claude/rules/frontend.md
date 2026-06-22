@@ -178,6 +178,23 @@ const handleFormSubmit = (values: FormValues): void => {
 
 ---
 
+## User passwords
+
+- The password and password confirmation fields are shown **only on create** — never on the edit form
+- The create form schema must include both `password` and `password_confirmation`, with a Zod `.refine()` check that they match:
+  ```ts
+  password: z.string().min(8, 'Minimum 8 characters'),
+  password_confirmation: z.string(),
+  }).refine(d => d.password === d.password_confirmation, {
+    message: 'Passwords do not match',
+    path: ['password_confirmation'],
+  })
+  ```
+- On the edit page, omit both fields from the form schema, the form component, and the update payload entirely
+- If the user entity spec includes a password change flow, implement it as a separate card or page, not as part of the standard edit form
+
+---
+
 ## What never to do
 
 - ❌ `any` in TypeScript — see `rules/typescript.md`

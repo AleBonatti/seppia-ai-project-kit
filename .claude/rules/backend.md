@@ -243,6 +243,15 @@ public function index(PostQuery $query): AnonymousResourceCollection
 
 ---
 
+## User passwords
+
+- `password` and `password_confirmation` are both required in `StoreUserRequest` — use the `confirmed` rule so Laravel validates they match
+- `password` and `password_confirmation` must be absent from `UpdateUserRequest` — they are never updated through the standard edit flow
+- The update Action must never touch the password field — omit it from the `User::update()` call entirely
+- Password changes are handled through a separate dedicated endpoint (e.g. `POST /users/{id}/change-password`), not through the standard update flow
+
+---
+
 ## What never to do
 
 - ❌ Business logic in controllers
