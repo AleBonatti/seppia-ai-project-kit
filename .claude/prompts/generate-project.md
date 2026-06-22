@@ -147,25 +147,18 @@ Generate these files inside `api/`:
 
 ### Auth
 
-1. `app/Models/User.php` — add `role` column to `$fillable` and `$casts`;
-   add `isSuperAdmin(): bool` and `isAdmin(): bool` helper methods;
-   role values: `admin` and `user` (or as defined in `.claude/specs/project.md`)
+Generate all auth files as described in `.claude/specs/auth.md`. That document is the single
+source of truth for the auth system — follow it exactly. Files to generate:
 
-2. `database/migrations/[timestamp]_add_role_to_users_table.php` — add `role` string column,
-   default `'user'`, after `email`
-
-3. `app/Http/Controllers/AuthController.php` — `login()`, `logout()`, `me()` using Sanctum;
-   login returns the authenticated user resource
-
-4. `app/Http/Controllers/PasswordResetController.php` — two methods using Laravel's built-in
-   Password broker (no extra packages):
-    - `sendResetLink(Request $request)`: validates `email`, calls `Password::sendResetLink()`,
-      returns 200 on success or 422 with the error message on failure
-    - `reset(Request $request)`: validates `token`, `email`, `password`, `password_confirmation`,
-      calls `Password::reset()` with a closure that updates the user's password and fires
-      `PasswordReset` event, returns 200 on success or 422 on failure
-
-5. `app/Http/Requests/LoginRequest.php` — validate `email` and `password`
+1. `app/Models/User.php`
+2. `database/migrations/[timestamp]_add_role_to_users_table.php`
+3. `database/migrations/[timestamp]_create_login_attempts_table.php`
+4. `app/Models/LoginAttempt.php`
+5. `app/DTOs/Auth/LoginAttemptData.php`
+6. `app/Actions/Auth/RecordLoginAttemptAction.php`
+7. `app/Http/Controllers/AuthController.php`
+8. `app/Http/Controllers/PasswordResetController.php`
+9. `app/Http/Requests/LoginRequest.php`
 
 ### Directory structure
 
@@ -418,17 +411,13 @@ php artisan storage:link
 ```
 
 > At this point the database should contain only Laravel's core tables (users, password_reset_tokens,
-> sessions, cache, jobs) plus the `add_role_to_users` migration. No entity tables exist yet —
-> those are created later when `generate-entity.md` is run for each entity.
+> sessions, cache, jobs) plus the auth migrations (`add_role_to_users`, `create_login_attempts_table`).
+> No entity tables exist yet — those are created later when `generate-entity.md` is run for each entity.
 
 ### 3c. Seed the default admin user
 
-Create `database/seeders/AdminUserSeeder.php` with one default admin user:
-
-- name: Admin
-- email: `la.seppia@gmail.com`
-- password: `password` (hashed with bcrypt)
-- role: `admin` (or `superadmin` if the project defines that role)
+Create `database/seeders/AdminUserSeeder.php` using the default admin credentials
+defined in `.claude/specs/auth.md` § "Default admin credentials".
 
 Run: `php artisan db:seed --class=AdminUserSeeder`
 
