@@ -30,7 +30,7 @@ export function TableHead({ children, className, ...props }: TableHeadProps) {
     <th
       className={cn(
         'text-left text-[11px] font-bold uppercase tracking-[.06em] text-(--muted) whitespace-nowrap',
-        'px-[14px] py-[11px] bg-(--surface-2)',
+        'px-3.5 py-[11px] bg-(--surface-2)',
         // first/last rounded to give the header bar pill-ends
         'first:rounded-l-[5px] last:rounded-r-[5px]',
         className,
@@ -56,8 +56,6 @@ export function TableRow({ children, className, ...props }: TableRowProps) {
   return (
     <tr
       className={cn(
-        'transition-colors duration-[120ms] hover:bg-(--surface-2)',
-        // row divider: top border on every row except the first
         '[&:not(:first-child)>td]:border-t [&:not(:first-child)>td]:border-(--border)',
         className,
       )}
@@ -76,7 +74,7 @@ export function TableCell({ children, className, ...props }: TableCellProps) {
   return (
     <td
       className={cn(
-        'px-[14px] align-middle',
+        'px-3.5 align-middle',
         className,
       )}
       style={{ height: 'var(--row-h)', ...props.style }}
@@ -89,11 +87,23 @@ export function TableCell({ children, className, ...props }: TableCellProps) {
 
 // ── Checkbox cell ─────────────────────────────────────────────────────────────
 // Fixed 44px column used as the leftmost cell when rows are selectable.
+// Use TableCheckHead in <thead> rows and TableCheckCell in <tbody> rows.
+
+export function TableCheckHead({ children, className, ...props }: TableCellProps) {
+  return (
+    <th
+      className={cn('w-11 text-center px-0 bg-(--surface-2) first:rounded-l-[5px]', className)}
+      {...props}
+    >
+      {children}
+    </th>
+  )
+}
 
 export function TableCheckCell({ children, className, ...props }: TableCellProps) {
   return (
     <td
-      className={cn('w-[44px] text-center px-0 align-middle', className)}
+      className={cn('w-11 text-center px-0 align-middle', className)}
       style={{ height: 'var(--row-h)', ...props.style }}
       {...props}
     >

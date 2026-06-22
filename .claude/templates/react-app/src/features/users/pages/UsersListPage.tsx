@@ -5,7 +5,7 @@ import { Button, ButtonLink } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardFooter } from "@/components/ui/Card";
-import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell, TableCheckCell, RowTitle } from "@/components/ui/Table";
+import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell, TableCheckHead, TableCheckCell, RowTitle } from "@/components/ui/Table";
 import { Pagination } from "@/layouts/Pagination";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -102,7 +102,7 @@ export default function UsersListPage() {
                 <Table>
                     <TableHeader>
                         <tr>
-                            <TableCheckCell as="th" />
+                            <TableCheckHead />
                             <TableHead className="w-[50px]" />
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>

@@ -8,7 +8,7 @@ import { Add01Icon, Search01Icon, PencilEdit01Icon, Delete01Icon } from "@/lib/i
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardFooter } from "@/components/ui/Card";
-import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell, TableCheckCell, RowTitle } from "@/components/ui/Table";
+import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell, TableCheckHead, TableCheckCell, RowTitle } from "@/components/ui/Table";
 import { Pagination } from "@/layouts/Pagination";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ export default function EntityListPage() {
                 <Table>
                     <TableHeader>
                         <tr>
-                            <TableCheckCell as="th" />
+                            <TableCheckHead />
                             <TableHead>Title</TableHead>
                             <TableHead>Author</TableHead>
                             <TableHead>Status</TableHead>
