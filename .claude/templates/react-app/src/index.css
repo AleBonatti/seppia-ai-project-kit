@@ -3,6 +3,7 @@
 @layer base {
   :root {
     --accent: #66FF4C;
+    --accent-2: #2b7fff;
     --accent-ink: #06210a;
     --r: 12px;
     --r-sm: 9px;
