@@ -23,15 +23,15 @@ export function Toggle({ checked, onChange, label, description, disabled }: Togg
         onClick={() => onChange(!checked)}
         className="flex-none relative w-[38px] h-[22px] rounded-full border cursor-pointer transition-[background,border-color] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
         style={{
-          background:   checked ? 'var(--accent)' : 'var(--box)',
-          borderColor:  checked ? 'var(--accent)' : 'var(--border)',
+          background:   checked ? 'var(--accent-2)' : 'var(--box)',
+          borderColor:  checked ? 'var(--accent-2)' : 'var(--field-border)',
           padding: 2,
         }}
       >
         <span
           className="block w-4 h-4 rounded-full transition-[transform,background] duration-150"
           style={{
-            background: checked ? 'var(--accent-ink)' : 'var(--muted)',
+            background: checked ? '#fff' : 'var(--muted)',
             transform:  checked ? 'translateX(16px)' : 'translateX(0)',
           }}
         />
