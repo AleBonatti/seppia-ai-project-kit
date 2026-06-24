@@ -273,6 +273,7 @@ function PostsList({ setPage }) {
 
 /* ---------- Edit Post ---------- */
 function EditPost({ setPage }) {
+  const [active, setActive] = React.useState(true);
   return (
     <div className="page">
       <div className="page-head">
@@ -337,7 +338,7 @@ function EditPost({ setPage }) {
           <div className="card">
             <h3 style={{ fontSize: 16, marginBottom: 14 }}>Publish</h3>
             <div className="field"><label>Status</label><div className="input select"><span>Draft</span><Icon name="caret" size={16} /></div></div>
-            <div className="field"><label>Visibility</label><div className="input select"><span>Public</span><Icon name="caret" size={16} /></div></div>
+            <div className="field"><label>Active</label><div className="row" style={{ justifyContent: 'space-between', gap: 12 }}><span style={{ color: 'var(--muted)', fontSize: 13.5 }}>{active ? 'Visible on site' : 'Hidden from site'}</span><button type="button" className={"switch row" + (active ? ' on' : '')} role="switch" aria-checked={active} onClick={() => setActive((v) => !v)}><span className="knob" /></button></div></div>
             <div className="field" style={{ marginBottom: 0 }}><label>Publish date</label><div className="input select"><span className="mono">2026-05-31 · 10:30</span><Icon name="calendar" size={16} /></div></div>
           </div>
 
