@@ -3,6 +3,7 @@
 // Add, remove, or reorder sidebar cards to match the entity spec.
 // The left column holds content fields; the right column holds metadata.
 
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft01Icon } from '@/lib/icons'
 import { Button, ButtonLink } from '@/components/ui/Button'
@@ -10,6 +11,7 @@ import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
 import { Select } from '@/components/ui/Select'
+import { Toggle } from '@/components/ui/Toggle'
 import { SaveBar } from '@/components/ui/SaveBar'
 
 // ── Form section wrapper ──────────────────────────────────────────────────────
@@ -59,6 +61,7 @@ export default function EntityEditPage() {
   // Replace with: const { data: entity, isLoading } = useEntity(id)
   // Replace with: const { form, onSubmit, isSubmitting } = useEntityForm({ id })
   const isNew = false // derive from route: !id
+  const [active, setActive] = useState(true)
 
   return (
     <div className="flex flex-col gap-(--gap)">
@@ -135,7 +138,12 @@ export default function EntityEditPage() {
             <h3 className="text-[15px] font-semibold text-(--ink) mb-4">Publish</h3>
             <div className="flex flex-col gap-4">
               <Select label="Status" options={[{ value: 'draft', label: 'Draft' }, { value: 'published', label: 'Published' }]} />
-              <Select label="Visibility" options={[{ value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }]} />
+              <Toggle
+                checked={active}
+                onChange={setActive}
+                label="Active"
+                description={active ? 'Visible on site' : 'Hidden from site'}
+              />
               <Input label="Publish date" type="datetime-local" />
             </div>
           </Card>

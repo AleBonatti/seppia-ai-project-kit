@@ -13,7 +13,7 @@ copied verbatim, not regenerated:
 - `src/components/ui/`: `Button.tsx`, `Input.tsx`, `Textarea.tsx`, `Select.tsx`, `Spinner.tsx`,
   `Checkbox.tsx`, `Badge.tsx`, `Card.tsx`, `Calendar.tsx`, `Table.tsx`, `Chip.tsx`, `Avatar.tsx`,
   `Tabs.tsx`, `Modal.tsx`, `EmptyState.tsx`, `PageHeader.tsx`, `StatCard.tsx`, `SaveBar.tsx`,
-  `Dropzone.tsx`
+  `Dropzone.tsx`, `Toggle.tsx`
 - `src/layouts/`: `AdminLayout.tsx`, `AuthLayout.tsx`, `PublicLayout.tsx`, `Sidebar.tsx`,
   `Breadcrumb.tsx`, `Pagination.tsx`, `useTheme.ts`
 
@@ -506,6 +506,29 @@ interface SaveBarProps {
 
 **Styling:** `sticky bottom-0 flex items-center justify-between border-t border-(--border) bg-(--box) px-5 py-3` /
 Timestamp: `text-xs text-(--faint)`
+
+---
+
+## Toggle
+
+**File:** `src/components/ui/Toggle.tsx` ← copy verbatim from template
+
+On/off switch for boolean fields (active, visible, enabled, etc.).
+
+**Props:**
+
+```ts
+interface ToggleProps {
+  checked: boolean
+  onChange: (checked: boolean) => void
+  label?: string
+  description?: string  // e.g. "Visible on site" / "Hidden from site"
+  disabled?: boolean
+}
+```
+
+**Styling:** Pill-shaped button, 38×22px. Off: `var(--box)` background, `var(--muted)` knob.
+On: `var(--accent)` background, `var(--accent-ink)` knob. Knob slides 16px on toggle.
 
 ---
 
