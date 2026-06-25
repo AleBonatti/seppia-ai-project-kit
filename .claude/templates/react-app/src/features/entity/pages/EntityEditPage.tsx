@@ -13,6 +13,8 @@ import { Textarea } from '@/components/ui/Textarea'
 import { Select } from '@/components/ui/Select'
 import { Toggle } from '@/components/ui/Toggle'
 import { SaveBar } from '@/components/ui/SaveBar'
+import { AttachmentManager } from '@/components/ui/AttachmentManager'
+import type { Attachment } from '@/components/ui/AttachmentManager'
 
 // ── Form section wrapper ──────────────────────────────────────────────────────
 
@@ -114,19 +116,16 @@ export default function EntityEditPage() {
             <p className="text-[12px] text-(--faint) mt-2">~0 words</p>
           </Card>
 
-          {/* Media card */}
+          {/* Attachments card — remove this card if the entity doesn't support attachments */}
           <Card>
-            <h3 className="text-[15px] font-semibold text-(--ink) mb-4">Media</h3>
-            <div className="border-2 border-dashed border-(--border) rounded-(--r) p-8 flex flex-col items-center gap-2 text-center text-(--muted) hover:border-(--accent) transition-colors cursor-pointer">
-              <div className="w-10 h-10 rounded-xl bg-(--surface-2) flex items-center justify-center text-(--faint)">
-                <ArrowLeft01Icon size={18} strokeWidth={1.8} />
-              </div>
-              <p className="text-[13.5px]">
-                Drag &amp; drop files here, or{' '}
-                <span className="text-(--accent) font-semibold">browse</span>
-              </p>
-              <p className="text-[12px] text-(--faint)">PNG, JPG, GIF, MP4 up to 10 MB</p>
-            </div>
+            <h3 className="text-[15px] font-semibold text-(--ink) mb-4">Attachments</h3>
+            {/* Replace [] with real attachments from the entity query */}
+            {/* Replace onUpload / onDetach with your mutation hooks */}
+            <AttachmentManager
+              attachments={[] as Attachment[]}
+              onUpload={(_files) => { /* uploadAttachmentMutation.mutate(files) */ }}
+              onDetach={(_id) => { /* detachAttachmentMutation.mutate(id) */ }}
+            />
           </Card>
         </div>
 

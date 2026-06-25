@@ -34,6 +34,11 @@ import {
   AlertCircleIcon       as _AlertCircle,
   CheckmarkCircle01Icon as _CheckmarkCircle01,
   Settings01Icon        as _Settings01,
+  UploadSquare01Icon    as _UploadSquare01,
+  PdfIcon               as _Pdf,
+  Doc01Icon             as _Doc01,
+  Xls01Icon             as _Xls01,
+  FileZipIcon           as _FileZip,
 } from '@hugeicons/core-free-icons'
 import type { FC } from 'react'
 
@@ -69,3 +74,8 @@ export const InformationCircleIcon = wrap(_InformationCircle)
 export const AlertCircleIcon       = wrap(_AlertCircle)
 export const CheckmarkCircle01Icon = wrap(_CheckmarkCircle01)
 export const Settings01Icon        = wrap(_Settings01)
+export const UploadSquare01Icon    = wrap(_UploadSquare01)
+export const PdfIcon               = wrap(_Pdf)
+export const Doc01Icon             = wrap(_Doc01)
+export const Xls01Icon             = wrap(_Xls01)
+export const FileZipIcon           = wrap(_FileZip)

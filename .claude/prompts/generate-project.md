@@ -72,6 +72,7 @@ npm install \
   zod \
   @hugeicons/react \
   @hugeicons/core-free-icons \
+  react-dropzone \
   clsx \
   tailwind-merge
 npm install -D \
@@ -344,6 +345,7 @@ Also copy the following files verbatim from `.claude/templates/react-app/src/com
 8. `SaveBar.tsx`
 9. `Dropzone.tsx`
 10. `Toggle.tsx`
+11. `AttachmentManager.tsx`
 
 Also copy `Pagination.tsx` verbatim from `.claude/templates/react-app/src/layouts/` into
 `src/layouts/Pagination.tsx` (it lives in `layouts/`, not `components/ui/`).
