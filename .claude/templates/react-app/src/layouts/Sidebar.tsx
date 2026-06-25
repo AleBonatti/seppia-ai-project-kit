@@ -149,7 +149,7 @@ export function Sidebar() {
                         }}>
                         {/* User card — acts as the trigger, sits at the top of the panel */}
                         <button type="button" onClick={() => setMenuOpen((o) => !o)} className={cn("flex w-full items-center gap-2.5 p-2 cursor-pointer bg-(--box) border border-(--border) rounded-(--r) text-left text-(--ink) transition-colors", menuOpen ? "rounded-b-none border-transparent hover:bg-(--box)" : "hover:bg-(--surface-2)", collapsed && "justify-center p-[7px] w-10 h-10 mx-auto box-content")}>
-                            <div className="shrink-0 grid place-items-center rounded-full bg-(--surface-2) text-(--ink) border border-(--border) text-[13px] font-semibold" style={collapsed ? { width: 24, height: 24, fontSize: 10 } : { width: 34, height: 34 }}>
+                            <div className="shrink-0 grid place-items-center rounded-full bg-(--surface-2) text-(--ink) border border-(--border) text-[13px] font-semibold" style={collapsed ? { width: 30, height: 30, fontSize: 11 } : { width: 34, height: 34 }}>
                                 {user ? initials(user.name) : "?"}
                             </div>
                             {!collapsed && (
@@ -167,15 +167,26 @@ export function Sidebar() {
 
                         {/* Menu body — measured for the slide distance */}
                         <div ref={menuBodyRef} className={cn("flex flex-col gap-[3px] px-2 pt-1 pb-2 border-t border-(--border)", !menuOpen && "pointer-events-none", collapsed && "w-[234px]")}>
-                            {/* Dark / Light segmented control */}
-                            <div className="flex gap-[5px] py-1">
-                                <button type="button" onClick={() => setTheme("dark")} className={cn("flex-1 inline-flex items-center justify-center gap-1.5 p-2 bg-transparent text-(--muted) cursor-pointer border border-(--border) rounded-(--r-sm) font-medium text-[13px] transition-colors", theme === "dark" && "bg-(--accent) text-(--accent-ink) border-(--accent) font-semibold")}>
-                                    <Moon02Icon size={15} strokeWidth={1.8} /> Dark
+                            {/* Dark / Light: full segmented control when expanded, single icon toggle when collapsed */}
+                            {!collapsed ? (
+                                <div className="flex gap-[5px] py-1">
+                                    <button type="button" onClick={() => setTheme("dark")} className={cn("flex-1 inline-flex items-center justify-center gap-[5px] p-1.5 bg-transparent text-(--muted) cursor-pointer border border-(--border) rounded-(--r-sm) font-medium text-[12px] transition-colors", theme === "dark" && "bg-(--surface-2) text-(--ink) border-(--border) font-semibold")}>
+                                        <Moon02Icon size={14} strokeWidth={1.8} /> Dark
+                                    </button>
+                                    <button type="button" onClick={() => setTheme("light")} className={cn("flex-1 inline-flex items-center justify-center gap-[5px] p-1.5 bg-transparent text-(--muted) cursor-pointer border border-(--border) rounded-(--r-sm) font-medium text-[12px] transition-colors", theme === "light" && "bg-(--surface-2) text-(--ink) border-(--border) font-semibold")}>
+                                        <Sun03Icon size={14} strokeWidth={1.8} /> Light
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    type="button"
+                                    title={theme === "dark" ? "Dark mode" : "Light mode"}
+                                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                                    className="inline-flex items-center justify-center w-full py-[7px] my-1 bg-(--surface-2) text-(--ink) cursor-pointer border border-(--border) rounded-(--r-sm)"
+                                >
+                                    {theme === "dark" ? <Moon02Icon size={15} strokeWidth={1.8} /> : <Sun03Icon size={15} strokeWidth={1.8} />}
                                 </button>
-                                <button type="button" onClick={() => setTheme("light")} className={cn("flex-1 inline-flex items-center justify-center gap-1.5 p-2 bg-transparent text-(--muted) cursor-pointer border border-(--border) rounded-(--r-sm) font-medium text-[13px] transition-colors", theme === "light" && "bg-(--accent) text-(--accent-ink) border-(--accent) font-semibold")}>
-                                    <Sun03Icon size={15} strokeWidth={1.8} /> Light
-                                </button>
-                            </div>
+                            )}
 
                             <div className="h-px bg-(--border) my-[5px]" />
 
