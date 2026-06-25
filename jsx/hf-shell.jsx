@@ -135,17 +135,21 @@ function Sidebar({ page, setPage, sidebar, onToggleSidebar, theme, setTheme }) {
             <div className="um-body" ref={bodyRef}>
               <div className="um-seg">
                 <button className={theme === 'dark' ? 'on' : ''} onClick={() => setTheme('dark')}>
-                  <Icon name="moon" size={15} /> Dark
+                  <Icon name="moon" size={14} /> Dark
                 </button>
                 <button className={theme === 'light' ? 'on' : ''} onClick={() => setTheme('light')}>
-                  <Icon name="sun" size={15} /> Light
+                  <Icon name="sun" size={14} /> Light
                 </button>
               </div>
+              <button className="um-seg-mini" title={theme === 'dark' ? 'Dark mode' : 'Light mode'}
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                <Icon name={theme === 'dark' ? 'moon' : 'sun'} size={15} />
+              </button>
               <div className="um-sep"></div>
-              <button className="um-item" onClick={() => { setMenuOpen(false); setPage('settings'); }}><span className="ico"><Icon name="account" size={17} /></span> Account settings</button>
-              <button className="um-item" onClick={() => { setMenuOpen(false); setPage('settings'); }}><span className="ico"><Icon name="settings" size={17} /></span> Preferences</button>
+              <button className="um-item" title="Account settings" onClick={() => { setMenuOpen(false); setPage('settings'); }}><span className="ico"><Icon name="account" size={17} /></span> <span className="um-lbl">Account settings</span></button>
+              <button className="um-item" title="Preferences" onClick={() => { setMenuOpen(false); setPage('settings'); }}><span className="ico"><Icon name="settings" size={17} /></span> <span className="um-lbl">Preferences</span></button>
               <div className="um-sep"></div>
-              <button className="um-item" onClick={() => { window.location.href = 'Login.html'; }}><span className="ico"><Icon name="logout" size={17} /></span> Sign out</button>
+              <button className="um-item" title="Sign out" onClick={() => { window.location.href = 'Login.html'; }}><span className="ico"><Icon name="logout" size={17} /></span> <span className="um-lbl">Sign out</span></button>
             </div>
           </div>
         </div>
