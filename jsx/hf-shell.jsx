@@ -43,6 +43,10 @@ const ICON_MAP = {
   warn:        ['AlertCircleIcon', 'Alert02Icon'],
   info:        ['InformationCircleIcon', 'InformationSquareIcon'],
   copy:        ['Copy01Icon', 'Copy02Icon'],
+  close:       ['Cancel01Icon', 'CancelCircleIcon', 'MultiplicationSignIcon'],
+  dimensions:  ['RulerIcon', 'AspectRatioIcon', 'Crop02Icon'],
+  weight:      ['DatabaseIcon', 'HardDriveIcon', 'Layers01Icon'],
+  filetype:    ['FileAttachmentIcon', 'File02Icon', 'DocumentAttachmentIcon'],
 };
 
 function resolveIcon(name) {

@@ -202,6 +202,8 @@ const POSTS = [
 ];
 
 function PostsList({ setPage }) {
+  const [checked, setChecked] = React.useState(() => new Set());
+  const toggle = (i) => setChecked((prev) => { const n = new Set(prev); n.has(i) ? n.delete(i) : n.add(i); return n; });
   return (
     <div className="page">
       <div className="card list-card">
@@ -218,9 +220,7 @@ function PostsList({ setPage }) {
             <Icon name="search" size={17} /><span>Search posts…</span>
           </div>
           <div className="row wrap" style={{ gap: 8 }}>
-            <span className="chip on">All <span className="ct">128</span></span>
-            <span className="chip">Published</span>
-            <span className="chip">Drafts</span>
+            <button className="btn btn-danger" disabled={checked.size === 0}><Icon name="trash" size={16} /> Delete{checked.size ? ` (${checked.size})` : ''}</button>
           </div>
         </div>
 
@@ -235,7 +235,7 @@ function PostsList({ setPage }) {
             <tbody>
               {POSTS.map((r, i) => (
                 <tr key={i}>
-                  <td className="cb-cell"><span className={"check" + (i === 0 ? ' on' : '')}><Icon name="check" size={13} strokeWidth={2.6} /></span></td>
+                  <td className="cb-cell"><button type="button" className={"check" + (checked.has(i) ? ' on' : '')} onClick={() => toggle(i)} aria-pressed={checked.has(i)}><Icon name="check" size={13} strokeWidth={2.6} /></button></td>
                   <td>
                     <div className="row-title">{r.title}</div>
                     <div className="row-sub">/{r.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 26)}</div>
@@ -274,6 +274,13 @@ function PostsList({ setPage }) {
 /* ---------- Edit Post ---------- */
 function EditPost({ setPage }) {
   const [active, setActive] = React.useState(true);
+  const [openAtt, setOpenAtt] = React.useState(null);
+  const ATTACHMENTS = [
+    { type: 'image', icon: 'media', name: 'hero-dashboard.jpg', size: '1.4 MB', mime: 'image/jpeg', dims: '1600 × 900' },
+    { type: 'image', icon: 'media', name: 'team-photo.png', size: '880 KB', mime: 'image/png', dims: '1200 × 800' },
+    { type: 'doc', icon: 'doc', name: 'press-kit.pdf', size: '3.2 MB', mime: 'application/pdf', dims: null },
+    { type: 'video', icon: 'video', name: 'promo-clip.mp4', size: '8.6 MB', mime: 'video/mp4', dims: '1920 × 1080' },
+  ];
   return (
     <div className="page">
       <div className="page-head">
@@ -324,11 +331,11 @@ function EditPost({ setPage }) {
               <div className="anno">PNG, JPG, GIF, MP4 up to 10 MB</div>
             </div>
             <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(118px, 1fr))', gap: 12, marginTop: 14 }}>
-              {[0,1,2,3].map((i) => (
-                <div key={i} className="edit-thumb">
-                  <Icon name="media" size={22} />
-                  <button className="thumb-x" title="Remove"><Icon name="trash" size={13} /></button>
-                </div>
+              {ATTACHMENTS.map((a, i) => (
+                <button key={i} className="edit-thumb" title={a.name} onClick={() => setOpenAtt(a)}>
+                  <Icon name={a.icon} size={22} />
+                  <span className="thumb-name">{a.name}</span>
+                </button>
               ))}
             </div>
           </div>
@@ -352,6 +359,31 @@ function EditPost({ setPage }) {
           </div>
         </div>
       </div>
+
+      {ReactDOM.createPortal(
+        <React.Fragment>
+          <div className={"att-drawer-overlay" + (openAtt ? ' show' : '')} onClick={() => setOpenAtt(null)}></div>
+          <aside className={"att-drawer" + (openAtt ? ' open' : '')} aria-hidden={!openAtt}>
+            <div className="att-drawer-head">
+              <h3 style={{ fontSize: 15 }}>Attachment details</h3>
+              <button className="icon-btn" title="Close" onClick={() => setOpenAtt(null)}><Icon name="close" size={18} /></button>
+            </div>
+            <div className="att-drawer-body">
+              <div className={"att-preview" + (openAtt && openAtt.type !== 'image' ? ' file' : '')}>
+                <Icon name={openAtt ? openAtt.icon : 'media'} size={openAtt && openAtt.type === 'image' ? 46 : 40} />
+                {openAtt && openAtt.type !== 'image' && <div className="att-preview-type">{openAtt.mime.split('/')[1].toUpperCase()}</div>}
+              </div>
+              <div className="att-name">{openAtt ? openAtt.name : ''}</div>
+              <div className="att-meta">
+                <div className="att-row"><span className="att-k"><Icon name="weight" size={15} /> File size</span><span className="att-v">{openAtt ? openAtt.size : ''}</span></div>
+                <div className="att-row"><span className="att-k"><Icon name="filetype" size={15} /> MIME type</span><span className="att-v mono">{openAtt ? openAtt.mime : ''}</span></div>
+                <div className="att-row"><span className="att-k"><Icon name="dimensions" size={15} /> Dimensions</span><span className="att-v">{openAtt && openAtt.dims ? openAtt.dims : '\u2014'}</span></div>
+              </div>
+            </div>
+          </aside>
+        </React.Fragment>,
+        document.body
+      )}
     </div>
   );
 }
@@ -438,6 +470,8 @@ function roleBadge(r) {
 }
 
 function UsersList({ setPage }) {
+  const [checked, setChecked] = React.useState(() => new Set());
+  const toggle = (i) => setChecked((prev) => { const n = new Set(prev); n.has(i) ? n.delete(i) : n.add(i); return n; });
   return (
     <div className="page">
       <div className="card list-card">
@@ -454,10 +488,7 @@ function UsersList({ setPage }) {
             <Icon name="search" size={17} /><span>Search users…</span>
           </div>
           <div className="row wrap" style={{ gap: 8 }}>
-            <span className="chip on">All <span className="ct">24</span></span>
-            <span className="chip">Admins</span>
-            <span className="chip">Editors</span>
-            <span className="chip">Authors</span>
+            <button className="btn btn-danger" disabled={checked.size === 0}><Icon name="trash" size={16} /> Delete{checked.size ? ` (${checked.size})` : ''}</button>
           </div>
         </div>
 
@@ -467,19 +498,19 @@ function UsersList({ setPage }) {
               <tr>
                 <th className="cb-cell"></th>
                 <th style={{ width: 50 }}></th>
-                <th>Name</th><th>Email</th><th>Phone</th><th style={{ textAlign: 'right' }}>Actions</th>
+                <th>Name</th><th>Role</th><th>Phone</th><th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {USERS.map((u, i) => (
                 <tr key={i}>
-                  <td className="cb-cell"><span className="check"><Icon name="check" size={13} strokeWidth={2.6} /></span></td>
+                  <td className="cb-cell"><button type="button" className={"check" + (checked.has(i) ? ' on' : '')} onClick={() => toggle(i)} aria-pressed={checked.has(i)}><Icon name="check" size={13} strokeWidth={2.6} /></button></td>
                   <td><div className="avatar" style={{ width: 38, height: 38, fontSize: 13 }}>{u.init}</div></td>
                   <td>
                     <div className="row-title">{u.name}</div>
-                    <div style={{ marginTop: 3 }}>{roleBadge(u.role)}</div>
+                    <div className="row-sub" style={{ marginTop: 1 }}>{u.email}</div>
                   </td>
-                  <td className="muted mono" style={{ fontSize: 13 }}>{u.email}</td>
+                  <td>{roleBadge(u.role)}</td>
                   <td className="muted mono" style={{ fontSize: 13 }}>{u.phone}</td>
                   <td>
                     <div className="row" style={{ justifyContent: 'flex-end', gap: 4 }}>
