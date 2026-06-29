@@ -149,10 +149,7 @@ function PostsList({ setPage }) {
           <Icon name="search" size={17} /><span>Search posts…</span>
         </div>
         <div className="row wrap" style={{ gap: 8 }}>
-          <span className="chip sk sk-soft on">All <span className="mono">128</span></span>
-          <span className="chip sk sk-soft">Published</span>
-          <span className="chip sk sk-soft">Drafts</span>
-          <span className="chip sk sk-soft">In review</span>
+          <button className="btn btn-danger sk" disabled><Icon name="trash" size={16} /> Delete</button>
         </div>
       </div>
 
@@ -431,10 +428,7 @@ function UsersList({ setPage }) {
           <Icon name="search" size={17} /><span>Search users…</span>
         </div>
         <div className="row wrap" style={{ gap: 8 }}>
-          <span className="chip sk sk-soft on">All <span className="mono">24</span></span>
-          <span className="chip sk sk-soft">Admins</span>
-          <span className="chip sk sk-soft">Editors</span>
-          <span className="chip sk sk-soft">Authors</span>
+          <button className="btn btn-danger sk" disabled><Icon name="trash" size={16} /> Delete</button>
         </div>
       </div>
 

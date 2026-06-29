@@ -1,6 +1,6 @@
 // Template: Entity List Page
 // Replace every occurrence of "Entity" / "entity" / "entities" with the real entity name.
-// Replace column definitions, filters, and badge logic to match the entity spec.
+// Replace column definitions and badge logic to match the entity spec.
 
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -12,6 +12,7 @@ import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell, TableChe
 import { Pagination } from '@/layouts/Pagination'
 import { useDebounce } from '@/hooks/useDebounce'
 // Replace with: import { useEntityList } from '../hooks/useEntityList'
+// Replace with: import { useDeleteEntities } from '../hooks/useDeleteEntities'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -36,16 +37,44 @@ const PLACEHOLDER_ROWS: Entity[] = [
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function EntityListPage() {
-  const [search, setSearch]           = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all')
-  const [page, setPage]               = useState(1)
+  const [search, setSearch] = useState('')
+  const [page, setPage]     = useState(1)
+  const [selected, setSelected] = useState<Set<number>>(new Set())
 
   const debouncedSearch = useDebounce(search)
 
-  // Replace with: const { data, isLoading } = useEntityList({ search: debouncedSearch, status: statusFilter, page })
+  // Replace with: const { data, isLoading } = useEntityList({ search: debouncedSearch, page })
   const rows = PLACEHOLDER_ROWS
   const total = rows.length
   const totalPages = 1
+
+  // Replace with: const deleteMutation = useDeleteEntities()
+
+  function toggleRow(id: number): void {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  function toggleAll(): void {
+    if (selected.size === rows.length) {
+      setSelected(new Set())
+    } else {
+      setSelected(new Set(rows.map((r) => r.id)))
+    }
+  }
+
+  function handleDeleteSelected(): void {
+    const count = selected.size
+    if (!window.confirm(`Delete ${count} ${count === 1 ? 'entry' : 'entries'}? This cannot be undone.`)) return
+    // Replace with: deleteMutation.mutate([...selected], { onSuccess: () => setSelected(new Set()) })
+    setSelected(new Set())
+  }
+
+  const allChecked = rows.length > 0 && selected.size === rows.length
+  const someChecked = selected.size > 0 && selected.size < rows.length
 
   return (
     <div className="flex flex-col gap-(--gap)">
@@ -73,29 +102,29 @@ export default function EntityListPage() {
               className="bg-transparent border-none outline-none text-[13.5px] text-(--ink) placeholder:text-(--faint) w-full"
             />
           </div>
-          <div className="flex gap-2">
-            {(['all', 'published', 'draft'] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => { setStatusFilter(f); setPage(1) }}
-                className={[
-                  'px-3 h-8 rounded-(--r-sm) text-[13px] border transition-colors capitalize',
-                  statusFilter === f
-                    ? 'bg-(--accent) text-(--accent-ink) border-(--accent) font-semibold'
-                    : 'bg-transparent text-(--muted) border-(--border) hover:bg-(--surface-2) hover:text-(--ink)',
-                ].join(' ')}
-              >
-                {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
-              </button>
-            ))}
-          </div>
+          <Button
+            variant="danger"
+            leftIcon={<Delete01Icon size={15} strokeWidth={1.8} />}
+            disabled={selected.size === 0}
+            onClick={handleDeleteSelected}
+          >
+            Delete{selected.size > 0 ? ` (${selected.size})` : ''}
+          </Button>
         </div>
 
         {/* Table */}
         <Table>
           <TableHeader>
             <tr>
-              <TableCheckHead />
+              <TableCheckHead>
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 accent-(--accent) cursor-pointer"
+                  checked={allChecked}
+                  ref={(el) => { if (el) el.indeterminate = someChecked }}
+                  onChange={toggleAll}
+                />
+              </TableCheckHead>
               <TableHead>Title</TableHead>
               <TableHead>Author</TableHead>
               <TableHead>Status</TableHead>
@@ -105,9 +134,14 @@ export default function EntityListPage() {
           </TableHeader>
           <TableBody>
             {rows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow key={row.id} data-selected={selected.has(row.id) || undefined}>
                 <TableCheckCell>
-                  <input type="checkbox" className="w-4 h-4 accent-(--accent) cursor-pointer" />
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 accent-(--accent) cursor-pointer"
+                    checked={selected.has(row.id)}
+                    onChange={() => toggleRow(row.id)}
+                  />
                 </TableCheckCell>
                 <TableCell>
                   <RowTitle title={row.title} sub={`/${row.slug}`} />
@@ -131,6 +165,11 @@ export default function EntityListPage() {
                     <button
                       className="w-[34px] h-[34px] flex items-center justify-center rounded-(--r-sm) border border-transparent text-(--muted) hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-colors"
                       title="Delete"
+                      onClick={() => {
+                        if (window.confirm('Delete this entry? This cannot be undone.')) {
+                          // Replace with: deleteMutation.mutate([row.id])
+                        }
+                      }}
                     >
                       <Delete01Icon size={16} strokeWidth={1.8} />
                     </button>

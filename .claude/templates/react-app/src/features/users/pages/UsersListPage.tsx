@@ -9,6 +9,7 @@ import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell, TableChe
 import { Pagination } from '@/layouts/Pagination'
 import { useDebounce } from '@/hooks/useDebounce'
 // Replace with: import { useUserList } from '../hooks/useUserList'
+// Replace with: import { useDeleteUsers } from '../hooks/useDeleteUsers'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -50,22 +51,47 @@ const PLACEHOLDER_USERS: UserRow[] = [
   { id: 6, name: 'Olaf Lether',         email: 'zzevenboom@hotmail.com',  phone: '0161-692845',     role: 'author', initials: 'OL' },
 ]
 
-const ROLE_FILTERS = ['all', 'admin', 'editor', 'author', 'user'] as const
-type RoleFilter = typeof ROLE_FILTERS[number]
-
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function UsersListPage() {
-  const [search, setSearch]       = useState('')
-  const [roleFilter, setRoleFilter] = useState<RoleFilter>('all')
-  const [page, setPage]           = useState(1)
+  const [search, setSearch]   = useState('')
+  const [page, setPage]       = useState(1)
+  const [selected, setSelected] = useState<Set<number>>(new Set())
 
   const debouncedSearch = useDebounce(search)
 
-  // Replace with: const { data, isLoading } = useUserList({ search: debouncedSearch, role: roleFilter, page })
+  // Replace with: const { data, isLoading } = useUserList({ search: debouncedSearch, page })
   const users = PLACEHOLDER_USERS
   const total = users.length
   const totalPages = 1
+
+  // Replace with: const deleteMutation = useDeleteUsers()
+
+  function toggleRow(id: number): void {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  function toggleAll(): void {
+    if (selected.size === users.length) {
+      setSelected(new Set())
+    } else {
+      setSelected(new Set(users.map((u) => u.id)))
+    }
+  }
+
+  function handleDeleteSelected(): void {
+    const count = selected.size
+    if (!window.confirm(`Delete ${count} ${count === 1 ? 'user' : 'users'}? This cannot be undone.`)) return
+    // Replace with: deleteMutation.mutate([...selected], { onSuccess: () => setSelected(new Set()) })
+    setSelected(new Set())
+  }
+
+  const allChecked  = users.length > 0 && selected.size === users.length
+  const someChecked = selected.size > 0 && selected.size < users.length
 
   return (
     <div className="flex flex-col gap-(--gap)">
@@ -93,29 +119,29 @@ export default function UsersListPage() {
               className="bg-transparent border-none outline-none text-[13.5px] text-(--ink) placeholder:text-(--faint) w-full"
             />
           </div>
-          <div className="flex flex-wrap gap-2">
-            {ROLE_FILTERS.map((f) => (
-              <button
-                key={f}
-                onClick={() => { setRoleFilter(f); setPage(1) }}
-                className={[
-                  'px-3 h-8 rounded-(--r-sm) text-[13px] border transition-colors capitalize',
-                  roleFilter === f
-                    ? 'bg-(--accent) text-(--accent-ink) border-(--accent) font-semibold'
-                    : 'bg-transparent text-(--muted) border-(--border) hover:bg-(--surface-2) hover:text-(--ink)',
-                ].join(' ')}
-              >
-                {f === 'all' ? 'All' : ROLE_LABEL[f as UserRole] + 's'}
-              </button>
-            ))}
-          </div>
+          <Button
+            variant="danger"
+            leftIcon={<Delete01Icon size={15} strokeWidth={1.8} />}
+            disabled={selected.size === 0}
+            onClick={handleDeleteSelected}
+          >
+            Delete{selected.size > 0 ? ` (${selected.size})` : ''}
+          </Button>
         </div>
 
         {/* Table */}
         <Table>
           <TableHeader>
             <tr>
-              <TableCheckHead />
+              <TableCheckHead>
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 accent-(--accent) cursor-pointer"
+                  checked={allChecked}
+                  ref={(el) => { if (el) el.indeterminate = someChecked }}
+                  onChange={toggleAll}
+                />
+              </TableCheckHead>
               <TableHead className="w-[50px]" />
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
@@ -125,9 +151,14 @@ export default function UsersListPage() {
           </TableHeader>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user.id}>
+              <TableRow key={user.id} data-selected={selected.has(user.id) || undefined}>
                 <TableCheckCell>
-                  <input type="checkbox" className="w-4 h-4 accent-(--accent) cursor-pointer" />
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 accent-(--accent) cursor-pointer"
+                    checked={selected.has(user.id)}
+                    onChange={() => toggleRow(user.id)}
+                  />
                 </TableCheckCell>
                 <TableCell>
                   <Avatar initials={user.initials} size="md" />
@@ -152,6 +183,11 @@ export default function UsersListPage() {
                     <button
                       className="w-[34px] h-[34px] flex items-center justify-center rounded-(--r-sm) border border-transparent text-(--muted) hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-colors"
                       title="Delete"
+                      onClick={() => {
+                        if (window.confirm('Delete this user? This cannot be undone.')) {
+                          // Replace with: deleteMutation.mutate([user.id])
+                        }
+                      }}
                     >
                       <Delete01Icon size={16} strokeWidth={1.8} />
                     </button>
