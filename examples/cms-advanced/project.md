@@ -43,6 +43,9 @@ List the main features of this project. Be specific — each item here maps to g
 - [x] Media library — upload, browse, delete files (images, documents, any file type)
 - [x] Page attachments — attach media to a page with title, description, position
 - [x] Public read API — pages and media served without auth for frontend consumption
+- [x] Translation agent — after a page is saved in the primary locale (Italian), a background
+      agent auto-generates the English translation via the Claude API (see
+      `.claude/specs/agents/translation-agent.md`)
 
 ---
 
@@ -101,7 +104,20 @@ See `.claude/specs/dashboard.md` for the full dashboard specification.
 
 List any third-party services this project connects to.
 
-- [ ] None
+- [x] Anthropic Claude API — powers the translation agent. Requires `ANTHROPIC_API_KEY` in `.env`.
+      Configured via `config/agents.php` (`translation.enabled`, `translation.model`).
+
+---
+
+## Background agents
+
+This project enables the optional **translation agent**. Its full configuration lives in
+`.claude/specs/agents/translation-agent.md`:
+
+- **Primary locale:** `it` — **secondary:** `[en]`
+- **Entity:** Page — translates `title`, `short_text`, `full_text` (never `slug`)
+- **Trigger:** `on_save` — `CreatePageAction` and `UpdatePageAction` dispatch `TranslateEntityJob`
+  after persisting; the translation runs on the queue, so saves return immediately.
 
 ---
 

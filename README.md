@@ -31,6 +31,8 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
   specs/
     project.md                   ← fill-in template: describes the project
     entity.md                    ← fill-in template: describes one domain entity (copy per entity)
+    agents/
+      translation-agent.md       ← OPTIONAL feature: auto-translates entity content via Claude API
 
   prompts/
     generate-project.md          ← installs Laravel + React, then scaffolds the full base project
@@ -47,6 +49,11 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
 
   templates/
     laravel-api/                 ← reference code: Action, DTO, Controller, Model, tests
+      app/
+        Jobs/
+          TranslateEntityJob.php       ← OPTIONAL: queued translation job (translation agent)
+        Actions/
+          TranslateEntityAction.php    ← OPTIONAL: the translation agent (Claude API tool-use)
     react-app/
       src/
         index.css                ← design system CSS tokens (Tailwind v4)
@@ -159,6 +166,48 @@ and component APIs are frozen in code, not reconstructed from prose on each gene
 | `react-app/src/features/auth/**` | `frontend/src/features/auth/**` |
 
 **Generated from prose** (via `generate-project.md`): the dashboard placeholder page and all entity-specific code.
+
+---
+
+## Optional: background agents
+
+The kit can generate **optional background agents** — runtime features that live inside the
+generated project and call the Claude API to do work asynchronously. They are entirely opt-in:
+a feature exists in a project only if its spec file is present.
+
+### Translation agent
+
+Auto-translates an entity's content from a primary locale into secondary locales after it is
+saved. The save returns immediately; the translation runs on the queue in the background.
+
+**How it works**
+
+1. An entity (e.g. `Page`) is saved in the primary locale (e.g. Italian).
+2. The entity's Create/Update action dispatches `TranslateEntityJob` (only when
+   `config('agents.translation.enabled')` is true).
+3. The job runs `TranslateEntityAction`, which loads the source fields and calls the Claude API
+   with a forced `set_translation` tool call — Claude returns structured translations.
+4. The action persists each locale onto the entity's translation table via `updateOrCreate`.
+
+**Turning it on for a project**
+
+Copy `.claude/specs/agents/translation-agent.md` into the project and fill it in (locales,
+which entities/fields, trigger, style instructions). When that file is present with
+`enabled: true`, project generation also produces:
+
+- `app/Jobs/TranslateEntityJob.php` and `app/Actions/TranslateEntityAction.php`
+- `config/agents.php` (`translation.enabled`, `translation.model`)
+- an `anthropic` block in `config/services.php` (reads `ANTHROPIC_API_KEY`)
+- `ANTHROPIC_API_KEY`, `TRANSLATION_AGENT_ENABLED`, `TRANSLATION_AGENT_MODEL` in `.env.example`
+- a one-line dispatch hook at the end of each `on_save` entity's Create/Update action
+- `composer require anthropic-ai/sdk`
+
+**Turning it off** — simply omit the spec file. When it is absent, nothing agent-related is
+generated: no job, no action, no config, no env vars, no dispatch hooks. Default model is
+`claude-sonnet-4-6` (a good cost/quality fit for translation), overridable via
+`TRANSLATION_AGENT_MODEL`.
+
+See `examples/cms-advanced/` for a complete, filled-in reference.
 
 ---
 
