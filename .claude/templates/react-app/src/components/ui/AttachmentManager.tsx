@@ -110,7 +110,7 @@ function DropZone({ onDrop, isUploading, accept, maxSize }: DropZoneProps) {
       className={cn(
         'border-[1.5px] border-dashed border-(--border) rounded-(--r) px-[18px] py-[26px]',
         'flex flex-col items-center gap-[7px] text-center cursor-pointer',
-        'bg-(--surface-2) text-(--faint)',
+        'bg-(--field) text-(--faint)',
         'transition-[border-color,color] duration-[140ms]',
         isDragActive && 'border-(--accent) text-(--muted)',
         !isDragActive && 'hover:border-(--accent) hover:text-(--muted)',
@@ -142,22 +142,27 @@ function Thumbnail({ attachment, onClick }: ThumbnailProps) {
     <button
       type="button"
       onClick={onClick}
-      className="relative aspect-square rounded-(--r-sm) bg-(--surface-2) border border-(--border) grid place-items-center text-(--faint) overflow-hidden cursor-pointer group"
+      className="flex flex-col items-center gap-[7px] cursor-pointer group bg-transparent border-none p-0"
     >
-      {isImage(attachment.mimeType) ? (
-        <img
-          src={attachment.url}
-          alt={attachment.name}
-          className="w-full h-full object-cover"
-        />
-      ) : (
-        <div className="flex flex-col items-center gap-2">
-          <FileTypeIcon mimeType={attachment.mimeType} size={28} />
-          <span className="text-[10px] font-bold tracking-[.05em] text-(--muted) uppercase">
-            {fileExtLabel(attachment.mimeType)}
-          </span>
-        </div>
-      )}
+      <div className="w-full aspect-square rounded-(--r-sm) bg-(--surface-2) border border-(--border) grid place-items-center text-(--faint) overflow-hidden">
+        {isImage(attachment.mimeType) ? (
+          <img
+            src={attachment.url}
+            alt={attachment.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="flex flex-col items-center gap-2">
+            <FileTypeIcon mimeType={attachment.mimeType} size={28} />
+            <span className="text-[10px] font-bold tracking-[.05em] text-(--muted) uppercase">
+              {fileExtLabel(attachment.mimeType)}
+            </span>
+          </div>
+        )}
+      </div>
+      <span className="text-[11.5px] text-(--muted) w-full truncate text-center leading-tight group-hover:text-(--ink) transition-colors">
+        {attachment.name}
+      </span>
     </button>
   )
 }
@@ -313,7 +318,7 @@ export const AttachmentManager: FC<AttachmentManagerProps> = ({
       {attachments.length > 0 && (
         <div
           className="grid gap-3 mt-4"
-          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(96px, 1fr))' }}
+          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(118px, 1fr))' }}
         >
           {attachments.map((a) => (
             <Thumbnail key={a.id} attachment={a} onClick={() => setSelected(a)} />
