@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Upload01Icon, Search01Icon, ArrowLeft01Icon, ArrowRight01Icon } from "@/lib/icons";
+import { Upload01Icon, Search01Icon, Delete01Icon, Cancel01Icon, File01Icon, PdfIcon, Doc01Icon, Xls01Icon, FileZipIcon } from "@/lib/icons";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card, CardFooter } from "@/components/ui/Card";
@@ -15,32 +15,46 @@ interface MediaItem {
     name: string;
     ext?: string;
     meta: string;
+    mimeType?: string;
     url?: string;
+    width?: number;
+    height?: number;
+    size?: number;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function FileTypeIcon({ mimeType, size = 28 }: { mimeType?: string; size?: number }) {
+    const props = { size, strokeWidth: 1.6 }
+    if (mimeType === 'application/pdf') return <PdfIcon {...props} />
+    if (mimeType?.startsWith('application/msword') || mimeType?.includes('wordprocessingml')) return <Doc01Icon {...props} />
+    if (mimeType?.includes('spreadsheetml') || mimeType === 'application/vnd.ms-excel') return <Xls01Icon {...props} />
+    if (mimeType === 'application/zip' || mimeType === 'application/x-zip-compressed') return <FileZipIcon {...props} />
+    return <File01Icon {...props} />
 }
 
 // ── Thumbnail ─────────────────────────────────────────────────────────────────
 
 interface MediaThumbProps {
     item: MediaItem;
+    onClick: () => void;
 }
 
-function MediaThumb({ item }: MediaThumbProps) {
+function MediaThumb({ item, onClick }: MediaThumbProps) {
     return (
-        <div className="bg-(--box) border border-(--border) rounded-(--r) overflow-hidden cursor-pointer group hover:border-(--accent) transition-colors">
+        <div
+            onClick={onClick}
+            className="bg-(--box) border border-(--border) rounded-(--r) overflow-hidden cursor-pointer group hover:border-(--accent) transition-colors"
+        >
             <div className="h-[130px] bg-(--surface-2) flex items-center justify-center relative">
-                {item.url ? (
+                {item.url && item.type === "image" ? (
                     <img src={item.url} alt={item.name} className="w-full h-full object-cover" />
                 ) : (
                     <div className="text-center text-(--faint)">
                         {item.ext && <div className="text-[11px] font-bold uppercase tracking-widest mb-1 text-(--muted)">{item.ext}</div>}
-                        <div className="w-10 h-10 rounded-xl bg-(--box) border border-(--border) flex items-center justify-center mx-auto">
-                            <Upload01Icon size={18} strokeWidth={1.8} />
-                        </div>
+                        <FileTypeIcon mimeType={item.mimeType} size={28} />
                     </div>
                 )}
-                <button className="absolute top-2 right-2 w-7 h-7 rounded-[7px] bg-(--box) border border-(--border) text-(--muted) opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:text-(--ink)" title="Options">
-                    <span className="text-[16px] leading-none">⋯</span>
-                </button>
             </div>
             <div className="p-3">
                 <div className="text-[13.5px] font-medium text-(--ink) truncate">{item.name}</div>
@@ -48,6 +62,131 @@ function MediaThumb({ item }: MediaThumbProps) {
             </div>
         </div>
     );
+}
+
+// ── Detail drawer ─────────────────────────────────────────────────────────────
+
+interface DetailDrawerProps {
+    item: MediaItem;
+    onClose: () => void;
+    onDelete: (id: number) => void;
+}
+
+function DetailDrawer({ item, onClose, onDelete }: DetailDrawerProps) {
+    const [confirming, setConfirming] = useState(false)
+
+    function handleDelete() {
+        if (!confirming) { setConfirming(true); return }
+        onDelete(item.id)
+        onClose()
+    }
+
+    const isImage = item.type === "image"
+
+    return (
+        <>
+            {/* Backdrop */}
+            <div
+                className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px]"
+                onClick={onClose}
+                aria-hidden="true"
+            />
+
+            {/* Panel — fixed height = full viewport, never overflows */}
+            <div
+                className="fixed right-0 top-0 bottom-0 z-50 w-[340px] flex flex-col bg-(--box) border-l border-(--border) shadow-[var(--shadow)]"
+                style={{ animation: 'mediaDrawerIn .24s cubic-bezier(.22,.61,.36,1) both' }}
+            >
+                {/* Header — fixed, never shrinks */}
+                <div className="flex-none flex items-center justify-between gap-3 px-5 py-4 border-b border-(--border)">
+                    <h3 className="text-[15px] font-semibold text-(--ink) truncate">{item.name}</h3>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="w-8 h-8 flex-none flex items-center justify-center rounded-[7px] text-(--muted) hover:bg-(--surface-2) hover:text-(--ink) transition-colors"
+                    >
+                        <Cancel01Icon size={16} strokeWidth={2} />
+                    </button>
+                </div>
+
+                {/* Scrollable body — takes remaining height */}
+                <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-5 px-5 py-5">
+                    {/* Preview — capped so it never alone fills the panel */}
+                    <div
+                        className="rounded-(--r-sm) bg-(--field) border border-(--border) grid place-items-center text-(--faint) overflow-hidden"
+                        style={{ maxHeight: 'min(280px, 40vh)' }}
+                    >
+                        {isImage && item.url ? (
+                            <img
+                                src={item.url}
+                                alt={item.name}
+                                className="w-full object-contain"
+                                style={{ maxHeight: 'min(280px, 40vh)' }}
+                            />
+                        ) : (
+                            <div className="flex flex-col items-center gap-3 py-8">
+                                <FileTypeIcon mimeType={item.mimeType} size={48} />
+                                <span className="text-[11px] font-bold tracking-[.06em] text-(--muted) uppercase">
+                                    {item.ext ?? 'FILE'}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Metadata */}
+                    <div className="flex flex-col rounded-(--r-sm) border border-(--border) overflow-hidden">
+                        {[
+                            { label: 'File name', value: item.name },
+                            { label: 'Type',      value: item.mimeType ?? item.ext ?? '—' },
+                            { label: 'Size',      value: item.meta },
+                            ...(item.width && item.height
+                                ? [{ label: 'Dimensions', value: `${item.width} × ${item.height} px` }]
+                                : []),
+                        ].map(({ label, value }) => (
+                            <div key={label} className="flex items-start gap-3 px-4 py-[10px] border-b border-(--border) last:border-b-0">
+                                <span className="text-[12px] font-medium text-(--muted) w-[90px] flex-none pt-px">{label}</span>
+                                <span className="text-[12.5px] text-(--ink) break-all">{value}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Actions — fixed at bottom */}
+                <div className="flex-none px-5 pb-5 pt-4 border-t border-(--border)">
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        className={[
+                            'w-full flex items-center justify-center gap-2 px-4 py-[10px] rounded-(--r-sm)',
+                            'border font-medium text-[13.5px] cursor-pointer transition-colors',
+                            confirming
+                                ? 'bg-[#e5484d] border-[#e5484d] text-white hover:bg-[#d03f44]'
+                                : 'bg-transparent border-(--border) text-(--muted) hover:border-[color-mix(in_srgb,#e5484d_40%,var(--border))] hover:text-[#e5484d]',
+                        ].join(' ')}
+                    >
+                        <Delete01Icon size={15} strokeWidth={1.8} />
+                        {confirming ? 'Confirm delete' : 'Delete file'}
+                    </button>
+                    {confirming && (
+                        <button
+                            type="button"
+                            onClick={() => setConfirming(false)}
+                            className="w-full text-center text-[12px] text-(--muted) mt-2 cursor-pointer hover:text-(--ink) transition-colors bg-transparent border-none"
+                        >
+                            Cancel
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            <style>{`
+                @keyframes mediaDrawerIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to   { transform: translateX(0);    opacity: 1; }
+                }
+            `}</style>
+        </>
+    )
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -70,6 +209,8 @@ const PLACEHOLDER_ITEMS: MediaItem[] = [
 export default function MediaLibraryPage() {
     const [search, setSearch] = useState("");
     const [typeFilter, setTypeFilter] = useState<"all" | "image" | "file">("all");
+    const [selected, setSelected] = useState<MediaItem | null>(null);
+    // Replace with: const deleteMutation = useDeleteMedia()
 
     const filtered = PLACEHOLDER_ITEMS.filter((m) => {
         if (typeFilter !== "all" && m.type !== typeFilter) return false;
@@ -105,7 +246,7 @@ export default function MediaLibraryPage() {
                     {filtered.length > 0 ? (
                         <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(188px, 1fr))" }}>
                             {filtered.map((item) => (
-                                <MediaThumb key={item.id} item={item} />
+                                <MediaThumb key={item.id} item={item} onClick={() => setSelected(item)} />
                             ))}
                         </div>
                     ) : (
@@ -121,6 +262,17 @@ export default function MediaLibraryPage() {
                     <Pagination currentPage={1} totalPages={1} onPageChange={() => {}} />
                 </CardFooter>
             </Card>
+
+            {selected && (
+                <DetailDrawer
+                    item={selected}
+                    onClose={() => setSelected(null)}
+                    onDelete={(id) => {
+                        // Replace with: deleteMutation.mutate(id, { onSuccess: () => setSelected(null) })
+                        setSelected(null)
+                    }}
+                />
+            )}
         </div>
     );
 }

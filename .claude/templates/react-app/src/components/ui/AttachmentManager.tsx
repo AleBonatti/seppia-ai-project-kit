@@ -198,8 +198,8 @@ function DetailDrawer({ attachment, onClose, onDetach }: DrawerProps) {
         className="fixed right-0 top-0 bottom-0 z-50 w-[340px] flex flex-col bg-(--box) border-l border-(--border) shadow-[var(--shadow)]"
         style={{ animation: 'drawerIn .24s cubic-bezier(.22,.61,.36,1) both' }}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-(--border)">
+        {/* Header — fixed height, never shrinks */}
+        <div className="flex-none flex items-center justify-between gap-3 px-5 py-4 border-b border-(--border)">
           <h3 className="text-[15px] font-semibold text-(--ink) truncate">{attachment.name}</h3>
           <button
             type="button"
@@ -210,43 +210,49 @@ function DetailDrawer({ attachment, onClose, onDetach }: DrawerProps) {
           </button>
         </div>
 
-        {/* Preview */}
-        <div className="mx-5 mt-5 rounded-(--r-sm) bg-(--field) border border-(--border) aspect-square grid place-items-center text-(--faint) overflow-hidden">
-          {isImage(attachment.mimeType) ? (
-            <img
-              src={attachment.url}
-              alt={attachment.name}
-              className="w-full h-full object-contain"
-            />
-          ) : (
-            <div className="flex flex-col items-center gap-3">
-              <FileTypeIcon mimeType={attachment.mimeType} size={48} />
-              <span className="text-[11px] font-bold tracking-[.06em] text-(--muted) uppercase">
-                {fileExtLabel(attachment.mimeType)}
-              </span>
-            </div>
-          )}
+        {/* Scrollable body — takes remaining height, never overflows the viewport */}
+        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-5 px-5 py-5">
+          {/* Preview — capped so it never alone fills the panel */}
+          <div className="rounded-(--r-sm) bg-(--field) border border-(--border) grid place-items-center text-(--faint) overflow-hidden"
+            style={{ maxHeight: 'min(280px, 40vh)' }}
+          >
+            {isImage(attachment.mimeType) ? (
+              <img
+                src={attachment.url}
+                alt={attachment.name}
+                className="w-full object-contain"
+                style={{ maxHeight: 'min(280px, 40vh)' }}
+              />
+            ) : (
+              <div className="flex flex-col items-center gap-3 py-8">
+                <FileTypeIcon mimeType={attachment.mimeType} size={48} />
+                <span className="text-[11px] font-bold tracking-[.06em] text-(--muted) uppercase">
+                  {fileExtLabel(attachment.mimeType)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Metadata */}
+          <div className="flex flex-col rounded-(--r-sm) border border-(--border) overflow-hidden">
+            {[
+              { label: 'File name',  value: attachment.name },
+              { label: 'MIME type',  value: attachment.mimeType },
+              { label: 'File size',  value: formatBytes(attachment.size) },
+              ...(attachment.width && attachment.height
+                ? [{ label: 'Dimensions', value: `${attachment.width} × ${attachment.height} px` }]
+                : []),
+            ].map(({ label, value }) => (
+              <div key={label} className="flex items-start gap-3 px-4 py-[10px] border-b border-(--border) last:border-b-0">
+                <span className="text-[12px] font-medium text-(--muted) w-[90px] flex-none pt-px">{label}</span>
+                <span className="text-[12.5px] text-(--ink) break-all">{value}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Metadata */}
-        <div className="flex flex-col gap-0 mx-5 mt-5 rounded-(--r-sm) border border-(--border) overflow-hidden">
-          {[
-            { label: 'File name',  value: attachment.name },
-            { label: 'MIME type',  value: attachment.mimeType },
-            { label: 'File size',  value: formatBytes(attachment.size) },
-            ...(attachment.width && attachment.height
-              ? [{ label: 'Dimensions', value: `${attachment.width} × ${attachment.height} px` }]
-              : []),
-          ].map(({ label, value }) => (
-            <div key={label} className="flex items-start gap-3 px-4 py-[10px] border-b border-(--border) last:border-b-0">
-              <span className="text-[12px] font-medium text-(--muted) w-[90px] flex-none pt-px">{label}</span>
-              <span className="text-[12.5px] text-(--ink) break-all">{value}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Actions */}
-        <div className="mt-auto px-5 pb-5 pt-4">
+        {/* Actions — fixed at bottom, never shrinks */}
+        <div className="flex-none px-5 pb-5 pt-4 border-t border-(--border)">
           <button
             type="button"
             onClick={handleDetach}
