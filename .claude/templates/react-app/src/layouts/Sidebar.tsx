@@ -148,7 +148,7 @@ export function Sidebar() {
                             willChange: "transform",
                         }}>
                         {/* User card — acts as the trigger, sits at the top of the panel */}
-                        <button type="button" onClick={() => setMenuOpen((o) => !o)} className={cn("flex w-full items-center gap-2.5 p-2 cursor-pointer bg-(--box) border border-(--border) rounded-(--r) text-left text-(--ink) transition-colors", menuOpen ? "rounded-b-none border-transparent hover:bg-(--box)" : "hover:bg-(--surface-2)", collapsed && "justify-center p-[7px] w-10 h-10 mx-auto box-content")}>
+                        <button type="button" onClick={() => setMenuOpen((o) => !o)} className={cn("flex w-full items-center gap-2.5 p-2 cursor-pointer bg-(--box) border border-(--border) rounded-(--r) text-left text-(--ink) transition-colors", menuOpen ? "rounded-b-none border-transparent hover:bg-(--box)" : "hover:bg-(--surface-2)", collapsed && "justify-center p-0 h-11 w-full mx-0")}>
                             <div className="shrink-0 grid place-items-center rounded-full bg-(--surface-2) text-(--ink) border border-(--border) text-[13px] font-semibold" style={collapsed ? { width: 30, height: 30, fontSize: 11 } : { width: 34, height: 34 }}>
                                 {user ? initials(user.name) : "?"}
                             </div>
@@ -166,7 +166,7 @@ export function Sidebar() {
                         </button>
 
                         {/* Menu body — measured for the slide distance */}
-                        <div ref={menuBodyRef} className={cn("flex flex-col gap-[3px] px-2 pt-1 pb-2 border-t border-(--border)", !menuOpen && "pointer-events-none", collapsed && "w-[234px]")}>
+                        <div ref={menuBodyRef} className={cn("flex flex-col gap-[3px] border-t border-(--border)", !menuOpen && "pointer-events-none", collapsed ? "px-[5px] pt-1 pb-[6px] w-[234px]" : "px-2 pt-1 pb-2")}>
                             {/* Dark / Light: full segmented control when expanded, single icon toggle when collapsed */}
                             {!collapsed ? (
                                 <div className="flex gap-[5px] py-1">
@@ -192,42 +192,27 @@ export function Sidebar() {
 
                             <button
                                 type="button"
-                                onClick={() => {
-                                    setMenuOpen(false);
-                                    navigate("/admin/settings");
-                                }}
-                                className="flex items-center gap-[11px] px-2 py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors w-full">
-                                <span className="text-(--muted)">
-                                    <UserAccountIcon size={17} strokeWidth={1.8} />
-                                </span>
-                                Account settings
+                                onClick={() => { setMenuOpen(false); navigate("/admin/settings"); }}
+                                className={cn("flex items-center gap-[11px] py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors w-full", collapsed ? "justify-center px-0" : "px-2")}>
+                                <span className="text-(--muted)"><UserAccountIcon size={17} strokeWidth={1.8} /></span>
+                                {!collapsed && "Account settings"}
                             </button>
                             <button
                                 type="button"
-                                onClick={() => {
-                                    setMenuOpen(false);
-                                    navigate("/admin/settings");
-                                }}
-                                className="flex items-center gap-[11px] px-2 py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors w-full">
-                                <span className="text-(--muted)">
-                                    <Settings01Icon size={17} strokeWidth={1.8} />
-                                </span>
-                                Preferences
+                                onClick={() => { setMenuOpen(false); navigate("/admin/settings"); }}
+                                className={cn("flex items-center gap-[11px] py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors w-full", collapsed ? "justify-center px-0" : "px-2")}>
+                                <span className="text-(--muted)"><Settings01Icon size={17} strokeWidth={1.8} /></span>
+                                {!collapsed && "Preferences"}
                             </button>
 
                             <div className="h-px bg-(--border) my-[5px]" />
 
                             <button
                                 type="button"
-                                onClick={() => {
-                                    logout.mutate();
-                                    setMenuOpen(false);
-                                }}
-                                className="flex items-center gap-[11px] px-2 py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors w-full">
-                                <span className="text-(--muted)">
-                                    <Logout01Icon size={17} strokeWidth={1.8} />
-                                </span>
-                                Sign out
+                                onClick={() => { logout.mutate(); setMenuOpen(false); }}
+                                className={cn("flex items-center gap-[11px] py-[9px] bg-transparent border-none text-(--ink) cursor-pointer font-medium text-[13.5px] rounded-(--r-sm) text-left whitespace-nowrap hover:bg-(--surface-2) transition-colors w-full", collapsed ? "justify-center px-0" : "px-2")}>
+                                <span className="text-(--muted)"><Logout01Icon size={17} strokeWidth={1.8} /></span>
+                                {!collapsed && "Sign out"}
                             </button>
                         </div>
                     </div>
