@@ -80,7 +80,7 @@ export default function UserEditPage() {
                                     Remove
                                 </Button>
                             </div>
-                            <p className="text-[12px] text-(--faint)">JPG, PNG or GIF. Max size 1 MB.</p>
+                            <p className="text-[12px] text-(--faint)">JPEG or PNG only. Max 2 MB. Resized to 500 × 500 px on the server.</p>
                         </div>
                     </div>
                 </FormRow>

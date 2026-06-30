@@ -16,7 +16,7 @@
 | `email`              | string    | yes      | email, unique:users,email, max:255 |                                 |
 | `password`           | string    | yes      | min:8 (hashed)                     | Never returned in API responses |
 | `role`               | enum      | yes      | `superadmin` \| `admin`            | Default: `admin`                |
-| `profile_photo_path` | string    | no       | —                                  |                                 |
+| `profile_photo_path` | string    | no       | nullable                           | Relative path inside `avatars/` on the public disk |
 | `created_at`         | timestamp | auto     | —                                  |                                 |
 | `updated_at`         | timestamp | auto     | —                                  |                                 |
 
@@ -69,16 +69,28 @@ Filters:
 
 ## Business rules
 
-- All type of admins roles (admins and superadmins) can access the Users section — But only superadmin can create other superadmins
+- All admin roles can access the Users section — only superadmin can create other superadmins
 - A user cannot delete their own account
 - Password is hashed with bcrypt; never returned in any API response
-- When updating a user, if the `password` field is blank or absent, the password is not changed
+- When updating a user, the password field is never touched — password changes go through a dedicated endpoint
+- When deleting a user, if they have a `profile_photo_path`, delete the file from disk first, then delete the user record
+- Avatar upload rules (enforced in `UploadAvatarAction`):
+  - Only `image/jpeg` and `image/png` are accepted — reject other types with a 422
+  - Maximum file size: 2 MB
+  - Resize to fit within 500 × 500 px, preserving aspect ratio (scale the longer side down to 500, the other side scales proportionally)
+  - Store in the `avatars/` folder on the public disk (`storage/app/public/avatars/`). Create the folder if it does not exist.
+  - Filename: `{userId}.{ext}` — overwrites any previous avatar for that user
+  - Save the relative path (`avatars/{userId}.{ext}`) in `profile_photo_path`
+- Avatar delete (`DeleteAvatarAction`): delete the file from disk and set `profile_photo_path` to null
 
 ---
 
 ## Notes for code generation
 
 - Use Laravel's built-in `User` model as the base — add `role` cast as a string enum
-- add `profile_photo_path` field to store an avatar picture. The upload will be placed in the suer personal settings page, and will be handled by the user itself.
-- `role` is checked in middleware/policies — define a `isSuperAdmin()` helper method on the model
+- `profile_photo_path` stores the relative path inside the public disk (e.g. `avatars/42.jpg`); `UserResource` appends a computed `avatarUrl` via `Storage::url($this->profile_photo_path)`
+- Avatar upload/delete is handled by dedicated actions (`UploadAvatarAction`, `DeleteAvatarAction`) called from the account settings endpoint — not part of the standard user CRUD
+- Use `Intervention\Image` (or `GD` via `imagecreatefromjpeg` / `imagecreatefrompng`) for resizing; ensure the `avatars/` directory exists before writing (`Storage::makeDirectory('avatars')`)
+- `DeleteUserAction` must check for `profile_photo_path` and delete the file from disk before deleting the user record
+- `role` is checked in middleware/policies — define an `isSuperAdmin()` helper method on the model
 - The `UserResource` must never include the `password` field

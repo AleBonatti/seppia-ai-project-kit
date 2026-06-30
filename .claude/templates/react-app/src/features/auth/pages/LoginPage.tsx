@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { Input } from '@/components/ui/Input'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 import { Button } from '@/components/ui/Button'
 import { useLogin } from '../hooks/useLogin'
 
@@ -69,10 +70,9 @@ export default function LoginPage() {
           {...register('email')}
         />
 
-        <Input
+        <PasswordInput
           id="password"
           label="Password"
-          type="password"
           placeholder="Enter your password"
           autoComplete="current-password"
           error={errors.password?.message}

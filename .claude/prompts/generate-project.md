@@ -346,6 +346,7 @@ Also copy the following files verbatim from `.claude/templates/react-app/src/com
 9. `Dropzone.tsx`
 10. `Toggle.tsx`
 11. `AttachmentManager.tsx`
+12. `PasswordInput.tsx`
 
 Also copy `Pagination.tsx` verbatim from `.claude/templates/react-app/src/layouts/` into
 `src/layouts/Pagination.tsx` (it lives in `layouts/`, not `components/ui/`).

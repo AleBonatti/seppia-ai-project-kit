@@ -1,13 +1,28 @@
 import { useRef, useState } from 'react'
-import { Upload01Icon, ViewIcon, ViewOffSlashIcon } from '@/lib/icons'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { Upload01Icon } from '@/lib/icons'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { SaveBar } from '@/components/ui/SaveBar'
 import { useAuth } from '@/features/auth/hooks/useAuth'
+// Replace with real mutation hooks:
+// import { useUpdateProfile } from '../hooks/useUpdateProfile'
+// import { useUpdatePassword } from '../hooks/useUpdatePassword'
+// import { useUploadAvatar } from '../hooks/useUploadAvatar'
+// import { useDeleteAvatar } from '../hooks/useDeleteAvatar'
 
-// ── Shared form-row layout (label left 220px, field right) ────────────────────
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+const AVATAR_MAX_BYTES  = 2 * 1024 * 1024        // 2 MB
+const AVATAR_ACCEPT     = ['image/jpeg', 'image/png']
+const SAVE_DELAY_MS     = 500
+
+// ── Shared form-row layout ────────────────────────────────────────────────────
 
 interface FormRowProps {
   label: string
@@ -34,80 +49,133 @@ function FormRow({ label, help, children, noBorderTop }: FormRowProps) {
   )
 }
 
-// ── Password field with show / hide toggle ────────────────────────────────────
-
-interface PasswordFieldProps {
-  placeholder?: string
-  value: string
-  onChange: (v: string) => void
-}
-
-function PasswordField({ placeholder, value, onChange }: PasswordFieldProps) {
-  const [revealed, setRevealed] = useState(false)
-  return (
-    <div className="flex items-center border border-(--field-border) bg-(--field) rounded-(--r-sm) pr-1 focus-within:border-(--accent) focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--accent)_22%,transparent)] transition-[border-color,box-shadow]">
-      <input
-        type={revealed ? 'text' : 'password'}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="flex-1 bg-transparent border-none outline-none text-[13.5px] text-(--ink) placeholder:text-(--faint) px-3 py-[9px]"
-      />
-      <button
-        type="button"
-        onClick={() => setRevealed(r => !r)}
-        className="flex-none flex items-center gap-1 px-2 py-1 rounded-[7px] text-[12px] font-medium text-(--muted) hover:text-(--ink) hover:bg-(--surface-2) transition-colors"
-      >
-        {revealed
-          ? <ViewOffSlashIcon size={15} strokeWidth={1.8} />
-          : <ViewIcon size={15} strokeWidth={1.8} />}
-        {revealed ? 'Hide' : 'Show'}
-      </button>
-    </div>
-  )
-}
-
 // ── Password strength meter ───────────────────────────────────────────────────
 
 function passwordScore(v: string): number {
   if (!v) return 0
   let s = 0
-  if (v.length >= 8)                          s++
-  if (/[0-9]/.test(v))                        s++
-  if (/[^A-Za-z0-9]/.test(v))                s++
-  if (/[A-Z]/.test(v) && /[a-z]/.test(v))    s++
+  if (v.length >= 8)                       s++
+  if (/[0-9]/.test(v))                     s++
+  if (/[^A-Za-z0-9]/.test(v))             s++
+  if (/[A-Z]/.test(v) && /[a-z]/.test(v)) s++
   return s
 }
 
 const STRENGTH_LABEL = ['Too short', 'Weak', 'Fair', 'Good', 'Strong']
+
+// ── Zod schemas ───────────────────────────────────────────────────────────────
+
+const profileSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+})
+
+const passwordSchema = z.object({
+  currentPassword: z.string().min(1, 'Required'),
+  newPassword:     z.string().min(8, 'Minimum 8 characters'),
+  confirmPassword: z.string().min(1, 'Required'),
+}).refine(d => d.newPassword === d.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
+})
+
+type ProfileValues  = z.infer<typeof profileSchema>
+type PasswordValues = z.infer<typeof passwordSchema>
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AccountSettingsPage() {
   const { user } = useAuth()
 
-  // Profile photo
+  // Replace with: const uploadAvatar  = useUploadAvatar()
+  // Replace with: const deleteAvatar  = useDeleteAvatar()
+  // Replace with: const updateProfile = useUpdateProfile()
+  // Replace with: const updatePassword = useUpdatePassword()
+
+  // ── Avatar ──
   const fileRef = useRef<HTMLInputElement>(null)
-  const [avatarSrc, setAvatarSrc] = useState<string | null>(null)
+  const [avatarSrc, setAvatarSrc] = useState<string | null>(
+    // Replace with: user?.avatarUrl ?? null
+    null
+  )
+  const [avatarError, setAvatarError] = useState<string | null>(null)
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
 
   function onAvatarPick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
+
+    setAvatarError(null)
+
+    if (!AVATAR_ACCEPT.includes(file.type)) {
+      setAvatarError('Only JPEG and PNG files are allowed.')
+      e.target.value = ''
+      return
+    }
+    if (file.size > AVATAR_MAX_BYTES) {
+      setAvatarError('Image must be 2 MB or smaller.')
+      e.target.value = ''
+      return
+    }
+
+    // Preview locally while the upload happens
     const reader = new FileReader()
     reader.onload = () => setAvatarSrc(reader.result as string)
     reader.readAsDataURL(file)
+
+    setIsUploadingAvatar(true)
+    // Replace with: uploadAvatar.mutate(file, {
+    //   onSuccess: () => setIsUploadingAvatar(false),
+    //   onError:   () => { setAvatarError('Upload failed. Please try again.'); setIsUploadingAvatar(false) },
+    // })
+    setTimeout(() => setIsUploadingAvatar(false), SAVE_DELAY_MS)
+    e.target.value = ''
   }
 
-  // Personal info
-  const [name, setName] = useState(user?.name ?? '')
+  function onAvatarRemove() {
+    setAvatarSrc(null)
+    setAvatarError(null)
+    // Replace with: deleteAvatar.mutate()
+  }
 
-  // Password
-  const [pw, setPw] = useState({ current: '', next: '', confirm: '' })
-  const setField = (key: keyof typeof pw) => (v: string) =>
-    setPw(prev => ({ ...prev, [key]: v }))
+  // ── Profile form ──
+  const profileForm = useForm<ProfileValues>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: { name: user?.name ?? '' },
+  })
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
 
-  const score = passwordScore(pw.next)
-  const passwordsMatch = pw.next.length > 0 && pw.next === pw.confirm
+  function onProfileSubmit(values: ProfileValues) {
+    setIsSavingProfile(true)
+    setTimeout(() => {
+      // Replace with: updateProfile.mutate(values, { onSettled: () => setIsSavingProfile(false) })
+      setIsSavingProfile(false)
+    }, SAVE_DELAY_MS)
+  }
+
+  // ── Password form ──
+  const passwordForm = useForm<PasswordValues>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
+  })
+  const [isSavingPassword, setIsSavingPassword] = useState(false)
+  const newPasswordValue = passwordForm.watch('newPassword')
+  const score = passwordScore(newPasswordValue)
+
+  function onPasswordSubmit(values: PasswordValues) {
+    setIsSavingPassword(true)
+    setTimeout(() => {
+      // Replace with: updatePassword.mutate(values, {
+      //   onSuccess: () => passwordForm.reset(),
+      //   onSettled: () => setIsSavingPassword(false),
+      // })
+      passwordForm.reset()
+      setIsSavingPassword(false)
+    }, SAVE_DELAY_MS)
+  }
+
+  const initials = user?.name
+    ? user.name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()
+    : '?'
 
   return (
     <div className="flex flex-col gap-(--gap)">
@@ -126,20 +194,19 @@ export default function AccountSettingsPage() {
 
         <FormRow label="Avatar" noBorderTop>
           <div className="flex items-center gap-4">
-            {/* Avatar preview */}
             <div
               className="shrink-0 rounded-full border border-(--border) bg-(--surface-2) text-(--ink) font-semibold grid place-items-center overflow-hidden"
               style={{ width: 80, height: 80, fontSize: 24, letterSpacing: '-0.01em' }}
             >
               {avatarSrc
                 ? <img src={avatarSrc} alt="Avatar preview" className="w-full h-full object-cover block" />
-                : (user?.name ? user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?')}
+                : initials}
             </div>
             <div className="min-w-0">
               <input
                 ref={fileRef}
                 type="file"
-                accept="image/*"
+                accept={AVATAR_ACCEPT.join(',')}
                 onChange={onAvatarPick}
                 className="hidden"
               />
@@ -147,15 +214,22 @@ export default function AccountSettingsPage() {
                 <Button
                   size="sm"
                   leftIcon={<Upload01Icon size={14} strokeWidth={1.8} />}
+                  isLoading={isUploadingAvatar}
                   onClick={() => fileRef.current?.click()}
                 >
                   Upload new
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => setAvatarSrc(null)}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  disabled={!avatarSrc}
+                  onClick={onAvatarRemove}
+                >
                   Remove
                 </Button>
               </div>
-              <p className="text-[12.5px] text-(--faint)">JPG, PNG or GIF. Max size 1 MB. Recommended 256×256px.</p>
+              <p className="text-[12.5px] text-(--faint)">JPEG or PNG only. Max 2 MB. Resized to 500 × 500 px on the server.</p>
+              {avatarError && <p className="text-[12.5px] text-red-400 mt-1">{avatarError}</p>}
             </div>
           </div>
         </FormRow>
@@ -165,25 +239,27 @@ export default function AccountSettingsPage() {
       <Card>
         <div className="mb-1">
           <h3 className="text-[17px] font-semibold text-(--ink)">Personal info</h3>
-          <p className="text-[13px] text-(--muted) mt-[3px]">Update your name and the email you sign in with.</p>
+          <p className="text-[13px] text-(--muted) mt-[3px]">Update your display name.</p>
         </div>
 
-        <FormRow label="Full name" help="Shown across the workspace and on your posts.">
-          <Input
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="Your name"
-          />
-        </FormRow>
+        <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} noValidate>
+          <FormRow label="Full name" help="Shown across the workspace and on your posts." noBorderTop>
+            <Input
+              placeholder="Your name"
+              error={profileForm.formState.errors.name?.message}
+              {...profileForm.register('name')}
+            />
+          </FormRow>
 
-        <FormRow label="Email" help="The email you use to sign in. Contact an admin to change it.">
-          <div className="flex items-center justify-between border border-(--field-border) bg-(--field) rounded-(--r-sm) px-3 py-[9px]">
-            <span className="text-[13.5px] text-(--ink) font-mono">{user?.email}</span>
-            <Badge variant="success">Verified</Badge>
-          </div>
-        </FormRow>
+          <FormRow label="Email" help="Contact an admin to change your email address.">
+            <div className="flex items-center justify-between border border-(--field-border) bg-(--field) rounded-(--r-sm) px-3 py-[9px] opacity-60 cursor-not-allowed">
+              <span className="text-[13.5px] text-(--ink) font-mono">{user?.email}</span>
+              <Badge variant="success">Verified</Badge>
+            </div>
+          </FormRow>
 
-        <SaveBar lastSaved="Jun 12, 2026 · 14:09" onSave={() => {}} />
+          <SaveBar onSave={profileForm.handleSubmit(onProfileSubmit)} isLoading={isSavingProfile} />
+        </form>
       </Card>
 
       {/* ── Password ── */}
@@ -193,54 +269,51 @@ export default function AccountSettingsPage() {
           <p className="text-[13px] text-(--muted) mt-[3px]">Choose a strong password you don't reuse on other sites.</p>
         </div>
 
-        <FormRow label="Current password">
-          <PasswordField
-            placeholder="Enter current password"
-            value={pw.current}
-            onChange={setField('current')}
-          />
-        </FormRow>
+        <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} noValidate>
+          <FormRow label="Current password" noBorderTop>
+            <PasswordInput
+              placeholder="Enter current password"
+              showToggle={false}
+              error={passwordForm.formState.errors.currentPassword?.message}
+              {...passwordForm.register('currentPassword')}
+            />
+          </FormRow>
 
-        <FormRow label="New password">
-          <PasswordField
-            placeholder="Enter new password"
-            value={pw.next}
-            onChange={setField('next')}
-          />
-          {/* Strength meter */}
-          <div className="flex gap-[5px] mt-[9px]">
-            {[0, 1, 2, 3].map(i => (
-              <span
-                key={i}
-                className="h-1 flex-1 rounded-[3px] transition-colors duration-150"
-                style={{ background: i < score ? 'var(--accent)' : 'var(--surface-2)' }}
-              />
-            ))}
-          </div>
-          <p className="text-[12.5px] text-(--faint) mt-[7px]">
-            {pw.next
-              ? `${STRENGTH_LABEL[score]} — at least 8 characters with a number and a symbol.`
-              : 'At least 8 characters with a number and a symbol.'}
-          </p>
-        </FormRow>
-
-        <FormRow label="Confirm password">
-          <PasswordField
-            placeholder="Re-enter new password"
-            value={pw.confirm}
-            onChange={setField('confirm')}
-          />
-          {pw.confirm.length > 0 && (
-            <p
-              className="text-[12.5px] mt-[7px]"
-              style={{ color: passwordsMatch ? 'var(--accent)' : '#e5484d' }}
-            >
-              {passwordsMatch ? 'Passwords match.' : "Passwords don't match yet."}
+          <FormRow label="New password">
+            <PasswordInput
+              placeholder="Enter new password"
+              showToggle={false}
+              error={passwordForm.formState.errors.newPassword?.message}
+              {...passwordForm.register('newPassword')}
+            />
+            {/* Strength meter */}
+            <div className="flex gap-[5px] mt-[9px]">
+              {[0, 1, 2, 3].map(i => (
+                <span
+                  key={i}
+                  className="h-1 flex-1 rounded-[3px] transition-colors duration-150"
+                  style={{ background: i < score ? 'var(--accent)' : 'var(--surface-2)' }}
+                />
+              ))}
+            </div>
+            <p className="text-[12.5px] text-(--faint) mt-[7px]">
+              {newPasswordValue
+                ? `${STRENGTH_LABEL[score]} — at least 8 characters with a number and a symbol.`
+                : 'At least 8 characters with a number and a symbol.'}
             </p>
-          )}
-        </FormRow>
+          </FormRow>
 
-        <SaveBar lastSaved="Last changed 3 months ago" onSave={() => {}} />
+          <FormRow label="Confirm password">
+            <PasswordInput
+              placeholder="Re-enter new password"
+              showToggle={false}
+              error={passwordForm.formState.errors.confirmPassword?.message}
+              {...passwordForm.register('confirmPassword')}
+            />
+          </FormRow>
+
+          <SaveBar onSave={passwordForm.handleSubmit(onPasswordSubmit)} isLoading={isSavingPassword} />
+        </form>
       </Card>
     </div>
   )
