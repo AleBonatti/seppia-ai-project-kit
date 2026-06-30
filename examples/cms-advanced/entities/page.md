@@ -97,6 +97,10 @@
     - [ ] Filter by active / inactive
     - [ ] Search by title (searches across all locales. should start searching on typing, with 300ms debounce)
 
+Attachments:
+
+- [x] **Yes** — include the `AttachmentManager` card on the edit page
+
 ### Create / Edit page
 
 The edit form is a single page with two main sections: a left column and a right column (check layout page). Each column is divided in multiple Cards blocks

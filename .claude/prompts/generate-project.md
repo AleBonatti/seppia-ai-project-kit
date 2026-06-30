@@ -367,8 +367,9 @@ Copy the following page templates verbatim from `.claude/templates/react-app/src
    badge logic to match the entity spec.
 
 3. `entity/pages/EntityEditPage.tsx` → use as the base for every entity create/edit page.
-   Two-column layout: content fields left, metadata sidebar right. Add/remove cards to
-   match the entity spec.
+   Two-column layout: content fields left, metadata sidebar right. Adapt fields and sidebar
+   cards to match the entity spec. **Always keep the `AttachmentManager` card** — remove it
+   only if the entity spec explicitly states the entity has no attachments.
 
 4. `users/pages/UsersListPage.tsx` → `src/features/users/pages/UsersListPage.tsx`
    Users list with avatar, role badge, search, role filter tabs, and pagination.

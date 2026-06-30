@@ -76,6 +76,11 @@ What screens should the admin panel have for this entity?
 - [ ] **Edit page** — same form pre-filled, with delete button
 - [ ] **Detail/view page** — read-only view (only if needed beyond list + edit)
 
+Attachments:
+
+- [ ] **Yes** — include the `AttachmentManager` card on the edit page (default)
+- [ ] **No** — this entity has no attachments; remove the `AttachmentManager` card
+
 Filters on list page:
 
 - [ ] Filter by status

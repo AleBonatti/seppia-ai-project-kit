@@ -116,7 +116,8 @@ export default function EntityEditPage() {
             <p className="text-[12px] text-(--faint) mt-2">~0 words</p>
           </Card>
 
-          {/* Attachments card — remove this card if the entity doesn't support attachments */}
+          {/* Attachments card — KEEP by default. Only remove if the entity spec
+              explicitly states it has no attachments. */}
           <Card>
             <h3 className="text-[15px] font-semibold text-(--ink) mb-4">Attachments</h3>
             {/* Replace [] with real attachments from the entity query */}
