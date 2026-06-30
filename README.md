@@ -255,6 +255,9 @@ CLAUDE.md                        → project root
     typescript.md
   specs/
     project.md
+    style.md                     ← fill in: accent color, font, dark mode
+    dashboard.md                 ← fill in: stat cards, recent activity, quick actions
+    auth.md                      ← copy as-is, no edits needed
   stacks/
     laravel-react.md
   templates/                     ← Claude copies these verbatim when generating files
