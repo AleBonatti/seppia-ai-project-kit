@@ -43,6 +43,7 @@ import {
   UserAccount01Icon     as _UserAccount01,
   Add01Icon             as _Add01,
   PencilEdit01Icon      as _PencilEdit01,
+  Calendar01Icon        as _Calendar01,
 } from '@hugeicons/core-free-icons'
 import type { FC } from 'react'
 
@@ -87,3 +88,4 @@ export const InsertColumnLeftIcon  = wrap(_InsertColumnLeft)
 export const UserAccountIcon       = wrap(_UserAccount01)
 export const Add01Icon             = wrap(_Add01)
 export const PencilEdit01Icon      = wrap(_PencilEdit01)
+export const CalendarIcon          = wrap(_Calendar01)
