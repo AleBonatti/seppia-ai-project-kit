@@ -58,25 +58,21 @@ export function usePostList(): UseQueryResult<PostListResponse> {
 
 ## API types
 
-- Keep domain types separate from API/transport types
-- Domain types represent what the UI works with
-- API types represent what comes back from the server (snake_case, raw dates, etc.)
-- Transform API types to domain types at the boundary (in `api.ts` or a mapper)
+The axios instance in `src/lib/axios.ts` converts all snake_case keys from the Laravel API to camelCase automatically via a response interceptor. Define **one camelCase type per entity** — no parallel `ApiPost` / `Post` pair, no manual mappers.
 
 ```ts
-// src/types/api.ts — raw API shape
-interface ApiPost {
-  id: number
-  title: string
-  created_at: string   // snake_case from Laravel
-}
-
-// features/posts/types.ts — domain shape
+// ✅ Correct — one type, always camelCase
+// features/posts/types.ts
 interface Post {
   id: number
   title: string
-  createdAt: string    // camelCase for the UI
+  createdAt: string    // API returns created_at → interceptor converts it
 }
+
+// ❌ Wrong — don't duplicate types or write manual mappers
+interface ApiPost { created_at: string }
+interface Post    { createdAt: string }
+const toPost = (a: ApiPost): Post => ({ createdAt: a.created_at })
 ```
 
 ---

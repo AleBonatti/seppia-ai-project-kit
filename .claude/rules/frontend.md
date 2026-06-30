@@ -65,6 +65,33 @@ export function useCreatePost(onSuccess?: () => void) {
 
 ---
 
+## API / domain type boundary
+
+The axios instance in `src/lib/axios.ts` has a response interceptor that automatically converts all snake_case keys returned by the Laravel API into camelCase before the data reaches React Query.
+
+This means:
+- **Domain types always use camelCase** — `createdAt`, `diskName`, `sizeHuman`, etc.
+- **Never write manual key mappers** in `api.ts` files — the interceptor handles it
+- **Never define a separate `ApiPost` interface** with snake_case fields alongside a `Post` interface — one camelCase type is enough
+- `PaginationMeta` fields are also camelCase after conversion: `currentPage`, `lastPage`, `perPage`, `total`, `from`, `to`
+
+```ts
+// ✅ Correct — one type, camelCase, matches what arrives after interceptor
+interface Attachment {
+  id: number
+  diskName: string     // API returns disk_name → interceptor converts it
+  sizeHuman: string    // API returns size_human → interceptor converts it
+  createdAt: string    // API returns created_at → interceptor converts it
+}
+
+// ❌ Wrong — don't maintain two parallel types or map manually
+interface ApiAttachment { disk_name: string; size_human: string }
+interface Attachment    { diskName: string;  sizeHuman: string }
+const toAttachment = (a: ApiAttachment): Attachment => ({ diskName: a.disk_name, ... })
+```
+
+---
+
 ## Data fetching
 
 - **React Query exclusively** for all server state
