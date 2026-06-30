@@ -31,7 +31,7 @@ A `Media` file can be attached to multiple pages. Each attachment is independent
 | ------------- | --------- | -------- | ----------------- | --------------------------------------------------------------- |
 | `id`          | integer   | auto     | —                 | Primary key (not a composite key — easier to work with in APIs) |
 | `page_id`     | foreignId | yes      | exists:pages,id   | Cascade delete when page is deleted                             |
-| `media_id`    | foreignId | yes      | exists:media,id   | Restrict delete — cannot delete media with attachments          |
+| `media_id`    | foreignId | yes      | exists:media,id   | Cascade delete — attachment is removed when media is deleted    |
 | `title`       | string    | no       | nullable, max:255 | Override label for this file on this page                       |
 | `description` | text      | no       | nullable          | Optional caption or description on this page                    |
 | `position`    | integer   | yes      | min:0, default:0  | Display order among attachments on this page                    |
@@ -130,7 +130,7 @@ The attachment UI lives inside the **Page edit page** — there is no standalone
 - The same media file cannot be attached to the same page twice (unique constraint on `page_id + media_id`)
 - `position` is auto-set to `max(position) + 1` when a new attachment is added
 - Deleting a page cascades and deletes all its attachments (but NOT the media files)
-- Deleting a media file is blocked if any attachments reference it
+- Deleting a media file cascades and deletes all attachment records referencing it (across all pages)
 - Removing an attachment does not delete or modify the underlying media file
 - The `PageResource` always includes the `attachments` array, each with the full `media` object nested inside
 

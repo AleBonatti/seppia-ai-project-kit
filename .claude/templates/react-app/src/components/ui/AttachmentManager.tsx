@@ -144,7 +144,7 @@ function Thumbnail({ attachment, onClick }: ThumbnailProps) {
       onClick={onClick}
       className="flex flex-col items-center gap-[7px] cursor-pointer group bg-transparent border-none p-0"
     >
-      <div className="w-full aspect-square rounded-(--r-sm) bg-(--surface-2) border border-(--border) grid place-items-center text-(--faint) overflow-hidden">
+      <div className="w-full aspect-square rounded-(--r-sm) bg-(--field) border border-(--border) grid place-items-center text-(--faint) overflow-hidden">
         {isImage(attachment.mimeType) ? (
           <img
             src={attachment.url}
@@ -211,7 +211,7 @@ function DetailDrawer({ attachment, onClose, onDetach }: DrawerProps) {
         </div>
 
         {/* Preview */}
-        <div className="mx-5 mt-5 rounded-(--r-sm) bg-(--surface-2) border border-(--border) aspect-square grid place-items-center text-(--faint) overflow-hidden">
+        <div className="mx-5 mt-5 rounded-(--r-sm) bg-(--field) border border-(--border) aspect-square grid place-items-center text-(--faint) overflow-hidden">
           {isImage(attachment.mimeType) ? (
             <img
               src={attachment.url}

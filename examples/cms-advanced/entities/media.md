@@ -58,7 +58,7 @@ These are appended to the `MediaResource` — not stored in the DB:
 | upload | ✅         | ✅    | ❌              |
 | delete | ✅         | ✅    | ❌              |
 
-> A media file cannot be deleted if it has any active attachments.
+> Deleting a media file automatically removes all its attachment records across all pages (cascade).
 > Admins can delete any media (not just their own uploads).
 
 ---
@@ -96,7 +96,7 @@ These are appended to the `MediaResource` — not stored in the DB:
 - Click a media card → opens a detail side panel (not a new page):
     - Full preview (image) or download link (document)
     - Metadata: filename, size, dimensions (if image), mime type, uploaded by, upload date
-    - Delete button (disabled if the file has active attachments — show tooltip explaining why)
+    - Delete button — always enabled; deleting the media also removes all its attachment records across all pages
 - Filters:
     - [ ] Filter by media_type (image / document / video / other)
     - [ ] Search by filename
@@ -119,7 +119,7 @@ These are appended to the `MediaResource` — not stored in the DB:
     - `video/*` → `video`
     - anything else → `other`
 - `width` and `height` are extracted at upload time for image files (use PHP `getimagesize()` or Intervention Image)
-- A media file **cannot be deleted** if it has one or more `Attachment` records pointing to it — return a 422 with a clear error message
+- Deleting a media file **cascades** — all `Attachment` records referencing it are automatically deleted (DB `onDelete: CASCADE` on `attachments.media_id`). The media file is then removed from disk.
 - `uploaded_by` is set automatically from the authenticated user; set to NULL if that user is deleted (onDelete: SET NULL)
 - No update endpoint — media is immutable after upload
 
@@ -137,9 +137,8 @@ These are appended to the `MediaResource` — not stored in the DB:
     5. Derive `media_type` from mime_type
     6. Create `Media` record
 - `DeleteMediaAction`:
-    1. Check no attachments exist — throw if so
-    2. Delete file from disk (`Storage::delete($media->path)`)
-    3. Delete DB record
+    1. Delete file from disk (`Storage::delete($media->path)`)
+    2. Delete DB record — the `onDelete: CASCADE` on `attachments.media_id` removes all related attachment rows automatically
 - `MediaResource` appends `url` via `Storage::url($this->path)`
 - The upload endpoint accepts `multipart/form-data` with a `file` field
 

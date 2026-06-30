@@ -111,7 +111,7 @@ The edit form is a single page with two main sections: a left column and a right
     - Tab switcher: `IT` | `EN`
     - Title (textbox)
     - Slug (textbox)
-    - Short text (3 rows textarea)
+    - Short text (2 rows textarea)
     - Full text (5 rows rich text / textarea)
 
 - Card 2 - Media:
