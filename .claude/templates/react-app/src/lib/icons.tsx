@@ -39,6 +39,10 @@ import {
   Doc01Icon             as _Doc01,
   Xls01Icon             as _Xls01,
   FileZipIcon           as _FileZip,
+  InsertColumnLeftIcon  as _InsertColumnLeft,
+  UserAccount01Icon     as _UserAccount01,
+  Add01Icon             as _Add01,
+  PencilEdit01Icon      as _PencilEdit01,
 } from '@hugeicons/core-free-icons'
 import type { FC } from 'react'
 
@@ -79,3 +83,7 @@ export const PdfIcon               = wrap(_Pdf)
 export const Doc01Icon             = wrap(_Doc01)
 export const Xls01Icon             = wrap(_Xls01)
 export const FileZipIcon           = wrap(_FileZip)
+export const InsertColumnLeftIcon  = wrap(_InsertColumnLeft)
+export const UserAccountIcon       = wrap(_UserAccount01)
+export const Add01Icon             = wrap(_Add01)
+export const PencilEdit01Icon      = wrap(_PencilEdit01)
