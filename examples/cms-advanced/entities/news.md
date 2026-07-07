@@ -1,32 +1,33 @@
-# Entity Specification — Page
+# Entity Specification — News
 
 ## Entity name
 
-**Name:** Page
+**Name:** News
 **Description:** A content page managed in the CMS. Has locale-specific text fields stored in a separate translations table. Can have multiple media files attached to it. No soft deletes — deletion is permanent.
 
 ---
 
 ## Fields
 
-### `pages` table (locale-independent data)
+### `news` table (locale-independent data)
 
 | Field          | Type      | Required | Validation                | Notes                                                  |
 | -------------- | --------- | -------- | ------------------------- | ------------------------------------------------------ |
 | `id`           | integer   | auto     | —                         | Primary key                                            |
 | `date`         | date      | no       | nullable                  | Optional editorial date (e.g. publication date)        |
 | `order_column` | integer   | yes      | min:0, default:0          | Used for manual sorting in lists                       |
-| `active`       | boolean   | yes      | default:false             | Only active pages are visible in the public API        |
+| `date`         | datetime  | No       | nullable.                 | Used in news or post type, will be remove              |
+| `active`       | boolean   | yes      | default:false             | Only active news are visible in the public API         |
 | `created_by`   | foreignId | no       | nullable, exists:users,id | Set to NULL if the user is deleted (onDelete:SET NULL) |
 | `created_at`   | timestamp | auto     | —                         |                                                        |
 | `updated_at`   | timestamp | auto     | —                         |                                                        |
 
-### `page_translations` table (locale-specific data)
+### `news_translations` table (locale-specific data)
 
 | Field        | Type      | Required | Validation        | Notes                                              |
 | ------------ | --------- | -------- | ----------------- | -------------------------------------------------- |
 | `id`         | integer   | auto     | —                 | Primary key                                        |
-| `page_id`    | foreignId | yes      | exists:pages,id   | Foreign key, cascade on delete                     |
+| `news_id`    | foreignId | yes      | exists:news,id    | Foreign key, cascade on delete                     |
 | `locale`     | string    | yes      | in:it,en          | Supported locales: `it`, `en`                      |
 | `slug`       | string    | yes      | unique per locale | URL-friendly identifier; unique within each locale |
 | `title`      | string    | yes      | max:255           |                                                    |
@@ -42,10 +43,10 @@
 
 | Relation       | Type      | Target          | Notes                                              |
 | -------------- | --------- | --------------- | -------------------------------------------------- |
-| `translations` | hasMany   | PageTranslation | All locale translations for this page              |
-| `translation`  | hasOne    | PageTranslation | Single translation — used with `locale` scope      |
-| `attachments`  | hasMany   | Attachment      | Media items attached to this page (via pivot data) |
-| `creator`      | belongsTo | User            | The admin who created the page (`created_by` FK)   |
+| `translations` | hasMany   | NewsTranslation | All locale translations for this news              |
+| `translation`  | hasOne    | NewsTranslation | Single translation — used with `locale` scope      |
+| `attachments`  | hasMany   | Attachment      | Media items attached to this news (via pivot data) |
+| `creator`      | belongsTo | User            | The admin who created the news (`created_by` FK)   |
 
 ---
 
@@ -59,8 +60,8 @@
 | update | ✅         | ✅    | ❌               |
 | delete | ✅         | ✅    | ❌               |
 
-> Future: superadmin may have additional restrictions on which pages admin can edit.
-> For now both roles have equal access to page CRUD.
+> Future: superadmin may have additional restrictions on which news admin can edit.
+> For now both roles have equal access to news CRUD.
 
 ---
 
@@ -68,26 +69,26 @@
 
 ### Admin (authenticated)
 
-| Method | Path                       | Description                                     | Auth  |
-| ------ | -------------------------- | ----------------------------------------------- | ----- |
-| GET    | `/api/v1/admin/pages`      | Paginated list (all pages, any locale)          | admin |
-| GET    | `/api/v1/admin/pages/{id}` | Single page with all translations + attachments | admin |
-| POST   | `/api/v1/admin/pages`      | Create page with translations                   | admin |
-| PATCH  | `/api/v1/admin/pages/{id}` | Update page + translations                      | admin |
-| DELETE | `/api/v1/admin/pages/{id}` | Permanently delete page                         | admin |
+| Method | Path                          | Description                                     | Auth  |
+| ------ | ----------------------------- | ----------------------------------------------- | ----- |
+| GET    | `/api/v1/admin/newsnews`      | Paginated list (all news, any locale)           | admin |
+| GET    | `/api/v1/admin/newsnews/{id}` | Single news with all translations + attachments | admin |
+| POST   | `/api/v1/admin/newsnews`      | Create news with translations                   | admin |
+| PATCH  | `/api/v1/admin/newsnews/{id}` | Update news + translations                      | admin |
+| DELETE | `/api/v1/admin/newsnews/{id}` | Permanently delete news                         | admin |
 
 ### Public (no auth)
 
-| Method | Path                            | Description                                    | Auth |
-| ------ | ------------------------------- | ---------------------------------------------- | ---- |
-| GET    | `/api/v1/pages`                 | Active pages, specific locale via `?locale=it` | no   |
-| GET    | `/api/v1/pages/{locale}/{slug}` | Single active page by locale + slug            | no   |
+| Method | Path                           | Description                                   | Auth |
+| ------ | ------------------------------ | --------------------------------------------- | ---- |
+| GET    | `/api/v1/news`                 | Active news, specific locale via `?locale=it` | no   |
+| GET    | `/api/v1/news/{locale}/{slug}` | Single active news by locale + slug           | no   |
 
 ---
 
 ## Admin UI
 
-### List page
+### List news
 
 - Table columns: title (default locale), active badge, date, order, creator name, actions
 - Default locale shown in list: `it` (fallback to `en` if IT translation missing)
@@ -98,11 +99,11 @@
 
 Attachments:
 
-- [x] **Yes** — include the `AttachmentManager` card on the edit page
+- [x] **Yes** — include the `AttachmentManager` card on the edit news
 
-### Create / Edit page
+### Create / Edit news
 
-The edit form is a single page with two main sections: a left column and a right column (check layout page). Each column is divided in multiple Cards blocks
+The edit form is a single news with two main sections: a left column and a right column (check layout news). Each column is divided in multiple Cards blocks
 
 **Left column**
 
@@ -127,12 +128,12 @@ The edit form is a single page with two main sections: a left column and a right
 ## Business rules
 
 - `created_by` is set automatically to the authenticated user on creation; never editable
-- `order_column` defaults to the current max + 1 (so new pages go to the end)
+- `order_column` defaults to the current max + 1 (so new news go to the end)
 - Slug is auto-generated from the title. Text field is filled when title is blurred; can be manually overridden
-- Slug must be unique per locale — validate in `StorePageRequest` and `UpdatePageRequest`
-- Deleting a page permanently deletes all its translations and attachments (DB cascade)
-- Deleting a page does NOT delete the media files — only the attachment records are removed
-- The public API never returns inactive pages
+- Slug must be unique per locale — validate in `StoreNewsRequest` and `UpdateNewsRequest`
+- Deleting a news permanently deletes all its translations and attachments (DB cascade)
+- Deleting a news does NOT delete the media files — only the attachment records are removed
+- The public API never returns inactive news
 - When the public API is called without `?locale`, default to `it`
 
 ---
@@ -141,7 +142,7 @@ The edit form is a single page with two main sections: a left column and a right
 
 ### Backend
 
-- The `Page` model has a `translations()` hasMany and a scoped `translation(string $locale)` hasOne
+- The `News` model has a `translations()` hasMany and a scoped `translation(string $locale)` hasOne
 - Create/update accepts a `translations` array in the request body, keyed by locale:
     ```json
     {
@@ -153,15 +154,15 @@ The edit form is a single page with two main sections: a left column and a right
         }
     }
     ```
-- `CreatePageAction` saves the page then iterates `$data->translations` to upsert each `PageTranslation`
-- `UpdatePageAction` uses `updateOrCreate(['page_id' => $page->id, 'locale' => $locale], [...])` for each translation
-- `PageResource` always includes all translations and attachments (with their media)
+- `CreateNewsAction` saves the news then iterates `$data->translations` to upsert each `NewsTranslation`
+- `UpdateNewsAction` uses `updateOrCreate(['news_id' => $news->id, 'locale' => $locale], [...])` for each translation
+- `NewsResource` always includes all translations and attachments (with their media)
 
 ### Frontend
 
-- The edit page uses a tab component to switch between `IT` and `EN` translation forms
+- The edit news uses a tab component to switch between `IT` and `EN` translation forms
 - Both language forms are submitted together in one API call — not separately
 - **Validation:** only `it` fields are required. The `en` Zod schema is fully optional — no `superRefine`, no conditional required rules. The submit handler omits `en` from the payload when all its fields are empty. See `rules/frontend.md` § Multi-language forms.
-- The attachment section is a sub-component `PageAttachments` that manages its own state
+- The attachment section is a sub-component `NewsAttachments` that manages its own state
 - Opening the media picker shows a modal with the full media library grid (paginated, searchable)
 - After selecting a media from the picker, a new attachment record is created via `POST /api/v1/admin/attachments`
