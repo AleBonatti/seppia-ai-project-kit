@@ -1,13 +1,15 @@
 import { forwardRef } from 'react'
+import type { TextareaHTMLAttributes } from 'react'
 
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
   error?: string
   hint?: string
+  rows?: number
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ label, error, hint, id, className = '', ...rest }, ref) => (
+  ({ label, error, hint, id, rows, className = '', ...rest }, ref) => (
     <div className="mb-4">
       {label && (
         <label htmlFor={id} className="block text-[12.5px] font-semibold text-(--ink) mb-[7px]">
@@ -17,8 +19,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       <textarea
         ref={ref}
         id={id}
+        rows={rows}
         className={[
-          'w-full text-[13.5px] px-[13px] py-[10px] min-h-[150px]',
+          'w-full text-[13.5px] px-[13px] py-[10px]',
+          rows ? '' : 'min-h-[150px]',
           'bg-(--field) text-(--ink) border border-(--field-border) rounded-[7px]',
           'outline-none transition-[border-color,box-shadow] duration-[140ms]',
           'placeholder:text-(--faint) resize-y align-top',
