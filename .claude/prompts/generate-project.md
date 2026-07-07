@@ -124,8 +124,8 @@ Generate these files inside `api/`:
     DB_CONNECTION=mysql
     DB_HOST=127.0.0.1
     DB_PORT=3306
-    DB_DATABASE=
-    DB_USERNAME=
+    DB_DATABASE=test-ai-project
+    DB_USERNAME=root
     DB_PASSWORD=
 
     FRONTEND_URL=http://localhost:5173
@@ -289,18 +289,18 @@ These are the application shells — all routes use one or the other.
    Replace with project-specific design once defined.
 
 4. `src/layouts/Sidebar.tsx` — left nav inside `AdminLayout`:
-   - Brand area: project name (large, 24px) + collapse toggle button
-   - Nav groups with uppercase group labels; nav items with icon + label
-   - **Active item style**: `bg-(--surface-2)` background + a 3px left accent bar
-     (`position: absolute; left: -14px; top/bottom: 9px; width: 3px; background: var(--accent)`)
-     — NOT a tinted `bg-(--accent)/15` background
-   - Collapse toggles `data-sidebar` attribute on `<html>` (comfortable ↔ icononly) and
-     persists to `localStorage` — never mutates `--sb-w` via inline style
-   - User card at bottom with dropdown menu containing:
-     - **Segmented Dark / Light control** (two buttons, active = `bg-(--accent) text-(--accent-ink)`)
-     - Sign out button
-   - Navigation items from `.claude/specs/project.md`; project name from spec as the brand label
-   - Imports `useTheme` from `@/layouts/useTheme` and `useLogout` from `@/features/auth/hooks/useLogout`
+    - Brand area: project name (large, 24px) + collapse toggle button
+    - Nav groups with uppercase group labels; nav items with icon + label
+    - **Active item style**: `bg-(--surface-2)` background + a 3px left accent bar
+      (`position: absolute; left: -14px; top/bottom: 9px; width: 3px; background: var(--accent)`)
+      — NOT a tinted `bg-(--accent)/15` background
+    - Collapse toggles `data-sidebar` attribute on `<html>` (comfortable ↔ icononly) and
+      persists to `localStorage` — never mutates `--sb-w` via inline style
+    - User card at bottom with dropdown menu containing:
+        - **Segmented Dark / Light control** (two buttons, active = `bg-(--accent) text-(--accent-ink)`)
+        - Sign out button
+    - Navigation items from `.claude/specs/project.md`; project name from spec as the brand label
+    - Imports `useTheme` from `@/layouts/useTheme` and `useLogout` from `@/features/auth/hooks/useLogout`
 
 5. `src/layouts/Breadcrumb.tsx` — floating pill inside the pagebox above page content.
    Style: `bg-(--panel) rounded-[7px] px-4 py-[11px] mb-[18px]`.
@@ -325,9 +325,9 @@ Copy the following files verbatim from `.claude/templates/react-app/src/componen
 9. `Calendar.tsx` — exports `DatePicker` (trigger + popover) and `InlineCalendar` (always visible).
    Install `react-day-picker` and `date-fns` before copying this file:
 
-   ```bash
-   npm install react-day-picker date-fns
-   ```
+    ```bash
+    npm install react-day-picker date-fns
+    ```
 
 10. `Table.tsx` — exports `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`,
     `TableCell`, `TableCheckCell`, `RowTitle`. Row height from `--row-h` CSS var.
