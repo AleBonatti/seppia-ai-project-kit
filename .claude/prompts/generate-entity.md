@@ -46,7 +46,35 @@ Before generating each entity, verify that any entity it depends on (foreign key
 already has a migration file in `api/database/migrations/`. If a dependency is missing,
 generate it first, then continue with the originally requested entity.
 
-Generate all backend and frontend code for each entity as described in its spec file.
+## Media / Attachment special case
+
+`Media` and `Attachment` entities are NOT generic CRUD entities — do not run them through the
+generic Frontend steps below (no `[Entity]ListPage.tsx` built from `EntityListPage.tsx`, no
+`[Entity]EditPage.tsx` built from `EntityEditPage.tsx`, no `[Entity]Form.tsx`). A file library
+has fundamentally different UI (grid of thumbnails, drag-and-drop upload, detail drawer) that
+the generic table/form templates cannot produce.
+
+If the entity being generated is `Media` (or the spec describes a standalone file library):
+- Generate the backend normally (migration, model, DTO, Actions, Requests, Controller, Resource,
+  Policy, routes, tests) per its spec — Media's backend still follows the standard rules, except
+  there is no `Update[Entity]Action` / `UpdateMediaRequest` (Media is immutable after upload; see
+  the spec's "no PATCH/update" note).
+- For the frontend, copy `.claude/templates/react-app/src/features/media/pages/MediaLibraryPage.tsx`
+  verbatim into `src/features/media/pages/MediaLibraryPage.tsx` if it is not already present, then
+  wire the placeholder data to real `useMediaList` / `useUploadMedia` / `useDeleteMedia` hooks.
+- Do not generate a `MediaForm.tsx` or `MediaEditPage.tsx`.
+
+If the entity being generated is `Attachment` (or the spec describes a pivot linking another
+entity to Media, e.g. `page_id` + `media_id`):
+- There is no standalone Attachment list/edit page. Generate the backend (model, DTO, Actions,
+  Requests, Controller, Resource, Policy, routes) per its spec, but skip the frontend
+  `[Entity]ListPage.tsx` / `[Entity]EditPage.tsx` / `[Entity]Form.tsx` steps entirely.
+- Instead, ensure the owning entity's edit page (e.g. `PageEditPage.tsx`) includes the
+  `AttachmentManager` component from `.claude/templates/react-app/src/components/ui/AttachmentManager.tsx`
+  (drop-zone + thumbnail grid + detail drawer), wired to `use[Owner]` for the current attachments
+  and to `useCreateAttachment` / `useDeleteAttachment` (or `useDetachAttachment`) mutations.
+
+For every other entity, generate all backend and frontend code as described below and in its spec file.
 
 ## Backend — generate these files (inside api/)
 
@@ -97,6 +125,8 @@ Generate all backend and frontend code for each entity as described in its spec 
     - Tests for authorization (forbidden cases)
 
 ## Frontend — generate these files (inside frontend/)
+
+> Skip this entire section for `Media` and `Attachment` — see "Media / Attachment special case" above.
 
 1. `src/features/[entity]/types.ts`
    - [Entity] interface matching all spec fields (camelCase)
