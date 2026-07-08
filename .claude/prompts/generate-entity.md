@@ -74,6 +74,32 @@ entity to Media, e.g. `page_id` + `media_id`):
   (drop-zone + thumbnail grid + detail drawer), wired to `use[Owner]` for the current attachments
   and to `useCreateAttachment` / `useDeleteAttachment` (or `useDetachAttachment`) mutations.
 
+## User entity special case — avatar wiring
+
+If the entity being generated is `User` and its spec includes a `profile_photo_path` (or
+equivalent) field, the avatar must be wired all the way through to the sidebar, not just to
+`UserResource`. Generate the standard CRUD for User as usual, plus these extra steps:
+
+1. `UserResource` appends a computed `avatarUrl` (e.g. `Storage::url($this->profile_photo_path)`,
+   null if no photo) — this is normally already required by the entity spec itself.
+2. The `/me` endpoint (`AuthController@me` or equivalent, from `.claude/specs/auth.md`) must
+   return the same `UserResource`, so `avatarUrl` is present on the authenticated user, not just
+   in the admin users list.
+3. Update `frontend/src/features/auth/types.ts` — add `avatarUrl: string | null` to the
+   `AuthUser` interface.
+4. Update `frontend/src/layouts/Sidebar.tsx`:
+   - Import `Avatar` from `@/components/ui/Avatar`
+   - Replace the hand-rolled initials `<div>` in the user card (the element showing
+     `{user ? initials(user.name) : "?"}`) with
+     `<Avatar initials={user ? initials(user.name) : '?'} src={user?.avatarUrl ?? undefined} size={collapsed ? 'sm' : 'md'} />`
+   - Do not change any other part of the sidebar
+5. If `frontend/src/features/users/pages/AccountSettingsPage.tsx` has already been generated
+   (via `generate-settings.md`), verify its avatar preview also reads `user?.avatarUrl` — it
+   should already do so per that prompt.
+
+If the User entity has no photo field, skip this section entirely — do not add `avatarUrl`
+anywhere.
+
 For every other entity, generate all backend and frontend code as described below and in its spec file.
 
 ## Backend — generate these files (inside api/)
