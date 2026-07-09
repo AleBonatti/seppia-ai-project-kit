@@ -37,7 +37,10 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
   prompts/
     generate-project.md          ← installs Laravel + React, then scaffolds the full base project
     generate-entity.md           ← generates backend + frontend for one entity
-    generate-ui-page.md          ← generates a custom page (dashboard, settings, etc.)
+                                    (special-cases Media, Attachment, and User avatar wiring)
+    generate-dashboard.md        ← generates the real admin dashboard from specs/dashboard.md
+    generate-settings.md         ← wires the fixed AccountSettingsPage template to real endpoints
+    generate-ui-page.md          ← generates a custom page (reports, bespoke screens, etc.)
 
   agents/
     backend-generator.md         ← AI role definition for backend generation
@@ -64,6 +67,9 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
         app/
           queryClient.ts         ← React Query client
           router.tsx             ← route definitions
+        hooks/
+          useDebounce.ts         ← 300ms debounce for list page search inputs
+          useMinDelay.ts         ← keeps a boolean true for a minimum duration (SaveBar spinners)
         layouts/
           AdminLayout.tsx        ← CSS Grid shell (sidebar + main)
           AuthLayout.tsx         ← centered card shell (login, forgot, reset)
@@ -74,9 +80,9 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
           useTheme.ts            ← data-theme attribute manager (shared by all layouts)
         components/
           ui/
-            Button.tsx           ← variants: primary, secondary, danger, ghost
+            Button.tsx           ← variants: primary, secondary, danger, ghost; isLoading spinner
             Input.tsx            ← label, error, hint props; forwards ref
-            Textarea.tsx         ← same interface as Input
+            Textarea.tsx         ← same interface as Input; optional rows prop
             Select.tsx           ← label, error, options props; caret icon
             Spinner.tsx          ← sizes: sm, md, lg
             Checkbox.tsx         ← forwardRef; peer-checked accent fill
@@ -91,8 +97,11 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
             EmptyState.tsx       ← icon, title, description, action
             PageHeader.tsx       ← title, description, action, backHref
             StatCard.tsx         ← label, value, icon, delta, deltaUp
-            SaveBar.tsx          ← lastSaved timestamp + Cancel / Save actions
+            SaveBar.tsx          ← lastSaved timestamp + Cancel / Save actions; 500ms min spinner
             Dropzone.tsx         ← drag-and-drop; click-to-browse fallback
+            Toggle.tsx           ← on/off switch
+            PasswordInput.tsx    ← password field with show/hide toggle
+            AttachmentManager.tsx ← drop-zone + thumbnail grid + detail drawer for attachments
         features/
           auth/
             types.ts             ← auth types + password reset payloads
@@ -103,6 +112,15 @@ CLAUDE.md                        ← copy to every project root (auto-read by Cl
               LoginPage.tsx      ← email + password + Google button + remember me
               ForgotPasswordPage.tsx
               ResetPasswordPage.tsx
+          media/
+            pages/
+              MediaLibraryPage.tsx ← grid of thumbnails, search, type filter, pagination
+          users/
+            pages/
+              UsersListPage.tsx  ← users table with avatar, role badge, search, role filter
+              UserEditPage.tsx   ← user edit form
+              AccountSettingsPage.tsx ← avatar upload, personal info, password change (fixed
+                                         shape; wired to real endpoints via generate-settings.md)
 
 examples/
   booking-system/                ← complete filled-in spec: gym booking app
@@ -163,9 +181,68 @@ and component APIs are frozen in code, not reconstructed from prose on each gene
 | `react-app/src/components/ui/StatCard.tsx` | `frontend/src/components/ui/StatCard.tsx` |
 | `react-app/src/components/ui/SaveBar.tsx` | `frontend/src/components/ui/SaveBar.tsx` |
 | `react-app/src/components/ui/Dropzone.tsx` | `frontend/src/components/ui/Dropzone.tsx` |
+| `react-app/src/components/ui/Toggle.tsx` | `frontend/src/components/ui/Toggle.tsx` |
+| `react-app/src/components/ui/PasswordInput.tsx` | `frontend/src/components/ui/PasswordInput.tsx` |
+| `react-app/src/components/ui/AttachmentManager.tsx` | `frontend/src/components/ui/AttachmentManager.tsx` |
+| `react-app/src/hooks/useDebounce.ts` | `frontend/src/hooks/useDebounce.ts` |
+| `react-app/src/hooks/useMinDelay.ts` | `frontend/src/hooks/useMinDelay.ts` |
 | `react-app/src/features/auth/**` | `frontend/src/features/auth/**` |
+| `react-app/src/features/media/pages/MediaLibraryPage.tsx` | `frontend/src/features/media/pages/MediaLibraryPage.tsx` |
 
 **Generated from prose** (via `generate-project.md`): the dashboard placeholder page and all entity-specific code.
+
+**Wired up by a dedicated prompt, not scaffolded automatically:**
+
+- `react-app/src/features/users/pages/AccountSettingsPage.tsx` — copied by `generate-project.md`
+  as a page template, but its placeholder state/mutations are only wired to real backend
+  endpoints when `generate-settings.md` is run (see "Media library, attachments, and account
+  settings" below).
+- `react-app/src/components/ui/AttachmentManager.tsx` — copied verbatim, but only wired into an
+  entity's edit page when that entity's spec defines an `Attachment`-style relationship (see
+  `generate-entity.md` § "Media / Attachment special case").
+
+---
+
+## Media library, attachments, and account settings
+
+Three parts of the kit are **not generic CRUD** and are special-cased in the prompts rather than
+generated from a per-project spec:
+
+### Media / Attachment entities
+
+A file library (grid of thumbnails, drag-and-drop upload, detail drawer) can't be produced by the
+generic `EntityListPage.tsx` / `EntityEditPage.tsx` templates used for ordinary entities. When
+`generate-entity.md` is run on an entity named `Media`, or a pivot entity linking another entity
+to `Media` (e.g. `Attachment`, with `page_id` + `media_id`), it branches:
+
+- **Media** — backend generated normally (no update action; media is immutable after upload).
+  Frontend copies `MediaLibraryPage.tsx` verbatim and wires it to real `useMediaList` /
+  `useUploadMedia` / `useDeleteMedia` hooks. No `MediaForm.tsx` or `MediaEditPage.tsx` is generated.
+- **Attachment** — backend generated normally. There is no standalone list/edit page; instead the
+  owning entity's edit page (e.g. `PageEditPage.tsx`) gets the `AttachmentManager` component
+  (drop-zone + thumbnail grid + detail drawer) wired to that entity's attachments.
+
+See `examples/cms-advanced/entities/media.md` and `.../attachment.md` for a complete reference,
+and `generate-entity.md` § "Media / Attachment special case" for the exact branching logic.
+
+### User avatar wiring
+
+When `generate-entity.md` generates the `User` entity and its spec includes a `profile_photo_path`
+(or equivalent) field, it also wires the resulting `avatarUrl` through to the UI — not just onto
+`UserResource`: the `/me` endpoint returns it, `AuthUser` (in `features/auth/types.ts`) gains an
+`avatarUrl` field, and `Sidebar.tsx`'s user card renders it via the existing `Avatar` component
+instead of initials-only. This only happens if the User entity actually has a photo field —
+projects without avatar support are unaffected.
+
+### Account settings page
+
+`AccountSettingsPage.tsx` (avatar upload, personal info, password change) has a fixed shape across
+every project — it's tied to the auth system defined in `.claude/specs/auth.md`, not to
+project-specific domain data, so it has no spec file of its own. `generate-project.md` copies the
+template verbatim as a starting point; running `.claude/prompts/generate-settings.md` afterward
+replaces its placeholder `// Replace with:` comments and `setTimeout` stand-ins with real
+`UpdateProfileAction` / `UpdatePasswordAction` / `UpdateAvatarAction` / `DeleteAvatarAction`
+endpoints and React Query mutation hooks, without changing the template's layout or copy.
 
 ---
 
@@ -372,12 +449,20 @@ into Claude Code. Claude will read `.claude/specs/dashboard.md` and generate:
 - `useDashboardStats` React Query hook
 - The real `DashboardPage.tsx`, replacing the placeholder generated in Step 6
 
-### Step 8 — Generate custom pages (optional)
+### Step 8 — Wire up account settings (optional)
 
-For any page that doesn't fit the standard entity CRUD pattern — a dashboard with stats,
-a settings screen, a reporting page — use `.claude/prompts/generate-ui-page.md` from this kit.
+If the project needs an account settings page (avatar, personal info, password change), open
+`.claude/prompts/generate-settings.md` from this kit, copy the prompt text, and paste it into
+Claude Code. There's no spec file to fill in — the page's shape is fixed by `.claude/specs/auth.md`.
+Claude will generate the backend endpoints and mutation hooks, and wire them into the
+`AccountSettingsPage.tsx` template already copied in Step 6.
 
-### Step 9 — Iterate and refine
+### Step 9 — Generate custom pages (optional)
+
+For any other page that doesn't fit the standard entity CRUD pattern — a bespoke reporting page,
+an analytics screen — use `.claude/prompts/generate-ui-page.md` from this kit.
+
+### Step 10 — Iterate and refine
 
 The project is fully scaffolded. Continue in Claude Code as normal — the `.claude/` rules and
 stack files ensure Claude stays consistent with the established patterns throughout.
@@ -402,17 +487,22 @@ Step 6: Paste generate-project.md prompt
       ▼
 Step 7: Paste generate-entity.md prompt (once per entity, or all at once)
         → full backend + frontend per entity
+        → Media/Attachment entities and User avatar wiring special-cased automatically
       │
       ▼
 Step 7.5: Paste generate-dashboard.md prompt
         → real dashboard replacing the placeholder
       │
       ▼
-Step 8: Paste generate-ui-page.md prompt (optional)
-        → custom pages (dashboard, settings, etc.)
+Step 8: Paste generate-settings.md prompt (optional)
+        → wires AccountSettingsPage template to real endpoints — no spec file needed
       │
       ▼
-Step 9: Iterate and refine in Claude Code
+Step 9: Paste generate-ui-page.md prompt (optional)
+        → other custom pages (reports, bespoke screens, etc.)
+      │
+      ▼
+Step 10: Iterate and refine in Claude Code
 ```
 
 ---

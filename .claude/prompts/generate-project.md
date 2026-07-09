@@ -222,7 +222,10 @@ Generate these files inside `frontend/src/`:
 
 6. `src/hooks/useDebounce.ts` — copy verbatim from `.claude/templates/react-app/src/hooks/useDebounce.ts`
 
-7. `frontend/.env.example`:
+7. `src/hooks/useMinDelay.ts` — copy verbatim from `.claude/templates/react-app/src/hooks/useMinDelay.ts`.
+   Used by `SaveBar.tsx` to guarantee a minimum 500ms loading/spinner state on save buttons.
+
+8. `frontend/.env.example`:
 
     ```env
     VITE_API_URL=http://localhost:8000/api/v1
